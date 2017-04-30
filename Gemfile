@@ -31,6 +31,7 @@ gem 'jbuilder', '~> 2.5'
 # gem 'bcrypt', '~> 3.1.7'
 gem 'haml'
 gem 'twilio-ruby', '~> 4.11.1'
+gem 'wit'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development

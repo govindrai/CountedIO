@@ -1,7 +1,13 @@
 require 'twilio-ruby'
+require 'wit'
 
 class Message < ApplicationRecord
   belongs_to :user
+
+  def self.send_message_to_wit(message)
+    self.configure_wit_client
+    wit_json_response = @client.message('I want to register.')
+  end
 
   def self.send_test_message_to_govind
     self.configure_twilio_client
@@ -23,6 +29,19 @@ class Message < ApplicationRecord
     end
     @twilio_phone_number = +19253504172
     @client = Twilio::REST::Client.new
+  end
+
+  def self.configure_wit_client
+    actions = {
+      send: -> (request, response) {
+        puts("sending... #{response['text']}")
+      },
+      my_action: -> (request) {
+        return request['context']
+      },
+    }
+
+    @client = Wit.new(access_token: Rails.application.secrets.wit_access_token, actions: actions)
   end
 
 
