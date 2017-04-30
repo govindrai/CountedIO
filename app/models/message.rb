@@ -73,7 +73,7 @@ class Message < ApplicationRecord
       config.auth_token = Rails.application.secrets.twilio_auth_token
       p Rails.application.secrets.twilio_account_sid
     end
-    @twilio_phone_number = +19253504172
+    @twilio_phone_number = '+19253504172'
     @client = Twilio::REST::Client.new
   end
 
