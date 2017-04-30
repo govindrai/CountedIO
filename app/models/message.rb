@@ -21,12 +21,12 @@ class Message < ApplicationRecord
     end
   end
 
-  # helper method which looks at a JSON response from with and extracts intent
-  def extract_intent(wit_response)
-    @intent ||= response["entities"]["intent"][0]["value"] if response["entities"]["intent"]
+  # looks at a JSON response from wit.ai and extracts intent
+  def extract_intent
+    @intent ||= self.WIT_JSON_output["entities"]["intent"][0]["value"] if self.WIT_JSON_output["entities"]["intent"]
   end
 
-  # extracts food items
+  # extracts food items from wit_response
   def extract_food_item
     # this needs to work for multiple foods
     # this also needs to select food descriptions and not the whole text
@@ -54,6 +54,7 @@ class Message < ApplicationRecord
     results_json
   end
 
+  # sends sms to wit, updates the messages table
   def send_message_to_wit
     configure_wit_client
     wit_response = @client.message(self.body)

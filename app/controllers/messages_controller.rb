@@ -24,7 +24,9 @@ class MessagesController < ApplicationController
   end
 
   def test_add_item_intent
-
+    @message = Message.new(body: "I ate two bananas")
+    @message.do_easy_shit
+    head :ok
   end
 
 
