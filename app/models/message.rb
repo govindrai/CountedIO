@@ -1,6 +1,6 @@
 require 'twilio-ruby'
 require 'wit'
-require 'nutritionix/api_1_1'
+# require 'nutritionix/api_1_1'
 
 class Message < ApplicationRecord
   belongs_to :user
@@ -8,21 +8,34 @@ class Message < ApplicationRecord
 
 
 
-  def registration_user(wit_response)
-    @temp_user = TempUser.find(phone_number: self.phone_number)
-    if @temp_user
+  def register_user(wit_response)
+    @temp_user = TempUser.find_by(phone_number: self.phone_number)
 
-    elsif @temp_user && @temp_user.age
-    elsif @temp_user && @temp_user.age && @temp_user.weight_pounds
-    elsif @temp_user && @temp_user.age && @temp_user.weight_pounds && @temp_user.height_inches
-
-    elsif @temp_user && @temp_user.age && @temp_user.weight_pounds && @temp_user.height_inches && @temp_user.target_weight_pounds
-    elsif @temp_user && @temp_user.age && @temp_user.weight_pounds && @temp_user.height_inches && @temp_user.target_weight_pounds && @temp_user.sex
-    elsif @temp_user && @temp_user.age && @temp_user.weight_pounds && @temp_user.height_inches && @temp_user.target_weight_pounds && @temp_user.sex && @temp_user.randomized_profile_url
-    else
-      message = "What is your name"
-
+    if !@temp_user
+      TempUser.create(phone_number: self.phone_number)
     end
+
+
+    if @temp_user && @temp_user.target_weight_pounds
+      #Save
+      @user = User.new(name: @temp_user.name, phone_number: @temp_user.phone_number, age: @temp_user.age, weight_pounds: @temp_user.weight_pounds, height_inches: @temp_user.height_inches, target_weight_pounds: @temp_user.target_weight_pounds, sex: @temp_user.sex)
+      @temp_user.destroy
+      message = "Your profile has been created"
+
+    elsif @temp_user && @temp_user.weight_pounds
+      message = "What is your target weight?"
+    elsif @temp_user && @temp_user.height_inches
+      message = "What is your current weight?"
+    elsif @temp_user && @temp_user.sex
+      message = "How tall are you in inches?"
+    elsif @temp_user && @temp_user.age
+      message = "What is your sex?"
+    elsif @temp_user && @temp_user.name
+      message = "How old are you?"
+    elsif @temp_user
+      message = "What is your name?"
+    end
+    return message
   end
 
 
@@ -30,8 +43,8 @@ class Message < ApplicationRecord
     wit_response = send_message_to_wit
     intent = extract_intent(wit_response)
 
-    if intent == 'registration'
-      registration_user(wit_response)
+    if intent == 'register' || TempUser.find_by(phone_number: self.phone_number)
+      register_user(wit_response)
     elsif intent == 'add_item'
       # do add_item_flo
       respond_to_user(results_json)
