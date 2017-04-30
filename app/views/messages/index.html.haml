@@ -1,0 +1,7 @@
+%h1 THIS WILL DISPLAY ALL INCOMING MESSAGES TO OUR APP
+
+- @messages.each do |message|
+  .message{style: "border: 1px solid red"}
+    = message.body
+
+
