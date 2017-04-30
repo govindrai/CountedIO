@@ -8,12 +8,23 @@ class MessagesController < ApplicationController
     body = message_params[:Body]
     phone_number = message_params[:From]
     @message = Message.create(body: body, phone_number: phone_number)
+    @message.do_easy_shit
   end
 
-  def test
-    Message.send_test_message_to_govind
+  def test_twilio_send
+    @message = Message.new()
+    @message.send_test_message_to_govind
     head :ok
   end
+
+  def test_wit_send
+    @message = Message.new(body: "I would like to register")
+    @message.do_easy_shit
+    head :ok
+  end
+
+
+
 
   private
 
