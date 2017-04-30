@@ -7,8 +7,8 @@ class MessagesController < ApplicationController
   def create
   end
 
-  def test
-    send_test_message_to_govind
+  def self.test
+    Message.send_test_message_to_govind
     head :ok
   end
 end
