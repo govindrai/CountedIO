@@ -1,11 +1,51 @@
 require 'twilio-ruby'
 require 'wit'
+require 'nutritionix/api_1_1'
 
 class Message < ApplicationRecord
   belongs_to :user
 
   def do_easy_shit
-    puts send_message_to_wit
+    wit_response = send_message_to_wit
+    intent = extract_intent(wit_response)
+    if intent == 'registration'
+      # do registration flow
+    elsif intent == 'add_item'
+      # do add_item_flow
+    else
+      # send twilio response saying "I have no idea what you're talking about"
+    end
+  end
+
+  # helper method which looks at a JSON response from with and extracts intent
+  def extract_intent(wit_response)
+    @intent ||= response["entities"]["intent"][0]["value"] if response["entities"]["intent"]
+  end
+
+  # extracts food items
+  def extract_food_item(wit_response)
+    food_item = wit_response["_text"]
+    queryNutrionix(food_item)
+  end
+
+
+  def queryNutrionix(food)
+    app_id = '010fcf20'
+    app_key = 'f5e31860c7cc709b1ec3b1249435e70a'
+    provider = Nutritionix::Api_1_1.new(app_id, app_key)
+    search_params = {
+      offset: 0,
+      limit: 3,
+      fields: ['item_name', 'nf_calories'],
+      query: food
+    }
+    results_json = provider.nxql_search(search_params)
+    p results_json
+    p '*' * 100
+    puts "Results: #{results_json}"
+    p '*' * 100
+
+    sendToTwilio(results_json)
   end
 
   def send_message_to_wit
@@ -55,6 +95,7 @@ class Message < ApplicationRecord
     puts("Yay, got Wit.ai response: #{rsp}")
   end
 
+
   def send_test_message_to_govind
     configure_twilio_client
     @client.messages.create(
@@ -90,5 +131,12 @@ class Message < ApplicationRecord
     @client = Wit.new(access_token: Rails.application.secrets.wit_access_token, actions: actions)
   end
 
+  def sample_wilio_response
+  end
 
+  def sample_WIT_response
+  end
+
+  def sample_nutrionix_response
+  end
 end
