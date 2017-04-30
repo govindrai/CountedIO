@@ -17,10 +17,14 @@ class MessagesController < ApplicationController
     head :ok
   end
 
-  def test_wit_send
+  def test_register_intent
     @message = Message.new(body: "I would like to register")
     @message.do_easy_shit
     head :ok
+  end
+
+  def test_add_item_intent
+
   end
 
 
