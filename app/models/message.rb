@@ -14,8 +14,10 @@ class Message < ApplicationRecord
     if intent == 'registration'
       # do registration flow
     elsif intent == 'add_item'
-      extract_food_item(wit_response)
-      respond_to_user(results_json)
+      nutritionix_response = queryNutritionix
+      send_test_reply_to_user
+      # do some calculations based on serving sizes etc. then reply to user
+      # reply_to_user()
     else
       # send twilio response saying "I have no idea what you're talking about"
     end
@@ -26,14 +28,18 @@ class Message < ApplicationRecord
     @intent ||= self.WIT_JSON_output["entities"]["intent"][0]["value"] if self.WIT_JSON_output["entities"]["intent"]
   end
 
-  # extracts food items from wit_response
+  # extracts food item(s) from wit_response
   def extract_food_item
     # this needs to work for multiple foods
     # this also needs to select food descriptions and not the whole text
     food_item = self.WIT_JSON_output["_text"]
   end
 
-  def queryNutrionix
+  # extracts calories from nutritionix_response
+  def extract_calories
+  end
+
+  def queryNutritionix
     food = extract_food_item
     app_id = Rails.application.secrets.nutritionix_app_id
     app_key = Rails.application.secrets.nutritionix_app_key
@@ -102,6 +108,9 @@ class Message < ApplicationRecord
     # puts("Yay, got Wit.ai response: #{rsp}")
   end
 
+  def send_test_reply_to_user
+
+  end
 
   def send_test_message_to_govind
     configure_twilio_client
@@ -148,6 +157,5 @@ class Message < ApplicationRecord
 
   def sample_nutrionix_response
   end
-
 
 end
