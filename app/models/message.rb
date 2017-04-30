@@ -8,16 +8,8 @@ class Message < ApplicationRecord
 
 
 
-  def check_for_registration(wit_response)
-    p '*' * 100
-    puts wit_response
-    puts wit_response[:intent]
-    p '*' * 100
-    if wit_response["intent"][0]["value"] == "register"
-      p '*' * 100
-      puts 'yes! please save me'
-      p '*' * 100
-    end
+  def registration_user(wit_response)
+    user.registering = true
   end
 
 
@@ -26,7 +18,7 @@ class Message < ApplicationRecord
     intent = extract_intent(wit_response)
 
     if intent == 'registration'
-      # do registration flow
+      registration_user(wit_response)
     elsif intent == 'add_item'
       # do add_item_flo
       respond_to_user(results_json)
