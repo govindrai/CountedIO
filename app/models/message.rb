@@ -1,10 +1,62 @@
 require 'twilio-ruby'
+require 'wit'
 
 class Message < ApplicationRecord
   belongs_to :user
 
-  def self.send_test_message_to_govind
-    self.configure_twilio_client
+  def do_easy_shit
+    puts send_message_to_wit
+  end
+
+  def send_message_to_wit
+    configure_wit_client
+    # wit_json_response = @client.message(self.body)
+
+    #User messages
+    p "*" * 50
+    p "Response 1"
+    rsp = @client.converse('my-user-session-42', self.body, {})
+    puts("Yay, got Wit.ai response: #{rsp}")
+
+    p "*" * 50
+    p "Response 2"
+    #Sever Applies context
+    rsp = @client.converse('my-user-session-42', {intent: "register"})
+    puts("Yay, got Wit.ai response: #{rsp}")
+
+    p "*" * 50
+    p "Response 3"
+    #user message
+    rsp = @client.converse('my-user-session-42', 'Govind Rai', {intent: "register"})
+    puts("Yay, got Wit.ai response: #{rsp}")
+
+    p "*" * 50
+    p "Response 4"
+    #server applies context
+    rsp = @client.converse('my-user-session-42', {intent: "register", name: "Govind Rai"})
+    puts("Yay, got Wit.ai response: #{rsp}")
+
+    p "*" * 50
+    p "Response 5"
+    #user message
+    rsp = @client.converse('my-user-session-42', {intent: "register", name: "Govind Rai"})
+    puts("Yay, got Wit.ai response: #{rsp}")
+
+    p "*" * 50
+    p "Response 6"
+    #user message
+    rsp = @client.converse('my-user-session-42', "20", {intent: "register", name: "Govind Rai"})
+    puts("Yay, got Wit.ai response: #{rsp}")
+
+    p "*" * 50
+    p "Response 7"
+    #user message
+    rsp = @client.converse('my-user-session-42', {intent: "register", name: "Govind Rai", age: "20"})
+    puts("Yay, got Wit.ai response: #{rsp}")
+  end
+
+  def send_test_message_to_govind
+    configure_twilio_client
     @client.messages.create(
       from: @twilio_phone_number,
       to: '+19257779777',
@@ -14,7 +66,7 @@ class Message < ApplicationRecord
     )
   end
 
-  def self.configure_twilio_client
+  def configure_twilio_client
     p Rails.application.secrets
     Twilio.configure do |config|
       config.account_sid = Rails.application.secrets.twilio_account_sid
@@ -23,6 +75,19 @@ class Message < ApplicationRecord
     end
     @twilio_phone_number = +19253504172
     @client = Twilio::REST::Client.new
+  end
+
+  def configure_wit_client
+    actions = {
+      send: -> (request, response) {
+        puts("sending... #{response['text']}")
+      },
+      my_action: -> (request) {
+        return request['context']
+      },
+    }
+
+    @client = Wit.new(access_token: Rails.application.secrets.wit_access_token, actions: actions)
   end
 
 
