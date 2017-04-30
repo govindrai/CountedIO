@@ -1,6 +1,6 @@
 require 'twilio-ruby'
 require 'wit'
-# require 'nutritionix/api_1_1'
+require 'nutritionix/api_1_1'
 
 class Message < ApplicationRecord
   belongs_to :user
@@ -76,7 +76,8 @@ class Message < ApplicationRecord
     intent = extract_intent(wit_response)
 
     if intent == 'register' || TempUser.find_by(phone_number: self.phone_number)
-      register_user(wit_response)
+      response = register_user(wit_response)
+      send_to_twillio(response)
     elsif intent == 'add_item'
       # do add_item_flo
       respond_to_user(results_json)
