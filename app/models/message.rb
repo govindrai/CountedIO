@@ -9,7 +9,20 @@ class Message < ApplicationRecord
 
 
   def registration_user(wit_response)
-    user.registering = true
+    @temp_user = TempUser.find(phone_number: self.phone_number)
+    if @temp_user
+
+    elsif @temp_user && @temp_user.age
+    elsif @temp_user && @temp_user.age && @temp_user.weight_pounds
+    elsif @temp_user && @temp_user.age && @temp_user.weight_pounds && @temp_user.height_inches
+
+    elsif @temp_user && @temp_user.age && @temp_user.weight_pounds && @temp_user.height_inches && @temp_user.target_weight_pounds
+    elsif @temp_user && @temp_user.age && @temp_user.weight_pounds && @temp_user.height_inches && @temp_user.target_weight_pounds && @temp_user.sex
+    elsif @temp_user && @temp_user.age && @temp_user.weight_pounds && @temp_user.height_inches && @temp_user.target_weight_pounds && @temp_user.sex && @temp_user.randomized_profile_url
+    else
+      message = "What is your name"
+
+    end
   end
 
 

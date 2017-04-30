@@ -1,2 +1,3 @@
 class TempUser < ApplicationRecord
+
 end
