@@ -8,10 +8,12 @@ class Message < ApplicationRecord
   def do_easy_shit
     wit_response = send_message_to_wit
     intent = extract_intent(wit_response)
+
     if intent == 'registration'
       # do registration flow
     elsif intent == 'add_item'
-      # do add_item_flow
+      # do add_item_flo
+      respond_to_user(results_json)
     else
       # send twilio response saying "I have no idea what you're talking about"
     end
@@ -28,7 +30,6 @@ class Message < ApplicationRecord
     queryNutrionix(food_item)
   end
 
-
   def queryNutrionix(food)
     app_id = '010fcf20'
     app_key = 'f5e31860c7cc709b1ec3b1249435e70a'
@@ -44,55 +45,53 @@ class Message < ApplicationRecord
     p '*' * 100
     puts "Results: #{results_json}"
     p '*' * 100
-
-    sendToTwilio(results_json)
+    results_json
   end
 
   def send_message_to_wit
     configure_wit_client
-    # wit_json_response = @client.message(self.body)
+    @client.message(self.body)
+    # #User messages
+    # p "*" * 50
+    # p "Response 1"
+    # rsp = @client.converse('my-user-session-42', self.body, {})
+    # puts("Yay, got Wit.ai response: #{rsp}")
 
-    #User messages
-    p "*" * 50
-    p "Response 1"
-    rsp = @client.converse('my-user-session-42', self.body, {})
-    puts("Yay, got Wit.ai response: #{rsp}")
+    # p "*" * 50
+    # p "Response 2"
+    # #Sever Applies context
+    # rsp = @client.converse('my-user-session-42', {intent: "register"})
+    # puts("Yay, got Wit.ai response: #{rsp}")
 
-    p "*" * 50
-    p "Response 2"
-    #Sever Applies context
-    rsp = @client.converse('my-user-session-42', {intent: "register"})
-    puts("Yay, got Wit.ai response: #{rsp}")
+    # p "*" * 50
+    # p "Response 3"
+    # #user message
+    # rsp = @client.converse('my-user-session-42', 'Govind Rai', {intent: "register"})
+    # puts("Yay, got Wit.ai response: #{rsp}")
 
-    p "*" * 50
-    p "Response 3"
-    #user message
-    rsp = @client.converse('my-user-session-42', 'Govind Rai', {intent: "register"})
-    puts("Yay, got Wit.ai response: #{rsp}")
+    # p "*" * 50
+    # p "Response 4"
+    # #server applies context
+    # rsp = @client.converse('my-user-session-42', {intent: "register", name: "Govind Rai"})
+    # puts("Yay, got Wit.ai response: #{rsp}")
 
-    p "*" * 50
-    p "Response 4"
-    #server applies context
-    rsp = @client.converse('my-user-session-42', {intent: "register", name: "Govind Rai"})
-    puts("Yay, got Wit.ai response: #{rsp}")
+    # p "*" * 50
+    # p "Response 5"
+    # #user message
+    # rsp = @client.converse('my-user-session-42', {intent: "register", name: "Govind Rai"})
+    # puts("Yay, got Wit.ai response: #{rsp}")
 
-    p "*" * 50
-    p "Response 5"
-    #user message
-    rsp = @client.converse('my-user-session-42', {intent: "register", name: "Govind Rai"})
-    puts("Yay, got Wit.ai response: #{rsp}")
+    # p "*" * 50
+    # p "Response 6"
+    # #user message
+    # rsp = @client.converse('my-user-session-42', "20", {intent: "register", name: "Govind Rai"})
+    # puts("Yay, got Wit.ai response: #{rsp}")
 
-    p "*" * 50
-    p "Response 6"
-    #user message
-    rsp = @client.converse('my-user-session-42', "20", {intent: "register", name: "Govind Rai"})
-    puts("Yay, got Wit.ai response: #{rsp}")
-
-    p "*" * 50
-    p "Response 7"
-    #user message
-    rsp = @client.converse('my-user-session-42', {intent: "register", name: "Govind Rai", age: "20"})
-    puts("Yay, got Wit.ai response: #{rsp}")
+    # p "*" * 50
+    # p "Response 7"
+    # #user message
+    # rsp = @client.converse('my-user-session-42', {intent: "register", name: "Govind Rai", age: "20"})
+    # puts("Yay, got Wit.ai response: #{rsp}")
   end
 
 
@@ -131,7 +130,9 @@ class Message < ApplicationRecord
     @client = Wit.new(access_token: Rails.application.secrets.wit_access_token, actions: actions)
   end
 
-  def sample_wilio_response
+  # a sample api responses
+  # useful for testing against the data structures
+  def sample_twilio_response
   end
 
   def sample_WIT_response
@@ -139,4 +140,6 @@ class Message < ApplicationRecord
 
   def sample_nutrionix_response
   end
+
+
 end
