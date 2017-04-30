@@ -12,28 +12,54 @@ class Message < ApplicationRecord
     @temp_user = TempUser.find_by(phone_number: self.phone_number)
 
     if !@temp_user
-      TempUser.create(phone_number: self.phone_number)
+      @temp_user = TempUser.create(phone_number: self.phone_number)
     end
 
 
-    if @temp_user && @temp_user.target_weight_pounds
+    #Saving variables
+    if @temp_user.target_weight_pounds
+      #Do nothing simply pass onto second phase
+    elsif @temp_user.weight_pounds
+      @temp_user.target_weight_pounds = self.body
+    elsif @temp_user.height_inches
+      @temp_user.weight_pounds = self.body
+    elsif @temp_user.sex
+      @temp_user.height_inches = self.body
+    elsif @temp_user.age
+      @temp_user.sex = self.body
+    elsif @temp_user.name
+      @temp_user.age = self.body
+    else
+      @temp_user.name = self.body
+    end
+
+
+
+    if @temp_user.target_weight_pounds
       #Save
       @user = User.new(name: @temp_user.name, phone_number: @temp_user.phone_number, age: @temp_user.age, weight_pounds: @temp_user.weight_pounds, height_inches: @temp_user.height_inches, target_weight_pounds: @temp_user.target_weight_pounds, sex: @temp_user.sex)
+      @user.save
       @temp_user.destroy
       message = "Your profile has been created"
 
-    elsif @temp_user && @temp_user.weight_pounds
+    elsif @temp_user.weight_pounds
       message = "What is your target weight?"
-    elsif @temp_user && @temp_user.height_inches
+
+    elsif @temp_user.height_inches
       message = "What is your current weight?"
-    elsif @temp_user && @temp_user.sex
+
+    elsif @temp_user.sex
       message = "How tall are you in inches?"
-    elsif @temp_user && @temp_user.age
+
+    elsif @temp_user.age
       message = "What is your sex?"
-    elsif @temp_user && @temp_user.name
+
+    elsif @temp_user.name
       message = "How old are you?"
-    elsif @temp_user
+
+    else
       message = "What is your name?"
+
     end
     return message
   end
