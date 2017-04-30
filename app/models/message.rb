@@ -6,13 +6,15 @@ class Message < ApplicationRecord
   belongs_to :user
 
   def do_easy_shit
-    wit_response = send_message_to_wit
+    send_message_to_wit
+    wit_response = self.WIT_JSON_output
+
     intent = extract_intent(wit_response)
 
     if intent == 'registration'
       # do registration flow
     elsif intent == 'add_item'
-      # do add_item_flo
+      extract_food_item(wit_response)
       respond_to_user(results_json)
     else
       # send twilio response saying "I have no idea what you're talking about"
@@ -25,21 +27,25 @@ class Message < ApplicationRecord
   end
 
   # extracts food items
-  def extract_food_item(wit_response)
-    food_item = wit_response["_text"]
-    queryNutrionix(food_item)
+  def extract_food_item
+    # this needs to work for multiple foods
+    # this also needs to select food descriptions and not the whole text
+    food_item = self.WIT_JSON_output["_text"]
   end
 
-  def queryNutrionix(food)
-    app_id = '010fcf20'
-    app_key = 'f5e31860c7cc709b1ec3b1249435e70a'
+  def queryNutrionix
+    food = extract_food_item
+    app_id = Rails.application.secrets.nutritionix_app_id
+    app_key = Rails.application.secrets.nutritionix_app_key
     provider = Nutritionix::Api_1_1.new(app_id, app_key)
+
     search_params = {
       offset: 0,
       limit: 3,
       fields: ['item_name', 'nf_calories'],
       query: food
     }
+
     results_json = provider.nxql_search(search_params)
     p results_json
     p '*' * 100
@@ -50,7 +56,8 @@ class Message < ApplicationRecord
 
   def send_message_to_wit
     configure_wit_client
-    @client.message(self.body)
+    wit_response = @client.message(self.body)
+    self.update(WIT_JSON_output: wit_response)
     # #User messages
     # p "*" * 50
     # p "Response 1"
