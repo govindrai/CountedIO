@@ -8,10 +8,8 @@ class Message < ApplicationRecord
 
   def do_easy_shit
     send_message_to_wit
+    intent = extract_intent; puts "INTENT = #{intent}"
 
-    intent = extract_intent
-
-    puts "INTENT = #{intent}"
     if intent == 'register' || TempUser.find_by(phone_number: self.phone_number)
       if User.find_by(phone_number: self.phone_number)
         response = "You are already registered!"
@@ -19,11 +17,9 @@ class Message < ApplicationRecord
         response = register_user
       end
     elsif intent == 'add_item'
-      puts "MADE IT INTO ADD ITEM CONDITION"
-      nutritionix_response = queryNutritionix
-      send_test_reply_to_user
-      # do some calculations based on serving sizes etc. then reply to user
-      # reply_to_user()
+      set_add_intent_reply
+    elsif intent == 'caloric_information'
+      # do something
     else
       # send twilio response saying "I have no idea what you're talking about"
     end
@@ -105,28 +101,34 @@ class Message < ApplicationRecord
     @intent ||= self.json_wit_response["entities"]["intent"][0]["value"] if self.json_wit_response["entities"]["intent"]
   end
 
-  # extracts food item(s) from wit_response
-  def extract_food_item
-    # this needs to work for multiple foods
-    # this also needs to select food descriptions and not the whole text
-    food_item = self.json_wit_response["_text"]
+  def extract_calories(food)
+    p nutritionix_response = queryNutritionix(food)
   end
 
-  # extracts calories from nutritionix_response
-  def extract_calories
+  def extract_food
+    foods = self.json_wit_response["entities"]["food_description"]
+    foods_array = []
+    food_description_entities.each do |food|
+      entities = food["entities"]
+      foods_array.push {
+        food: entities["food"] ? entities["food"][0]["value"] : nil,
+        quantity: entities["number"] ? entities["number"][0][:value] : nil,
+        unit: entities["unit"] ? entities["unit"][0][:value]: nil
+      }
+    end
+    foods_array
   end
 
-  def queryNutritionix
-    food = extract_food_item
+  def queryNutritionix(food)
     app_id = ENV["NUTRITIONIX_APP_ID"]
     app_key = ENV["NUTRITIONIX_APP_KEY"]
     provider = Nutritionix::Api_1_1.new(app_id, app_key)
 
     search_params = {
       offset: 0,
-      limit: 3,
+      limit: 1,
       fields: ['item_name', 'nf_calories'],
-      query: 'Big Mac'
+      query: food
     }
 
     results_json = provider.nxql_search(search_params)
@@ -137,6 +139,13 @@ class Message < ApplicationRecord
     results_json
   end
 
+  def set_add_intent_reply
+    foods_array = extract_food
+    add_intent_reply = "Thanks for sharing! We have added"
+    foods_array.each do |food_obj|
+      extract_calories(food_obj.food)
+    end
+  end
   # sends sms to wit, updates the messages table
   def send_message_to_wit
     configure_wit_client
@@ -185,9 +194,6 @@ class Message < ApplicationRecord
     # puts("Yay, got Wit.ai response: #{rsp}")
   end
 
-  def send_test_reply_to_user
-  end
-
   def send_test_message_to_govind
     configure_twilio_client
     @twilio_client.messages.create(
@@ -199,28 +205,70 @@ class Message < ApplicationRecord
     )
   end
 
-
   # a sample api responses
   # useful for testing against the data structures
   def sample_twilio_response
   end
 
-  def sample_WIT_response
-    {"msg_id"=>"1d1ddfc0-5cfb-4a5e-9cd3-214e9c503e8b",
-     "_text"=>"I ate two bananas",
-     "entities"=>
-      {"food_description"=>
-        [{"confidence"=>0.948610843637913,
-          "entities"=>
-           {"number"=>[{"confidence"=>1, "value"=>2, "type"=>"value"}],
-            "food"=>
-             [{"confidence"=>0.9551708395136853,
-               "type"=>"value",
-               "value"=>"bananas"}]},
-          "type"=>"value",
-          "value"=>"two bananas",
-          "suggested"=>true}],
-       "intent"=>[{"confidence"=>0.9995839306543423, "value"=>"add_item"}]}}
+  def sample_wit_response
+    JSON.parse('{
+      "msg_id" : "d5c2227b-1a6c-4384-85d7-eec2820e65dd",
+      "_text" : "I ate an apple, three olives, and a slice a bun",
+      "entities" : {
+        "food_description" : [ {
+          "confidence" : 0.9987320073552927,
+          "entities" : {
+            "food" : [ {
+              "confidence" : 0.9354258378052169,
+              "type" : "value",
+              "value" : "apple"
+            } ]
+          },
+          "type" : "value",
+          "value" : "an apple"
+        }, {
+          "confidence" : 0.997242556612624,
+          "entities" : {
+            "number" : [ {
+              "confidence" : 1,
+              "value" : 3,
+              "type" : "value"
+            } ],
+            "food" : [ {
+              "confidence" : 0.9165590880096315,
+              "type" : "value",
+              "value" : "olives",
+              "suggested" : true
+            } ]
+          },
+          "type" : "value",
+          "value" : "three olives",
+          "suggested" : true
+        }, {
+          "confidence" : 0.9953965565977307,
+          "entities" : {
+            "units" : [ {
+              "confidence" : 1,
+              "type" : "value",
+              "value" : "slice"
+            } ],
+            "food" : [ {
+              "confidence" : 0.9438404939605672,
+              "type" : "value",
+              "value" : "bun",
+              "suggested" : true
+            } ]
+          },
+          "type" : "value",
+          "value" : "a slice a bun",
+          "suggested" : true
+        } ],
+        "intent" : [ {
+          "confidence" : 0.9999998855726199,
+          "value" : "add_item"
+        } ]
+      }
+    }')
   end
 
   def sample_nutrionix_response
