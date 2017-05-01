@@ -48,12 +48,8 @@ class Message < ApplicationRecord
 
     if self.body == "reset" || self.body == 'Reset'
       @temp_user.destroy if @temp_user
+      @temp_user = nil
     end
-
-    p '*' * 100
-    p @temp_user if @temp_user
-    p "THERE IS CURRENT NO TEMP USER" if !@temp_user
-    p '*' * 100
 
     save_registration_input
     set_registration_reply
