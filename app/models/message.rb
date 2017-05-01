@@ -102,16 +102,16 @@ class Message < ApplicationRecord
   end
 
   def extract_calories(food)
-    p nutritionix_response = queryNutritionix(food)
+    queryNutritionix(food)
   end
 
   def extract_food
     foods = self.json_wit_response["entities"]["food_description"]
     foods_array = []
-    food_description_entities.each do |food|
+    foods.each do |food|
       entities = food["entities"]
       food = entities["food"] ? entities["food"][0]["value"] : nil
-      quantity = entities["number"] ? entities["number"][0]["value"] : nil
+      quantity = entities["number"] ? entities["number"][0]["value"] : 1
       unit = entities["unit"] ? entities["unit"][0]["value"] : nil
       foods_array.push({
         food: food,
@@ -135,19 +135,20 @@ class Message < ApplicationRecord
     }
 
     results_json = provider.nxql_search(search_params)
-    p results_json
-    p '*' * 100
-    puts "Results: #{results_json}"
-    p '*' * 100
-    results_json
+    puts results_json
+    # p '*' * 100
+    results_json = JSON.parse(results_json.to_s)
+    p calories = results_json["hits"][0]["fields"]["nf_calories"]
+    # p '*' * 100
   end
 
   def set_add_intent_reply
     foods_array = extract_food
-    add_intent_reply = "Thanks for sharing! We have added"
+    add_intent_reply = "Thanks for sharing! We have added "
     foods_array.each do |food_obj|
-      extract_calories(food_obj.food)
+      add_intent_reply += "#{food_obj[:quantity]} #{food_obj[:food]} (#{extract_calories(food_obj[:food]) * food_obj[:quantity].to_f} calories)"
     end
+    @response_to_user = add_intent_reply
   end
   # sends sms to wit, updates the messages table
   def send_message_to_wit

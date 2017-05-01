@@ -25,7 +25,7 @@ class MessagesController < ApplicationController
   end
 
   def test_add_item_intent
-    @message = Message.create!(phone_number: ENV["GOVIND_PHONE_NUMBER"], body: "I ate a bananas")
+    @message = Message.create!(phone_number: ENV["GOVIND_PHONE_NUMBER"], body: "Add 14 Big Mac")
     @message.do_easy_shit
     head :ok
   end
