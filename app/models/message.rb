@@ -14,7 +14,7 @@ class Message < ApplicationRecord
       if User.find_by(phone_number: self.phone_number)
         response = "You are already registered!"
       else
-        response = register_user
+        register_user
       end
     elsif intent == 'add_item'
       set_add_intent_reply
