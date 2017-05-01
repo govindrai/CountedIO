@@ -156,6 +156,8 @@ class Message < ApplicationRecord
     self.update(json_wit_response: wit_response)
   end
 
+  # useful for checking if Twilio is working
+  # useful for testing different message parameters such as url/media_url
   def send_test_message_to_govind
     configure_twilio_client
     @twilio_client.messages.create(
@@ -167,11 +169,13 @@ class Message < ApplicationRecord
     )
   end
 
-  # a sample api responses
-  # useful for testing against the data structures
+  private
+
+  # sample api response, useful for studying/querying
   def sample_twilio_response
   end
 
+  # sample api response, useful for studying/querying
   def sample_wit_response
     JSON.parse('{
       "msg_id" : "d5c2227b-1a6c-4384-85d7-eec2820e65dd",
@@ -233,6 +237,7 @@ class Message < ApplicationRecord
     }')
   end
 
+  # sample api response, useful for studying/querying
   def sample_nutrionix_response
   end
 
