@@ -9,6 +9,7 @@ class Message < ApplicationRecord
   # Takes a path based on intent
   def intent_controller
     intent = extract_intent
+    @user = User.find_by(phone_number: self.phone_number)
 
     if intent == 'register' || TempUser.find_by(phone_number: self.phone_number)
       register_user
@@ -16,6 +17,8 @@ class Message < ApplicationRecord
       add_meal
     elsif intent == 'caloric_information'
       # do something
+    elsif intent == 'get_profile'
+      @response_to_user = @user.generate_link_to_profile
     else
       # send twilio response saying "I have no idea what you're talking about"
     end
@@ -150,7 +153,7 @@ class Message < ApplicationRecord
     @twilio_client.messages.create(
       from: ENV["TWILIO_PHONE_NUMBER"],
       to: ENV["GOVIND_PHONE_NUMBER"],
-      body: 'Hey there!',
+      body: 'Show me my profile',
       # url: 'localhost.com/viewmyprofile'
       # media_url: 'http://coolwildlife.com/wp-content/uploads/galleries/post-3004/Fox%20Picture%20003.jpg'
     )

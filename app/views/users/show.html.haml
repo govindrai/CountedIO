@@ -1,0 +1,9 @@
+%h1 This is a User Show page
+
+- if @authorized
+  %h1= @user.name
+
+- if @meals
+  - @meals.each do |meal|
+    %h3= meal.food_name
+    %p= meal.calories
