@@ -8,4 +8,6 @@ class User < ApplicationRecord
     self.randomized_profile_url = "THIS IS A URL"
   end
 
+
+
 end
