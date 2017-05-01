@@ -36,6 +36,20 @@ ActiveRecord::Schema.define(version: 20170430223123) do
     t.index ["user_id"], name: "index_messages_on_user_id", using: :btree
   end
 
+  create_table "temp_users", force: :cascade do |t|
+    t.string   "phone_number"
+    t.integer  "age"
+    t.integer  "weight_pounds"
+    t.integer  "height_inches"
+    t.string   "target_weight_pounds"
+    t.string   "sex"
+    t.string   "randomized_profile_url"
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+    t.string   "name"
+    t.index ["phone_number"], name: "index_temp_users_on_phone_number", using: :btree
+  end
+
   create_table "users", force: :cascade do |t|
     t.string   "phone_number",           null: false
     t.integer  "age",                    null: false
@@ -46,6 +60,7 @@ ActiveRecord::Schema.define(version: 20170430223123) do
     t.string   "randomized_profile_url", null: false
     t.datetime "created_at",             null: false
     t.datetime "updated_at",             null: false
+    t.string   "name",                   null: false
     t.index ["phone_number"], name: "index_users_on_phone_number", using: :btree
   end
 

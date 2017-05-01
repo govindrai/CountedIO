@@ -7,23 +7,89 @@ require 'json'
 class Message < ApplicationRecord
   belongs_to :user
 
+  def register_user(wit_response)
+    @temp_user = TempUser.find_by(phone_number: self.phone_number)
+
+    if !@temp_user
+      @temp_user = TempUser.create(phone_number: self.phone_number)
+    end
+
+    #Saving variables
+    save_registration_input(@temp_user)
+
+    #Determine what message needs to be sent next
+    message = set_registration_message(temp_user)
+
+    return message
+  end
+
+  def save_registration_input(temp_user)
+    if temp_user.target_weight_pounds
+      #Do nothing simply pass onto second phase
+    elsif temp_user.weight_pounds
+      temp_user.target_weight_pounds = self.body
+    elsif temp_user.height_inches
+      temp_user.weight_pounds = self.body
+    elsif temp_user.sex
+      temp_user.height_inches = self.body
+    elsif temp_user.age
+      temp_user.sex = self.body
+    elsif temp_user.name
+      temp_user.age = self.body
+    else
+      temp_user.name = self.body
+    end
+  end
+
+  def set_registration_message(temp_user)
+    if @temp_user.target_weight_pounds
+      #Save
+      @user = User.new(name: @temp_user.name, phone_number: @temp_user.phone_number, age: @temp_user.age, weight_pounds: @temp_user.weight_pounds, height_inches: @temp_user.height_inches, target_weight_pounds: @temp_user.target_weight_pounds, sex: @temp_user.sex)
+      @user.save
+      @temp_user.destroy
+      message = "Your profile has been created"
+
+    elsif @temp_user.weight_pounds
+      message = "What is your target weight?"
+
+    elsif @temp_user.height_inches
+      message = "What is your current weight?"
+
+    elsif @temp_user.sex
+      message = "How tall are you in inches?"
+
+    elsif @temp_user.age
+      message = "What is your sex?"
+
+    elsif @temp_user.name
+      message = "How old are you?"
+
+    else
+      message = "What is your name?"
+    end
+  end
+
+
   def do_easy_shit
     send_message_to_wit
     wit_response = self.json_wit_response
     pp wit_response
 
+<<<<<<< HEAD
     intent = extract_intent
 
     puts "INTENT #{intent} lasdjflaj"
-    if intent == 'registration'
+    if intent == 'register' || TempUser.find_by(phone_number: self.phone_number)
+      response = register_user(wit_response)
+      send_to_twillio(response)
       # do registration flow
-    # elsif intent == 'add_item'
-    else puts "MADE IT INTO ADD ITEM CONDITION"
+    elsif intent == 'add_item'
+      puts "MADE IT INTO ADD ITEM CONDITION"
       nutritionix_response = queryNutritionix
       send_test_reply_to_user
       # do some calculations based on serving sizes etc. then reply to user
       # reply_to_user()
-    # else
+    else
       # send twilio response saying "I have no idea what you're talking about"
     end
   end
@@ -128,11 +194,9 @@ class Message < ApplicationRecord
   end
 
   def configure_twilio_client
-    p Rails.application.secrets
     Twilio.configure do |config|
       config.account_sid = Rails.application.secrets.twilio_account_sid
       config.auth_token = Rails.application.secrets.twilio_auth_token
-      p Rails.application.secrets.twilio_account_sid
     end
     @twilio_phone_number = '+19253504172'
     @client = Twilio::REST::Client.new
