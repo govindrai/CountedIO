@@ -29,9 +29,10 @@ class Message < ApplicationRecord
   end
 
   def reply_to_user
-    @message = @twilio_client.messages.create(
+    configure_twilio_client
+    @twilio_client.messages.create(
       to: self.phone_number,
-      from: twilio_phone_number,
+      from: ENV["TWILIO_PHONE_NUMBER"],
       body: @response_to_user
       # ,
       # media_url: "http://twilio.com/heart.jpg"
@@ -59,7 +60,7 @@ class Message < ApplicationRecord
       elsif @temp_user.name
         @temp_user.age = self.body
       elsif @temp_user
-        @temp_user.name = self.body
+        "YOLO"
       end
     else
       @temp_user = TempUser.create(phone_number: self.phone_number)
@@ -67,24 +68,23 @@ class Message < ApplicationRecord
   end
 
   def set_registration_reply
-    if @temp_user
-      if @temp_user.target_weight_pounds
-        #Save
-        @user = User.new(name: @temp_user.name, phone_number: @temp_user.phone_number, age: @temp_user.age, weight_pounds: @temp_user.weight_pounds, height_inches: @temp_user.height_inches, target_weight_pounds: @temp_user.target_weight_pounds, sex: @temp_user.sex)
-        @user.save
-        @temp_user.destroy
-        message = "Your profile has been created"
-      elsif @temp_user.weight_pounds
-        message = "What is your target weight?"
-      elsif @temp_user.height_inches
-        message = "What is your current weight?"
-      elsif @temp_user.sex
-        message = "How tall are you in inches?"
-      elsif @temp_user.age
-        message = "What is your sex?"
-      elsif @temp_user.name
-        message = "How old are you?"
-      end
+    p @temp_user
+    if @temp_user.target_weight_pounds
+      #Save
+      @user = User.new(name: @temp_user.name, phone_number: @temp_user.phone_number, age: @temp_user.age, weight_pounds: @temp_user.weight_pounds, height_inches: @temp_user.height_inches, target_weight_pounds: @temp_user.target_weight_pounds, sex: @temp_user.sex)
+      @user.save
+      @temp_user.destroy
+      message = "Your profile has been created"
+    elsif @temp_user.weight_pounds
+      message = "What is your target weight?"
+    elsif @temp_user.height_inches
+      message = "What is your current weight?"
+    elsif @temp_user.sex
+      message = "How tall are you in inches?"
+    elsif @temp_user.age
+      message = "What is your sex?"
+    elsif @temp_user.name
+      message = "How old are you?"
     else
       message = "What is your name?"
     end
