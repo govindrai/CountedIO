@@ -41,6 +41,9 @@ class Message < ApplicationRecord
 
   def register_user
     @temp_user = TempUser.find_by(phone_number: self.phone_number)
+    p '*' * 100
+    p @temp_user
+    p '*' * 100
     save_registration_input
     set_registration_reply
   end
@@ -62,6 +65,7 @@ class Message < ApplicationRecord
       elsif @temp_user
         "YOLO"
       end
+      @temp_user.save
     else
       @temp_user = TempUser.create(phone_number: self.phone_number)
     end
@@ -88,7 +92,6 @@ class Message < ApplicationRecord
     else
       message = "What is your name?"
     end
-    @temp_user.save
     @response_to_user = message
   end
 
