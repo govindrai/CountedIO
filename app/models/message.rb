@@ -88,6 +88,7 @@ class Message < ApplicationRecord
     else
       message = "What is your name?"
     end
+    @temp_user.save
     @response_to_user = message
   end
 
