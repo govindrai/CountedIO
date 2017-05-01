@@ -18,7 +18,7 @@ class MessagesController < ApplicationController
   end
 
   def test_register_intent
-    @message = Message.new(phone_number: ENV["GOVIND_PHONE_NUMBER"], body: "I would like to register")
+    @message = Message.new(phone_number: ENV["GOVIND_PHONE_NUMBER"], body: "reset")
     @message.do_easy_shit
     head :ok
   end

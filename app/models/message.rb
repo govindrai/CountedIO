@@ -14,8 +14,11 @@ class Message < ApplicationRecord
 
     puts "INTENT = #{intent}"
     if intent == 'register' || TempUser.find_by(phone_number: self.phone_number)
-      response = register_user
-      # do registration flow
+      if User.find_by(phone_number: self.phone_number)
+        response = "You are already registered!"
+      else
+        response = register_user
+      end
     elsif intent == 'add_item'
       puts "MADE IT INTO ADD ITEM CONDITION"
       nutritionix_response = queryNutritionix
@@ -41,9 +44,12 @@ class Message < ApplicationRecord
 
   def register_user
     @temp_user = TempUser.find_by(phone_number: self.phone_number)
-    p '*' * 100
-    p @temp_user
-    p '*' * 100
+
+    if self.body == "reset" || self.body == 'Reset'
+      @temp_user.destroy if @temp_user
+      @temp_user = nil
+    end
+
     save_registration_input
     set_registration_reply
   end
@@ -90,7 +96,7 @@ class Message < ApplicationRecord
     elsif @temp_user.name
       message = "How old are you?"
     else
-      message = "What is your name?"
+      message = "Hey There!\nWhat is your name?\nAlso, say 'reset' at anytime to restart!"
     end
     @response_to_user = message
   end
