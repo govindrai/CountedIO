@@ -12,7 +12,7 @@ class Message < ApplicationRecord
 
     if intent == 'register' || TempUser.find_by(phone_number: self.phone_number)
       if User.find_by(phone_number: self.phone_number)
-        response = "You are already registered!"
+        @response_to_user = "You are already registered!"
       else
         register_user
       end
