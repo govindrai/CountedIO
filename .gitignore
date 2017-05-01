@@ -14,7 +14,7 @@
 !/tmp/.keep
 
 #Ignore the secrets file
-/config/secrets.yml
+/config/secrets_backup.yml
 
 # Ignore Byebug command history file.
 .byebug_history

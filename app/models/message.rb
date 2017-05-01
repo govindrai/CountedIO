@@ -75,7 +75,6 @@ class Message < ApplicationRecord
     wit_response = self.json_wit_response
     pp wit_response
 
-<<<<<<< HEAD
     intent = extract_intent
 
     puts "INTENT #{intent} lasdjflaj"
@@ -112,8 +111,8 @@ class Message < ApplicationRecord
 
   def queryNutritionix
     food = extract_food_item
-    app_id = Rails.application.secrets.nutritionix_app_id
-    app_key = Rails.application.secrets.nutritionix_app_key
+    app_id = ENV["NUTRITIONIX_APP_ID"]
+    app_key = ENV["NUTRITIONIX_APP_KEY"]
     provider = Nutritionix::Api_1_1.new(app_id, app_key)
 
     search_params = {
@@ -186,34 +185,13 @@ class Message < ApplicationRecord
     configure_twilio_client
     @client.messages.create(
       from: @twilio_phone_number,
-      to: '+19257779777',
+      to: ENV["GOVIND_PHONE_NUMBER"],
       body: 'Hey there!',
       # url: 'localhost.com/viewmyprofile'
       # media_url: 'http://coolwildlife.com/wp-content/uploads/galleries/post-3004/Fox%20Picture%20003.jpg'
     )
   end
 
-  def configure_twilio_client
-    Twilio.configure do |config|
-      config.account_sid = Rails.application.secrets.twilio_account_sid
-      config.auth_token = Rails.application.secrets.twilio_auth_token
-    end
-    @twilio_phone_number = '+19253504172'
-    @client = Twilio::REST::Client.new
-  end
-
-  def configure_wit_client
-    actions = {
-      send: -> (request, response) {
-        puts("sending... #{response['text']}")
-      },
-      my_action: -> (request) {
-        return request['context']
-      },
-    }
-
-    @client = Wit.new(access_token: Rails.application.secrets.wit_access_token, actions: actions)
-  end
 
   # a sample api responses
   # useful for testing against the data structures
@@ -241,4 +219,25 @@ class Message < ApplicationRecord
   def sample_nutrionix_response
   end
 
+  def configure_twilio_client
+    Twilio.configure do |config|
+      config.account_sid = ENV["TWILIO_ACCOUNT_SID"]
+      config.auth_token = ENV["TWILIO_AUTH_TOKEN"]
+    end
+    @twilio_phone_number = ENV["TWILIO_PHONE_NUMBER"]
+    @client = Twilio::REST::Client.new
+  end
+
+  def configure_wit_client
+    actions = {
+      send: -> (request, response) {
+        puts("sending... #{response['text']}")
+      },
+      my_action: -> (request) {
+        return request['context']
+      },
+    }
+
+    @client = Wit.new(access_token: ENV["WIT_ACCESS_TOKEN"], actions: actions)
+  end
 end
