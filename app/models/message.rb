@@ -9,9 +9,10 @@ class Message < ApplicationRecord
   def do_easy_shit
     send_message_to_wit
     intent = extract_intent; puts "INTENT = #{intent}"
+    @user = User.find_by(phone_number: self.phone_number)
 
     if intent == 'register' || TempUser.find_by(phone_number: self.phone_number)
-      if User.find_by(phone_number: self.phone_number)
+      if @user
         @response_to_user = "You are already registered!"
       else
         register_user
@@ -20,6 +21,8 @@ class Message < ApplicationRecord
       set_add_intent_reply
     elsif intent == 'caloric_information'
       # do something
+    elsif intent == 'get_profile'
+      @user.generate_link_to_profile
     else
       # send twilio response saying "I have no idea what you're talking about"
     end
