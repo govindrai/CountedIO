@@ -13,7 +13,7 @@ class Message < ApplicationRecord
     intent = extract_intent
 
     puts "INTENT = #{intent}"
-    if intent == 'register' || TempUser.find_by(phone_number: self.phone_number) || 'reset' || 'Reset'
+    if intent == 'register' || TempUser.find_by(phone_number: self.phone_number)
       if User.find_by(phone_number: self.phone_number)
         response = "You are already registered!"
       else
