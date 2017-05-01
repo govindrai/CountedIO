@@ -1,12 +1,11 @@
 require 'twilio-ruby'
 require 'wit'
 require 'nutritionix/api_1_1'
+require 'pp'
+require 'json'
 
 class Message < ApplicationRecord
   belongs_to :user
-
-
-
 
   def register_user(wit_response)
     @temp_user = TempUser.find_by(phone_number: self.phone_number)
@@ -72,41 +71,58 @@ class Message < ApplicationRecord
 
 
   def do_easy_shit
-    wit_response = send_message_to_wit
-    intent = extract_intent(wit_response)
+    send_message_to_wit
+    wit_response = self.json_wit_response
+    pp wit_response
 
+<<<<<<< HEAD
+    intent = extract_intent
+
+    puts "INTENT #{intent} lasdjflaj"
     if intent == 'register' || TempUser.find_by(phone_number: self.phone_number)
       response = register_user(wit_response)
       send_to_twillio(response)
+      # do registration flow
     elsif intent == 'add_item'
-      # do add_item_flo
-      respond_to_user(results_json)
+      puts "MADE IT INTO ADD ITEM CONDITION"
+      nutritionix_response = queryNutritionix
+      send_test_reply_to_user
+      # do some calculations based on serving sizes etc. then reply to user
+      # reply_to_user()
     else
       # send twilio response saying "I have no idea what you're talking about"
     end
   end
 
-  # helper method which looks at a JSON response from with and extracts intent
-  def extract_intent(wit_response)
-    @intent ||= response["entities"]["intent"][0]["value"] if response["entities"]["intent"]
+  # looks at a JSON response from wit.ai and extracts intent
+  def extract_intent
+    @intent ||= self.json_wit_response["entities"]["intent"][0]["value"] if self.json_wit_response["entities"]["intent"]
   end
 
-  # extracts food items
-  def extract_food_item(wit_response)
-    food_item = wit_response["_text"]
-    queryNutrionix(food_item)
+  # extracts food item(s) from wit_response
+  def extract_food_item
+    # this needs to work for multiple foods
+    # this also needs to select food descriptions and not the whole text
+    food_item = self.json_wit_response["_text"]
   end
 
-  def queryNutrionix(food)
-    app_id = '010fcf20'
-    app_key = 'f5e31860c7cc709b1ec3b1249435e70a'
+  # extracts calories from nutritionix_response
+  def extract_calories
+  end
+
+  def queryNutritionix
+    food = extract_food_item
+    app_id = Rails.application.secrets.nutritionix_app_id
+    app_key = Rails.application.secrets.nutritionix_app_key
     provider = Nutritionix::Api_1_1.new(app_id, app_key)
+
     search_params = {
       offset: 0,
       limit: 3,
       fields: ['item_name', 'nf_calories'],
-      query: food
+      query: 'Big Mac'
     }
+
     results_json = provider.nxql_search(search_params)
     p results_json
     p '*' * 100
@@ -115,9 +131,11 @@ class Message < ApplicationRecord
     results_json
   end
 
+  # sends sms to wit, updates the messages table
   def send_message_to_wit
     configure_wit_client
-    @client.message(self.body)
+    wit_response = @client.message(self.body)
+    self.update(json_wit_response: wit_response)
     # #User messages
     # p "*" * 50
     # p "Response 1"
@@ -161,6 +179,8 @@ class Message < ApplicationRecord
     # puts("Yay, got Wit.ai response: #{rsp}")
   end
 
+  def send_test_reply_to_user
+  end
 
   def send_test_message_to_govind
     configure_twilio_client
@@ -201,10 +221,24 @@ class Message < ApplicationRecord
   end
 
   def sample_WIT_response
+    {"msg_id"=>"1d1ddfc0-5cfb-4a5e-9cd3-214e9c503e8b",
+     "_text"=>"I ate two bananas",
+     "entities"=>
+      {"food_description"=>
+        [{"confidence"=>0.948610843637913,
+          "entities"=>
+           {"number"=>[{"confidence"=>1, "value"=>2, "type"=>"value"}],
+            "food"=>
+             [{"confidence"=>0.9551708395136853,
+               "type"=>"value",
+               "value"=>"bananas"}]},
+          "type"=>"value",
+          "value"=>"two bananas",
+          "suggested"=>true}],
+       "intent"=>[{"confidence"=>0.9995839306543423, "value"=>"add_item"}]}}
   end
 
   def sample_nutrionix_response
   end
-
 
 end
