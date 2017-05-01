@@ -12,10 +12,9 @@ class Message < ApplicationRecord
 
     intent = extract_intent
 
-    puts "INTENT #{intent} lasdjflaj"
+    puts "INTENT = #{intent}"
     if intent == 'register' || TempUser.find_by(phone_number: self.phone_number)
       response = register_user
-      send_to_twillio(response)
       # do registration flow
     elsif intent == 'add_item'
       puts "MADE IT INTO ADD ITEM CONDITION"
@@ -26,71 +25,66 @@ class Message < ApplicationRecord
     else
       # send twilio response saying "I have no idea what you're talking about"
     end
+    reply_to_user
+  end
+
+  def reply_to_user
+    @message = @client.messages.create(
+      to: self.phone_number,
+      from: twilio_phone_number,
+      body: @response_to_user,
+      # media_url: "http://twilio.com/heart.jpg"
+    )
   end
 
   def register_user
     @temp_user = TempUser.find_by(phone_number: self.phone_number)
+    save_registration_input
+    set_registration_reply
+  end
 
-    if !@temp_user
+  def save_registration_input
+    if @temp_user.target_weight_pounds
+      #Do nothing simply pass onto second phase
+    elsif @temp_user.weight_pounds
+      @temp_user.target_weight_pounds = self.body
+    elsif @temp_user.height_inches
+      @temp_user.weight_pounds = self.body
+    elsif @temp_user.sex
+      @temp_user.height_inches = self.body
+    elsif @temp_user.age
+      @temp_user.sex = self.body
+    elsif @temp_user.name
+      @temp_user.age = self.body
+    elsif @temp_user
+      @temp_user.name = self.body
+    else
       @temp_user = TempUser.create(phone_number: self.phone_number)
     end
-
-    #Saving variables
-    save_registration_input(@temp_user)
-
-    #Determine what message needs to be sent next
-    message = set_registration_message(temp_user)
-
-    return message
   end
 
-  def save_registration_input(temp_user)
-    if temp_user.target_weight_pounds
-      #Do nothing simply pass onto second phase
-    elsif temp_user.weight_pounds
-      temp_user.target_weight_pounds = self.body
-    elsif temp_user.height_inches
-      temp_user.weight_pounds = self.body
-    elsif temp_user.sex
-      temp_user.height_inches = self.body
-    elsif temp_user.age
-      temp_user.sex = self.body
-    elsif temp_user.name
-      temp_user.age = self.body
-    else
-      temp_user.name = self.body
-    end
-  end
-
-  def set_registration_message(temp_user)
+  def set_registration_reply
     if @temp_user.target_weight_pounds
       #Save
       @user = User.new(name: @temp_user.name, phone_number: @temp_user.phone_number, age: @temp_user.age, weight_pounds: @temp_user.weight_pounds, height_inches: @temp_user.height_inches, target_weight_pounds: @temp_user.target_weight_pounds, sex: @temp_user.sex)
       @user.save
       @temp_user.destroy
       message = "Your profile has been created"
-
     elsif @temp_user.weight_pounds
       message = "What is your target weight?"
-
     elsif @temp_user.height_inches
       message = "What is your current weight?"
-
     elsif @temp_user.sex
       message = "How tall are you in inches?"
-
     elsif @temp_user.age
       message = "What is your sex?"
-
     elsif @temp_user.name
       message = "How old are you?"
-
     else
       message = "What is your name?"
     end
+    @response_to_user = message
   end
-
-
 
   # looks at a JSON response from wit.ai and extracts intent
   def extract_intent
