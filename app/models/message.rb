@@ -5,7 +5,6 @@ require 'pp'
 require 'json'
 
 class Message < ApplicationRecord
-  belongs_to :user
 
   def do_easy_shit
     send_message_to_wit
