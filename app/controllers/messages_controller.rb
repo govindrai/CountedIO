@@ -8,7 +8,8 @@ class MessagesController < ApplicationController
     body = message_params[:Body]
     phone_number = message_params[:From]
     @message = Message.create(body: body, phone_number: phone_number)
-    @message.do_easy_shit
+    @message.reply
+    head :ok
   end
 
   def test_twilio_send
@@ -36,8 +37,6 @@ class MessagesController < ApplicationController
     @message.do_easy_shit
     head :ok
   end
-
-
 
 
   private
