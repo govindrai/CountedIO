@@ -63,7 +63,7 @@ class Message < ApplicationRecord
       elsif @temp_user.name
         @temp_user.age = self.body
       elsif @temp_user
-        "YOLO"
+        @temp_user.name = self.body
       end
       @temp_user.save
     else
