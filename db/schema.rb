@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170430223123) do
+ActiveRecord::Schema.define(version: 20170501014753) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -33,6 +33,7 @@ ActiveRecord::Schema.define(version: 20170430223123) do
     t.json     "json_wit_response"
     t.datetime "created_at",        null: false
     t.datetime "updated_at",        null: false
+    t.string   "phone_number",      null: false
     t.index ["user_id"], name: "index_messages_on_user_id", using: :btree
   end
 

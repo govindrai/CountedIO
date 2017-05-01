@@ -7,7 +7,28 @@ require 'json'
 class Message < ApplicationRecord
   belongs_to :user
 
-  def register_user(wit_response)
+  def do_easy_shit
+    send_message_to_wit
+
+    intent = extract_intent
+
+    puts "INTENT #{intent} lasdjflaj"
+    if intent == 'register' || TempUser.find_by(phone_number: self.phone_number)
+      response = register_user
+      send_to_twillio(response)
+      # do registration flow
+    elsif intent == 'add_item'
+      puts "MADE IT INTO ADD ITEM CONDITION"
+      nutritionix_response = queryNutritionix
+      send_test_reply_to_user
+      # do some calculations based on serving sizes etc. then reply to user
+      # reply_to_user()
+    else
+      # send twilio response saying "I have no idea what you're talking about"
+    end
+  end
+
+  def register_user
     @temp_user = TempUser.find_by(phone_number: self.phone_number)
 
     if !@temp_user
@@ -70,28 +91,6 @@ class Message < ApplicationRecord
   end
 
 
-  def do_easy_shit
-    send_message_to_wit
-    wit_response = self.json_wit_response
-    pp wit_response
-
-    intent = extract_intent
-
-    puts "INTENT #{intent} lasdjflaj"
-    if intent == 'register' || TempUser.find_by(phone_number: self.phone_number)
-      response = register_user(wit_response)
-      send_to_twillio(response)
-      # do registration flow
-    elsif intent == 'add_item'
-      puts "MADE IT INTO ADD ITEM CONDITION"
-      nutritionix_response = queryNutritionix
-      send_test_reply_to_user
-      # do some calculations based on serving sizes etc. then reply to user
-      # reply_to_user()
-    else
-      # send twilio response saying "I have no idea what you're talking about"
-    end
-  end
 
   # looks at a JSON response from wit.ai and extracts intent
   def extract_intent
