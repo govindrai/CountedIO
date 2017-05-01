@@ -5,10 +5,11 @@ require 'pp'
 require 'json'
 
 class Message < ApplicationRecord
+  after_create :send_message_to_wit
 
-  def do_easy_shit
-    send_message_to_wit
-    intent = extract_intent; puts "INTENT = #{intent}"
+  # Takes a path based on intent
+  def intent_controller
+    intent = extract_intent; puts "INTENT = #{intent}" #remove after debugging
 
     if intent == 'register' || TempUser.find_by(phone_number: self.phone_number)
       if User.find_by(phone_number: self.phone_number)
@@ -23,10 +24,10 @@ class Message < ApplicationRecord
     else
       # send twilio response saying "I have no idea what you're talking about"
     end
-    reply_to_user
+    reply
   end
 
-  def reply_to_user
+  def reply
     configure_twilio_client
     @twilio_client.messages.create(
       to: self.phone_number,
@@ -101,10 +102,7 @@ class Message < ApplicationRecord
     @intent ||= self.json_wit_response["entities"]["intent"][0]["value"] if self.json_wit_response["entities"]["intent"]
   end
 
-  def extract_calories(food)
-    queryNutritionix(food)
-  end
-
+  # looks at the wit response, parses out foods, quantities and units into an array
   def extract_food
     foods = self.json_wit_response["entities"]["food_description"]
     foods_array = []
@@ -122,10 +120,15 @@ class Message < ApplicationRecord
     foods_array
   end
 
+  # queries nutritionix and extracts calories from output
+  def extract_calories(food)
+    nutritionix_response = queryNutritionix(food)
+    nutritionix_response = JSON.parse(nutritionix_response.to_s)
+    nutritionix_response["hits"][0]["fields"]["nf_calories"]
+  end
+
   def queryNutritionix(food)
-    app_id = ENV["NUTRITIONIX_APP_ID"]
-    app_key = ENV["NUTRITIONIX_APP_KEY"]
-    provider = Nutritionix::Api_1_1.new(app_id, app_key)
+    configure_nutritionix_client
 
     search_params = {
       offset: 0,
@@ -134,12 +137,7 @@ class Message < ApplicationRecord
       query: food
     }
 
-    results_json = provider.nxql_search(search_params)
-    puts results_json
-    # p '*' * 100
-    results_json = JSON.parse(results_json.to_s)
-    p calories = results_json["hits"][0]["fields"]["nf_calories"]
-    # p '*' * 100
+    @nutritionix_client.nxql_search(search_params)
   end
 
   def set_add_intent_reply
@@ -150,58 +148,18 @@ class Message < ApplicationRecord
     end
     @response_to_user = add_intent_reply
   end
+
   # sends sms to wit, updates the messages table
   def send_message_to_wit
     configure_wit_client
     wit_response = @wit_client.message(self.body)
     self.update(json_wit_response: wit_response)
-    # #User messages
-    # p "*" * 50
-    # p "Response 1"
-    # rsp = @client.converse('my-user-session-42', self.body, {})
-    # puts("Yay, got Wit.ai response: #{rsp}")
-
-    # p "*" * 50
-    # p "Response 2"
-    # #Sever Applies context
-    # rsp = @client.converse('my-user-session-42', {intent: "register"})
-    # puts("Yay, got Wit.ai response: #{rsp}")
-
-    # p "*" * 50
-    # p "Response 3"
-    # #user message
-    # rsp = @client.converse('my-user-session-42', 'Govind Rai', {intent: "register"})
-    # puts("Yay, got Wit.ai response: #{rsp}")
-
-    # p "*" * 50
-    # p "Response 4"
-    # #server applies context
-    # rsp = @client.converse('my-user-session-42', {intent: "register", name: "Govind Rai"})
-    # puts("Yay, got Wit.ai response: #{rsp}")
-
-    # p "*" * 50
-    # p "Response 5"
-    # #user message
-    # rsp = @client.converse('my-user-session-42', {intent: "register", name: "Govind Rai"})
-    # puts("Yay, got Wit.ai response: #{rsp}")
-
-    # p "*" * 50
-    # p "Response 6"
-    # #user message
-    # rsp = @client.converse('my-user-session-42', "20", {intent: "register", name: "Govind Rai"})
-    # puts("Yay, got Wit.ai response: #{rsp}")
-
-    # p "*" * 50
-    # p "Response 7"
-    # #user message
-    # rsp = @client.converse('my-user-session-42', {intent: "register", name: "Govind Rai", age: "20"})
-    # puts("Yay, got Wit.ai response: #{rsp}")
   end
 
   def send_test_message_to_govind
     configure_twilio_client
     @twilio_client.messages.create(
-      from: @twilio_phone_number,
+      from: ENV["TWILIO_PHONE_NUMBER"],
       to: ENV["GOVIND_PHONE_NUMBER"],
       body: 'Hey there!',
       # url: 'localhost.com/viewmyprofile'
@@ -279,12 +237,9 @@ class Message < ApplicationRecord
   end
 
   def configure_twilio_client
-    Twilio.configure do |config|
-      config.account_sid = ENV["TWILIO_ACCOUNT_SID"]
-      config.auth_token = ENV["TWILIO_AUTH_TOKEN"]
-    end
-    @twilio_phone_number = ENV["TWILIO_PHONE_NUMBER"]
-    @twilio_client = Twilio::REST::Client.new
+    account_sid = ENV["TWILIO_ACCOUNT_SID"]
+    auth_token = ENV["TWILIO_AUTH_TOKEN"]
+    @twilio_client = Twilio::REST::Client.new(account_sid, auth_token)
   end
 
   def configure_wit_client
@@ -299,4 +254,11 @@ class Message < ApplicationRecord
 
     @wit_client = Wit.new(access_token: ENV["WIT_ACCESS_TOKEN"], actions: actions)
   end
+
+  def configure_nutritionix_client
+    app_id = ENV["NUTRITIONIX_APP_ID"]
+    app_key = ENV["NUTRITIONIX_APP_KEY"]
+    @nutritionix_client = Nutritionix::Api_1_1.new(app_id, app_key)
+  end
+
 end
