@@ -66,6 +66,3 @@ ActiveRecord::Schema.define(version: 20170501071940) do
 
   add_foreign_key "meals", "users"
 end
-
-
-User.create(name: "Daniel Welsh", phone_number: "+17802636496", age: 20, weight_pounds: 170, target_weight_pounds: 180, sex: "male", height_inches: 74)
