@@ -110,11 +110,14 @@ class Message < ApplicationRecord
     foods_array = []
     food_description_entities.each do |food|
       entities = food["entities"]
-      foods_array.push {
-        food: entities["food"] ? entities["food"][0]["value"] : nil,
-        quantity: entities["number"] ? entities["number"][0][:value] : nil,
-        unit: entities["unit"] ? entities["unit"][0][:value]: nil
-      }
+      food = entities["food"] ? entities["food"][0]["value"] : nil
+      quantity = entities["number"] ? entities["number"][0]["value"] : nil
+      unit = entities["unit"] ? entities["unit"][0]["value"] : nil
+      foods_array.push({
+        food: food,
+        quantity: quantity,
+        unit: unit
+      })
     end
     foods_array
   end
