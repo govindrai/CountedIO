@@ -1,5 +1,5 @@
 %h1 This is a User Show page
 
-
-%h1= @user.name
-= @user.sex
+- if @authorized
+  %h1= @user.name
+  = @user.sex
