@@ -8,16 +8,12 @@ class Message < ApplicationRecord
 
   # Takes a path based on intent
   def intent_controller
-    intent = extract_intent; puts "INTENT = #{intent}" #remove after debugging
+    intent = extract_intent
 
     if intent == 'register' || TempUser.find_by(phone_number: self.phone_number)
-      if User.find_by(phone_number: self.phone_number)
-        @response_to_user = "You are already registered!"
-      else
-        register_user
-      end
-    elsif intent == 'add_item'
-      set_add_intent_reply
+      register_user
+    elsif intent == 'add_meal'
+      add_meal
     elsif intent == 'caloric_information'
       # do something
     else
@@ -32,12 +28,12 @@ class Message < ApplicationRecord
       to: self.phone_number,
       from: ENV["TWILIO_PHONE_NUMBER"],
       body: @response_to_user
-      # ,
-      # media_url: "http://twilio.com/heart.jpg"
     )
   end
 
   def register_user
+    return "You are already registered!" if User.find_by(phone_number: self.phone_number)
+
     @temp_user = TempUser.find_by(phone_number: self.phone_number)
 
     if self.body == "reset" || self.body == 'Reset'
@@ -45,47 +41,42 @@ class Message < ApplicationRecord
       @temp_user = nil
     end
 
-    register_user
-
-
-    # save_registration_input
-    # set_registration_reply
-  end
-
-def register_user
-  if @temp_user
-    if @temp_user.weight_pounds
-      @temp_user.target_weight_pounds = self.body
-      @user = User.create(name: @temp_user.name, phone_number: @temp_user.phone_number, age: @temp_user.age, weight_pounds: @temp_user.weight_pounds, height_inches: @temp_user.height_inches, target_weight_pounds: @temp_user.target_weight_pounds, sex: @temp_user.sex)
-      @temp_user.destroy
-      @temp_user = nil
-      message = "Your profile has been created"
-    elsif @temp_user.height_inches
-      @temp_user.weight_pounds = self.body
-      message = "What is your target weight?"
-    elsif @temp_user.sex
-      @temp_user.height_inches = self.body
-      message = "What is your current weight?"
-    elsif @temp_user.age
-      @temp_user.sex = self.body
-      message = "How tall are you in inches?"
-    elsif @temp_user.name
-      @temp_user.age = self.body
-      message = "What is your sex?"
-    elsif @temp_user
-      @temp_user.name = self.body
-      message = "How old are you?"
+    if @temp_user
+      if @temp_user.weight_pounds
+        @temp_user.target_weight_pounds = self.body
+        @user = User.create(name: @temp_user.name, phone_number: @temp_user.phone_number, age: @temp_user.age, weight_pounds: @temp_user.weight_pounds, height_inches: @temp_user.height_inches, target_weight_pounds: @temp_user.target_weight_pounds, sex: @temp_user.sex)
+        @temp_user.destroy
+        @temp_user = nil
+        message = "Your profile has been created"
+      elsif @temp_user.height_inches
+        @temp_user.weight_pounds = self.body
+        message = "What is your target weight?"
+      elsif @temp_user.sex
+        @temp_user.height_inches = self.body
+        message = "What is your current weight?"
+      elsif @temp_user.age
+        @temp_user.sex = self.body
+        message = "How tall are you in inches?"
+      elsif @temp_user.name
+        @temp_user.age = self.body
+        message = "What is your sex?"
+      elsif @temp_user
+        @temp_user.name = self.body
+        message = "How old are you?"
+      end
+      @temp_user.save if @temp_user
+    else
+      @temp_user = TempUser.create(phone_number: self.phone_number)
+      message = "Hey There!\nWhat is your name?\nYou can also say 'reset' or 'start over' at anytime to restart."
     end
-    @temp_user.save if @temp_user
-  else
-    @temp_user = TempUser.create(phone_number: self.phone_number)
-    message = "Hey There!\nWhat is your name?\nYou can also say 'reset' or 'start over' at anytime to restart."
+    @response_to_user = message
   end
-end
 
   # looks at a JSON response from wit.ai and extracts intent
   def extract_intent
     @intent ||= self.json_wit_response["entities"]["intent"][0]["value"] if self.json_wit_response["entities"]["intent"]
+    puts "INTENT = #{@intent}" #remove after debugging
+    @intent
   end
 
   # looks at the wit response, parses out foods, quantities and units into an array
@@ -126,13 +117,23 @@ end
     @nutritionix_client.nxql_search(search_params)
   end
 
-  def set_add_intent_reply
+  def add_meal
     foods_array = extract_food
-    add_intent_reply = "Thanks for sharing! We have added "
+    message = "Thanks for sharing! We have added "
     foods_array.each do |food_obj|
-      add_intent_reply += "#{food_obj[:quantity]} #{food_obj[:food]} (#{extract_calories(food_obj[:food]) * food_obj[:quantity].to_f} calories)"
+      calories = extract_calories(food_obj[:food].singularize)
+
+      Meal.create({
+        user: @user,
+        food_name: food_obj[:food],
+        calories: calories,
+        quantity: food_obj[:quantity],
+        meal_type: 'BreakfastCHANGETHIS'
+        })
+
+      message += "#{food_obj[:quantity]} #{food_obj[:food]} (#{extract_calories(food_obj[:food]) * food_obj[:quantity].to_f} calories), "
     end
-    @response_to_user = add_intent_reply
+    @response_to_user = message.chop(", ") + "!"
   end
 
   # sends sms to wit, updates the messages table
