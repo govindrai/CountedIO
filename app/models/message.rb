@@ -9,6 +9,7 @@ class Message < ApplicationRecord
   def do_easy_shit
     send_message_to_wit
     intent = extract_intent; puts "INTENT = #{intent}"
+    p self.phone_number
     @user = User.find_by(phone_number: self.phone_number)
 
     if intent == 'register' || TempUser.find_by(phone_number: self.phone_number)
@@ -22,7 +23,7 @@ class Message < ApplicationRecord
     elsif intent == 'caloric_information'
       # do something
     elsif intent == 'get_profile'
-      @user.generate_link_to_profile
+      @response_to_user = @user.generate_link_to_profile
     else
       # send twilio response saying "I have no idea what you're talking about"
     end
@@ -206,7 +207,7 @@ class Message < ApplicationRecord
     @twilio_client.messages.create(
       from: @twilio_phone_number,
       to: ENV["GOVIND_PHONE_NUMBER"],
-      body: 'Hey there!',
+      body: 'Show me my profile',
       # url: 'localhost.com/viewmyprofile'
       # media_url: 'http://coolwildlife.com/wp-content/uploads/galleries/post-3004/Fox%20Picture%20003.jpg'
     )

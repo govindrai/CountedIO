@@ -6,7 +6,6 @@ class UsersController < ApplicationController
       @authorized = true
     end
     @meals = Meal.where(user: @user)
-    p @meals
   end
 
   private

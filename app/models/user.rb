@@ -17,7 +17,8 @@ class User < ApplicationRecord
 
     base_url = "https://vildeio.herokuapp.com/profile/#{self.id}?random="
     random_url = self.randomized_profile_url
-    @response_to_user = base_url + random_url
+    message = "Here is your profile:  "
+    message + base_url + random_url
   end
 
 end

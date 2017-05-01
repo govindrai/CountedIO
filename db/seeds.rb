@@ -26,3 +26,25 @@ Meal.create(user: dan, food_name: "ham", calories: 150, quantity: 3, meal_type: 
 Meal.create(user: dan, food_name: "Grilled Chicken Breast", calories: 300, quantity: 1, meal_type: "dinner")
 
 Meal.create(user: dan, food_name: "Cake", calories: 300, quantity: 1, meal_type: "dinner")
+
+
+
+govind = User.create(name: "Govind Rai", phone_number: "+19257779777", age: 24, weight_pounds: 170, target_weight_pounds: 180, sex: "male", height_inches: 70)
+
+Meal.create(user: govind, food_name: "Chicken", calories: 123, quantity: 2, meal_type: "breakfast")
+
+Meal.create(user: govind, food_name: "Celery", calories: 5, quantity: 5, meal_type: "breakfast")
+
+Meal.create(user: govind, food_name: "Waffles", calories: 450, quantity: 2, meal_type: "breakfast")
+
+Meal.create(user: govind, food_name: "Ice Cream", calories: 200, quantity: 1, meal_type: "breakfast")
+
+Meal.create(user: govind, food_name: "Cereal", calories: 400, quantity: 1, meal_type: "lunch")
+
+Meal.create(user: govind, food_name: "Sandwich", calories: 300, quantity: 1, meal_type: "lunch")
+
+Meal.create(user: govind, food_name: "ham", calories: 150, quantity: 3, meal_type: "dinner")
+
+Meal.create(user: govind, food_name: "Grilled Chicken Breast", calories: 300, quantity: 1, meal_type: "dinner")
+
+Meal.create(user: govind, food_name: "Cake", calories: 300, quantity: 1, meal_type: "dinner")
