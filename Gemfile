@@ -32,6 +32,7 @@ gem 'jbuilder', '~> 2.5'
 gem 'haml'
 gem 'twilio-ruby', '~> 4.11.1'
 gem 'wit'
+gem 'nutritionix'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
