@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170501014753) do
+ActiveRecord::Schema.define(version: 20170501071940) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -28,13 +28,12 @@ ActiveRecord::Schema.define(version: 20170501014753) do
 
   create_table "messages", force: :cascade do |t|
     t.text     "body",              null: false
-    t.integer  "user_id"
     t.string   "intent"
     t.json     "json_wit_response"
     t.datetime "created_at",        null: false
     t.datetime "updated_at",        null: false
     t.string   "phone_number",      null: false
-    t.index ["user_id"], name: "index_messages_on_user_id", using: :btree
+    t.integer  "user_id"
   end
 
   create_table "temp_users", force: :cascade do |t|
@@ -66,5 +65,4 @@ ActiveRecord::Schema.define(version: 20170501014753) do
   end
 
   add_foreign_key "meals", "users"
-  add_foreign_key "messages", "users"
 end
