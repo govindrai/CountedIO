@@ -19,7 +19,6 @@ class Message < ApplicationRecord
       else
         response = register_user
       end
-      # do registration flow
     elsif intent == 'add_item'
       puts "MADE IT INTO ADD ITEM CONDITION"
       nutritionix_response = queryNutritionix
