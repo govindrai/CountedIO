@@ -7,81 +7,14 @@ require 'json'
 class Message < ApplicationRecord
   belongs_to :user
 
-  def register_user(wit_response)
-    @temp_user = TempUser.find_by(phone_number: self.phone_number)
-
-    if !@temp_user
-      @temp_user = TempUser.create(phone_number: self.phone_number)
-    end
-
-    #Saving variables
-    save_registration_input(@temp_user)
-
-    #Determine what message needs to be sent next
-    message = set_registration_message(temp_user)
-
-    return message
-  end
-
-  def save_registration_input(temp_user)
-    if temp_user.target_weight_pounds
-      #Do nothing simply pass onto second phase
-    elsif temp_user.weight_pounds
-      temp_user.target_weight_pounds = self.body
-    elsif temp_user.height_inches
-      temp_user.weight_pounds = self.body
-    elsif temp_user.sex
-      temp_user.height_inches = self.body
-    elsif temp_user.age
-      temp_user.sex = self.body
-    elsif temp_user.name
-      temp_user.age = self.body
-    else
-      temp_user.name = self.body
-    end
-  end
-
-  def set_registration_message(temp_user)
-    if @temp_user.target_weight_pounds
-      #Save
-      @user = User.new(name: @temp_user.name, phone_number: @temp_user.phone_number, age: @temp_user.age, weight_pounds: @temp_user.weight_pounds, height_inches: @temp_user.height_inches, target_weight_pounds: @temp_user.target_weight_pounds, sex: @temp_user.sex)
-      @user.save
-      @temp_user.destroy
-      message = "Your profile has been created"
-
-    elsif @temp_user.weight_pounds
-      message = "What is your target weight?"
-
-    elsif @temp_user.height_inches
-      message = "What is your current weight?"
-
-    elsif @temp_user.sex
-      message = "How tall are you in inches?"
-
-    elsif @temp_user.age
-      message = "What is your sex?"
-
-    elsif @temp_user.name
-      message = "How old are you?"
-
-    else
-      message = "What is your name?"
-    end
-  end
-
-
   def do_easy_shit
     send_message_to_wit
-    wit_response = self.json_wit_response
-    pp wit_response
 
-<<<<<<< HEAD
     intent = extract_intent
 
-    puts "INTENT #{intent} lasdjflaj"
+    puts "INTENT = #{intent}"
     if intent == 'register' || TempUser.find_by(phone_number: self.phone_number)
-      response = register_user(wit_response)
-      send_to_twillio(response)
+      response = register_user
       # do registration flow
     elsif intent == 'add_item'
       puts "MADE IT INTO ADD ITEM CONDITION"
@@ -92,6 +25,74 @@ class Message < ApplicationRecord
     else
       # send twilio response saying "I have no idea what you're talking about"
     end
+    reply_to_user
+  end
+
+  def reply_to_user
+    configure_twilio_client
+    @twilio_client.messages.create(
+      to: self.phone_number,
+      from: ENV["TWILIO_PHONE_NUMBER"],
+      body: @response_to_user
+      # ,
+      # media_url: "http://twilio.com/heart.jpg"
+    )
+  end
+
+  def register_user
+    @temp_user = TempUser.find_by(phone_number: self.phone_number)
+    p '*' * 100
+    p @temp_user
+    p '*' * 100
+    save_registration_input
+    set_registration_reply
+  end
+
+  def save_registration_input
+    if @temp_user
+      if @temp_user.target_weight_pounds
+        #Do nothing simply pass onto second phase
+      elsif @temp_user.weight_pounds
+        @temp_user.target_weight_pounds = self.body
+      elsif @temp_user.height_inches
+        @temp_user.weight_pounds = self.body
+      elsif @temp_user.sex
+        @temp_user.height_inches = self.body
+      elsif @temp_user.age
+        @temp_user.sex = self.body
+      elsif @temp_user.name
+        @temp_user.age = self.body
+      elsif @temp_user
+        @temp_user.name = self.body
+      end
+      @temp_user.save
+    else
+      @temp_user = TempUser.create(phone_number: self.phone_number)
+    end
+  end
+
+  def set_registration_reply
+    p @temp_user
+    if @temp_user.target_weight_pounds
+      #Save
+      @user = User.new(name: @temp_user.name, phone_number: @temp_user.phone_number, age: @temp_user.age, weight_pounds: @temp_user.weight_pounds, height_inches: @temp_user.height_inches, target_weight_pounds: @temp_user.target_weight_pounds, sex: @temp_user.sex)
+      @user.save
+      @temp_user.destroy
+      message = "Your profile has been created"
+    elsif @temp_user.weight_pounds
+      message = "What is your target weight?"
+    elsif @temp_user.height_inches
+      message = "What is your current weight?"
+    elsif @temp_user.sex
+      message = "How tall are you in inches?"
+    elsif @temp_user.age
+      message = "What is your sex?"
+    elsif @temp_user.name
+      message = "How old are you?"
+    else
+      message = "What is your name?"
+    end
+    @response_to_user = message
   end
 
   # looks at a JSON response from wit.ai and extracts intent
@@ -112,8 +113,8 @@ class Message < ApplicationRecord
 
   def queryNutritionix
     food = extract_food_item
-    app_id = Rails.application.secrets.nutritionix_app_id
-    app_key = Rails.application.secrets.nutritionix_app_key
+    app_id = ENV["NUTRITIONIX_APP_ID"]
+    app_key = ENV["NUTRITIONIX_APP_KEY"]
     provider = Nutritionix::Api_1_1.new(app_id, app_key)
 
     search_params = {
@@ -134,7 +135,7 @@ class Message < ApplicationRecord
   # sends sms to wit, updates the messages table
   def send_message_to_wit
     configure_wit_client
-    wit_response = @client.message(self.body)
+    wit_response = @wit_client.message(self.body)
     self.update(json_wit_response: wit_response)
     # #User messages
     # p "*" * 50
@@ -184,36 +185,15 @@ class Message < ApplicationRecord
 
   def send_test_message_to_govind
     configure_twilio_client
-    @client.messages.create(
+    @twilio_client.messages.create(
       from: @twilio_phone_number,
-      to: '+19257779777',
+      to: ENV["GOVIND_PHONE_NUMBER"],
       body: 'Hey there!',
       # url: 'localhost.com/viewmyprofile'
       # media_url: 'http://coolwildlife.com/wp-content/uploads/galleries/post-3004/Fox%20Picture%20003.jpg'
     )
   end
 
-  def configure_twilio_client
-    Twilio.configure do |config|
-      config.account_sid = Rails.application.secrets.twilio_account_sid
-      config.auth_token = Rails.application.secrets.twilio_auth_token
-    end
-    @twilio_phone_number = '+19253504172'
-    @client = Twilio::REST::Client.new
-  end
-
-  def configure_wit_client
-    actions = {
-      send: -> (request, response) {
-        puts("sending... #{response['text']}")
-      },
-      my_action: -> (request) {
-        return request['context']
-      },
-    }
-
-    @client = Wit.new(access_token: Rails.application.secrets.wit_access_token, actions: actions)
-  end
 
   # a sample api responses
   # useful for testing against the data structures
@@ -241,4 +221,25 @@ class Message < ApplicationRecord
   def sample_nutrionix_response
   end
 
+  def configure_twilio_client
+    Twilio.configure do |config|
+      config.account_sid = ENV["TWILIO_ACCOUNT_SID"]
+      config.auth_token = ENV["TWILIO_AUTH_TOKEN"]
+    end
+    @twilio_phone_number = ENV["TWILIO_PHONE_NUMBER"]
+    @twilio_client = Twilio::REST::Client.new
+  end
+
+  def configure_wit_client
+    actions = {
+      send: -> (request, response) {
+        puts("sending... #{response['text']}")
+      },
+      my_action: -> (request) {
+        return request['context']
+      },
+    }
+
+    @wit_client = Wit.new(access_token: ENV["WIT_ACCESS_TOKEN"], actions: actions)
+  end
 end

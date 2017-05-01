@@ -18,13 +18,13 @@ class MessagesController < ApplicationController
   end
 
   def test_register_intent
-    @message = Message.new(body: "I would like to register")
+    @message = Message.new(phone_number: ENV["GOVIND_PHONE_NUMBER"], body: "I would like to register")
     @message.do_easy_shit
     head :ok
   end
 
   def test_add_item_intent
-    @message = Message.new(body: "bananas")
+    @message = Message.new(phone_number: ENV["GOVIND_PHONE_NUMBER"], body: "I ate a bananas")
     @message.do_easy_shit
     head :ok
   end
