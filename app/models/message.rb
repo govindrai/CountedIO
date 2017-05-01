@@ -14,7 +14,11 @@ class Message < ApplicationRecord
 
     puts "INTENT = #{intent}"
     if intent == 'register' || TempUser.find_by(phone_number: self.phone_number) || 'reset' || 'Reset'
-      response = register_user
+      if User.find_by(phone_number: self.phone_number)
+        response = "You are already registered!"
+      else
+        response = register_user
+      end
       # do registration flow
     elsif intent == 'add_item'
       puts "MADE IT INTO ADD ITEM CONDITION"
@@ -50,6 +54,7 @@ class Message < ApplicationRecord
     p @temp_user if @temp_user
     p "THERE IS CURRENT NO TEMP USER" if !@temp_user
     p '*' * 100
+
     save_registration_input
     set_registration_reply
   end
