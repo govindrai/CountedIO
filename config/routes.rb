@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   resources :messages
 
   # Routes for Testing
+  get '/test_greet_intent', to: 'messages#test_greet_intent'
   get '/profile/:user_id', to: 'users#show'
   get '/test_twilio_send', to: 'messages#test_twilio_send'
   get '/test_register_intent', to: 'messages#test_register_intent'

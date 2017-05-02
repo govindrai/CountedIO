@@ -48,3 +48,11 @@ Meal.create(user: govind, food_name: "ham", calories: 150, quantity: 3, meal_typ
 Meal.create(user: govind, food_name: "Grilled Chicken Breast", calories: 300, quantity: 1, meal_type: "dinner")
 
 Meal.create(user: govind, food_name: "Cake", calories: 300, quantity: 1, meal_type: "dinner")
+
+Meal.create(user: govind, food_name: "Weed", calories: 332, quantity: 1, meal_type: "dinner")
+
+Meal.create(user: govind, food_name: "cupcake", calories: 300213, quantity: 1, meal_type: "dinner")
+
+Meal.create(user: govind, food_name: "dank", calories: 3020, quantity: 1, meal_type: "dinner")
+
+Meal.create(user: govind, food_name: "Cake", calories: 300, quantity: 1, meal_type: "dinner")
