@@ -26,12 +26,21 @@ class User < ApplicationRecord
     message = "You have consumed " + calories_consumed.to_s + "calories today."
   end
 
+  def get_suggested_calories
+    if self.sex == "male"
+      suggested_male_calories
+    else
+      suggested_female_calories
+    end
+  end
+
   def suggested_male_calories
-    BMR = 10 * (weight(lbs) * 0.453592) + 6.25 * (height(cm) * 2.54) - 5 * age(y) + 5
+    bmr = 10 * (self.weight_pounds * 0.453592) + 6.25 * (self.height_inches * 2.54) - 5 * self.age + 5
   end
 
   def suggested_female_calories
-    BMR = 10 * (weight(lbs) * 0.453592) + 6.25 * (height(cm) * 2.54) - 5 * age(y) - 161
+    bmr = 10 * (seld.weight_pounds * 0.453592) + 6.25 * (self.height_inches * 2.54) - 5 * self.age - 161
   end
+
 
 end
