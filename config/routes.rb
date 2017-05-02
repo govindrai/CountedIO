@@ -9,5 +9,6 @@ Rails.application.routes.draw do
   get '/test_register_intent', to: 'messages#test_register_intent'
   get '/test_add_item_intent', to: 'messages#test_add_item_intent'
   get '/test_profile_intent', to: 'messages#test_profile_intent'
+  get '/test_caloric_information_intent', to: 'messages#test_caloric_information_intent'
 
 end
