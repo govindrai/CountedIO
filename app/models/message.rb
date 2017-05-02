@@ -4,30 +4,47 @@ require 'nutritionix/api_1_1'
 require 'json'
 
 class Message < ApplicationRecord
-  after_create :message_wit
+  after_create :message_wit, :set_user
 
   # Takes a path based on intent
   def intent_controller
     intent = extract_intent
-    @user = User.find_by(phone_number: self.phone_number)
 
-    if intent == 'register' || TempUser.find_by(phone_number: self.phone_number)
+    case intent
+    when 'register' || TempUser.find_by(phone_number: self.phone_number)
       register_user
-    elsif intent == 'add_meal'
+    when 'add_meal'
       add_meal
-    elsif intent == 'caloric_information'
-      # do something
-    elsif intent == 'get_profile'
+    when 'caloric_information'
+      get_caloric_information
+    when 'get_profile'
       @response_to_user = @user.generate_link_to_profile
+    when 'capabilities'
 
-    elsif intent == 'get_calories_summary'
+    when 'how_to'
+
+    when 'get_calories_summary'
       @response_to_user = @user.get_calories_summary
-    elsif intent == 'add_calories'
+    when 'add_calories'
       message = self
       @response_to_user = @user.add_calories(message)
     else
       @response_to_user = "I HAVE NO IDEA WHAT YOU'RE TALKING ABOUT"
     end
+  end
+
+  def get_caloric_information
+    foods_array = extract_food
+    message = ""
+    foods_array.each do |food_obj|
+      if food_obj[:calories]
+        total_calories =  (food_obj[:calories] * food_obj[:quantity].to_f).round
+        message += "#{food_obj[:original_description]} has/have #{total_calories} calories.\n"
+      else
+        message += "I'm sorry we weren't able to find #{food_obj[:original_description]} in the database"
+      end
+    end
+    @response_to_user = message
   end
 
   def reply_to_user
@@ -177,6 +194,10 @@ class Message < ApplicationRecord
   end
 
   private
+
+  def set_user
+    @user = User.find_by(phone_number: self.phone_number)
+  end
 
   # sample api response, useful for studying/querying
   def sample_twilio_response
