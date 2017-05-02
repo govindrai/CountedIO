@@ -4,13 +4,15 @@ require 'nutritionix/api_1_1'
 require 'json'
 
 class Message < ApplicationRecord
-  after_create :message_wit, :set_user
+  after_create :message_wit, :set_user, :intent_controller
 
   # Takes a path based on intent
   def intent_controller
     intent = extract_intent
 
     case intent
+    when 'unknown_user'
+      ask_to_register
     when 'registration_in_progress', 'register'
       register_user
     when 'add_meal'
@@ -30,6 +32,14 @@ class Message < ApplicationRecord
     else
       @response_to_user = "I HAVE NO IDEA WHAT YOU'RE TALKING ABOUT"
     end
+  end
+
+  def ask_to_register
+    @response_to_user = %Q(
+    Hey there! We'd love to help you, but you need to be registered!\nReady to register? Just say "Register
+    )
+    # @response_to_user = "https://media.giphy.com/media/zCmxiQtydu8kE/giphy.gif"
+    # reply_to_user_gif
   end
 
   def get_caloric_information
@@ -59,12 +69,21 @@ class Message < ApplicationRecord
   end
 
   def reply_to_user
-    intent_controller
     configure_twilio_client
     @twilio_client.messages.create(
       to: self.phone_number,
       from: ENV["TWILIO_PHONE_NUMBER"],
       body: @response_to_user
+    )
+  end
+
+  def reply_to_user_gif
+    configure_twilio_client
+    @twilio_client.messages.create(
+      to: self.phone_number,
+      from: ENV["TWILIO_PHONE_NUMBER"],
+      body: "_",
+      media_url: @response_to_user
     )
   end
 
@@ -74,8 +93,9 @@ class Message < ApplicationRecord
     @temp_user = TempUser.find_by(phone_number: self.phone_number)
 
     if self.body == "reset" || self.body == 'Reset'
-      @temp_user.destroy if @temp_user
-      @temp_user = nil
+      @temp_user.restore_attributes
+      # @temp_user.destroy if @temp_user
+      # @temp_user = nil
     end
 
     if @temp_user
@@ -105,15 +125,21 @@ class Message < ApplicationRecord
       end
     else
       @temp_user = TempUser.create(phone_number: self.phone_number)
-      message = "Hey There!\nWhat is your name?\nYou can also say 'reset' or 'start over' at anytime to restart."
+      @response_to_user = "Hi there! My name is Vilde, your very-own wellness assistant. 🏋️. I’m very excited 🤗 to help you become more conscience of your eating habits and achieve your health goals😀.\n\nI need to ask you a couple of questions to get to know you a little better."
+      reply_to_user
+
+      message = %Q(What should I call you? (say "reset" at any time if you make a mistake))
     end
     @response_to_user = message
   end
 
   # looks at a JSON response from wit.ai and extracts intent
   def extract_intent
-    return @intent = 'registration_in_progress' if TempUser.find_by(phone_number: self.phone_number)
     @intent ||= self.json_wit_response["entities"]["intent"][0]["value"] if self.json_wit_response["entities"]["intent"]
+    if !@user
+      @intent = "unknown_user" if @intent != "register" && !TempUser.find_by(phone_number: self.phone_number)
+      @intent = 'registration_in_progress' if TempUser.find_by(phone_number: self.phone_number)
+    end
     puts "INTENT = #{@intent}" #remove after debugging
     @intent
   end
@@ -142,7 +168,6 @@ class Message < ApplicationRecord
 
   # queries nutritionix and extracts calories from output
   def extract_calories(food)
-    # SINGULARIZATION HAPPENS HERE
     nutritionix_response = queryNutritionix(food)
     nutritionix_response = JSON.parse(nutritionix_response.to_s)
     nutritionix_response = nutritionix_response["hits"].count > 0 ? nutritionix_response["hits"][0]["fields"]["nf_calories"] : nil
