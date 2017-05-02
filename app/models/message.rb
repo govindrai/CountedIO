@@ -19,6 +19,9 @@ class Message < ApplicationRecord
       # do something
     elsif intent == 'get_profile'
       @response_to_user = @user.generate_link_to_profile
+
+    elsif intent == 'get_calories_summary'
+      @response_to_user = @user.get_calories_summary
     else
       @response_to_user = "I HAVE NO IDEA WHAT YOU'RE TALKING ABOUT"
     end
