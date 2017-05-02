@@ -23,11 +23,17 @@ class User < ApplicationRecord
 
   def get_calories_summary
     calories_consumed = self.meals.where("created_at >= ?", Time.now.beginning_of_day.in_time_zone("Pacific Time (US & Canada)")).pluck(:calories).inject {|acc, sum| acc + sum }
-    message = "You have consumed " + calories_consumed.to_s + "calories today."
+    if calories_consumed
+      remaining_calories = (get_suggested_calories - calories_consumed).to_s
+    else
+      remaining_calories = get_suggested_calories.to_s
+    end
+    message = "You have consumed " + calories_consumed.to_s + "calories today. You may only consume " + remaining_calories + " more to meet your daily goal."
   end
 
   def get_suggested_calories
-    activity_level = {"Sitting all day": 1.2, "Seated work, no exercise": 1.3, "Seated work, no exercise": 1.4, "Moderately physical, no exercise": 1.5, "Moderately physical work, light exercise": 1.6, "Moderately physical work, heavy exercise": 1.7, "Heavy work/ heavy exercise": 1.8, "Above average physical activity": 2}
+    activity_level = {"Sitting all day": 1.2, "Seated work, no exercise": 1.3, "Seated work, light exercise": 1.4, "Moderately physical, no exercise": 1.5, "Moderately physical work, light exercise": 1.6, "Moderately physical work, heavy exercise": 1.7, "Heavy work/ heavy exercise": 1.8, "Above average physical activity": 2}
+
     if self.sex == "male" || self.sex =="Male"
       (1.4 * suggested_male_calories).round()
     else
