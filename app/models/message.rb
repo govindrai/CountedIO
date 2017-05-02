@@ -248,9 +248,9 @@ class Message < ApplicationRecord
         @temp_user.destroy
         message = "Thanks a lot! Your profile has been created and you can start tracking now!\n"
         if "loosing weight"
-          message += "To loose weight, you should consume x calories, x less than your maintenance calories\n"
+          message += "To lose weight, you should consume #{@user.get_suggested_calories - 500} calories, 500 less than your maintenance calories (#{@user.maintenance_calories})\n"
         else
-          message += "To loose weight, you should consume x calories, x less than your maintenance calories\n"
+          message += "To lose weight, you should consume x calories, x less than your maintenance calories\n"
         end
         message += "Based on your target weight, if you stick to this goal, you will reach your goal by XXXXX\n"
         message += "Type \"help\" for a quick briefer"
