@@ -11,7 +11,7 @@ class Message < ApplicationRecord
     intent = extract_intent
 
     case intent
-    when 'register' || TempUser.find_by(phone_number: self.phone_number)
+    when 'registration_in_progress', 'register'
       register_user
     when 'add_meal'
       add_meal
@@ -58,7 +58,7 @@ class Message < ApplicationRecord
   end
 
   def register_user
-    return "You are already registered!" if User.find_by(phone_number: self.phone_number)
+    return @response_to_user = "You are already registered!" if User.find_by(phone_number: self.phone_number)
 
     @temp_user = TempUser.find_by(phone_number: self.phone_number)
 
@@ -72,25 +72,26 @@ class Message < ApplicationRecord
         @temp_user.target_weight_pounds = self.body
         @user = User.create(name: @temp_user.name, phone_number: @temp_user.phone_number, age: @temp_user.age, weight_pounds: @temp_user.weight_pounds, height_inches: @temp_user.height_inches, target_weight_pounds: @temp_user.target_weight_pounds, sex: @temp_user.sex)
         @temp_user.destroy
-        @temp_user = nil
         message = "Your profile has been created"
-      elsif @temp_user.height_inches
-        @temp_user.weight_pounds = self.body
-        message = "What is your target weight?"
-      elsif @temp_user.sex
-        @temp_user.height_inches = self.body
-        message = "What is your current weight?"
-      elsif @temp_user.age
-        @temp_user.sex = self.body
-        message = "How tall are you in inches?"
-      elsif @temp_user.name
-        @temp_user.age = self.body
-        message = "What is your sex?"
-      elsif @temp_user
-        @temp_user.name = self.body
-        message = "How old are you?"
+      else
+        if @temp_user.height_inches
+          @temp_user.weight_pounds = self.body
+          message = "What is your target weight?"
+        elsif @temp_user.sex
+          @temp_user.height_inches = self.body
+          message = "What is your current weight?"
+        elsif @temp_user.age
+          @temp_user.sex = self.body
+          message = "How tall are you in inches?"
+        elsif @temp_user.name
+          @temp_user.age = self.body
+          message = "What is your sex?"
+        elsif @temp_user
+          @temp_user.name = self.body
+          message = "How old are you?"
+        end
+        @temp_user.save
       end
-      @temp_user.save
     else
       @temp_user = TempUser.create(phone_number: self.phone_number)
       message = "Hey There!\nWhat is your name?\nYou can also say 'reset' or 'start over' at anytime to restart."
@@ -100,6 +101,7 @@ class Message < ApplicationRecord
 
   # looks at a JSON response from wit.ai and extracts intent
   def extract_intent
+    return @intent = 'registration_in_progress' if TempUser.find_by(phone_number: self.phone_number)
     @intent ||= self.json_wit_response["entities"]["intent"][0]["value"] if self.json_wit_response["entities"]["intent"]
     puts "INTENT = #{@intent}" #remove after debugging
     @intent
