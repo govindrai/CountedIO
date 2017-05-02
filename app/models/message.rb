@@ -39,26 +39,10 @@ class Message < ApplicationRecord
     message = "Roger that! I have added "
     message_fail = ""
     foods_array.each do |food_obj|
-      if food_obj[:food] == "User Defined Calories"
-        puts food_obj
-        Meal.create({
-          user: @user,
-          food_name: food_obj[:food],
-          calories: food_obj[:calories],
-          quantity: food_obj[:quantity],
-          meal_type: 'Snack'
-        })
-        message = "Sweet. I have added #{food_obj[:calories]} to today's calorie count."
+      if food_obj[:food_name] == "User Defined Calories"
+        message = "Sweet. I have added #{food_obj[:calories]} to today's #{food_obj[:meal_type]} calorie count."
       elsif food_obj[:calories]
-        total_calories =  (food_obj[:calories] * food_obj[:quantity].to_f).round
-        Meal.create({
-          user: @user,
-          food_name: food_obj[:food],
-          calories: total_calories,
-          quantity: food_obj[:quantity],
-          meal_type: 'BreakfastCHANGETHIS'
-        })
-        message += "#{food_obj[:original_description]} (#{total_calories} calories), "
+        message += "#{food_obj[:original_description]} (#{food_obj[:calories]} calories), "
       else
         message_fail += "#{food_obj[:food]}, "
       end
@@ -108,57 +92,6 @@ class Message < ApplicationRecord
     )
   end
 
-  def register_user
-    return @response_to_user = "You are already registered!" if User.find_by(phone_number: self.phone_number)
-
-    @temp_user = TempUser.find_by(phone_number: self.phone_number)
-
-    if self.body == "reset" || self.body == 'Reset'
-      @temp_user.destroy if @temp_user
-      @temp_user = nil
-    end
-
-    if @temp_user
-      if @temp_user.weight_pounds
-        @temp_user.target_weight_pounds = self.body
-        @user = User.create(name: @temp_user.name, phone_number: @temp_user.phone_number, age: @temp_user.age, weight_pounds: @temp_user.weight_pounds, height_inches: @temp_user.height_inches, target_weight_pounds: @temp_user.target_weight_pounds, sex: @temp_user.sex)
-        @temp_user.destroy
-        message = "Thanks a lot! Your profile has been created and you can start tracking now!\n"
-        if loosing weight
-          message += "To loose weight, you should consume x calories, x less than your maintenance calories\n"
-        else
-          message += "To loose weight, you should consume x calories, x less than your maintenance calories\n"
-        end
-        message += "Based on your target weight, if you stick to this goal, you will reach your goal by XXXXX\n"
-        message += "Type \"help\" for a quick briefer"
-      else
-        if @temp_user.height_inches
-          @temp_user.weight_pounds = self.body
-          message = "(5/5) Last question... read carefully\n"
-          message += "To maintain your current weight, you should consume x calories\n"
-          message += "What is your target weight? 🤔🤔"
-        elsif @temp_user.sex
-          @temp_user.height_inches = self.body
-          message = "(4/5) What is your current weight?"
-        elsif @temp_user.age
-          @temp_user.sex = self.body
-          message = "(3/5) How tall are you in inches?"
-        elsif @temp_user.name
-          @temp_user.age = self.body
-          message = "(2/5) And, what is your sex?"
-        elsif @temp_user
-          @temp_user.name = self.body
-          message = "(1/5) Thanks, #{@temp_user.name}. How old are you?"
-        end
-        @temp_user.save
-      end
-    else
-      @temp_user = TempUser.create(phone_number: self.phone_number)
-      message = %Q(Hi there! My name is Vilde, your very-own wellness assistant. 🏋️. I’m very excited 🤗 to help you become more conscience of your eating habits and achieve your health goals😀.\n\nIn order to help, I will ask you some basic wellness questions.\n\nFirst, what should I call you? (say "reset" at any time if you make a mistake))
-    end
-    @response_to_user = message
-  end
-
   # looks at a JSON response from wit.ai and extracts intent
   def extract_intent
     @intent ||= self.json_wit_response["entities"]["intent"][0]["value"] if self.json_wit_response["entities"]["intent"]
@@ -173,29 +106,57 @@ class Message < ApplicationRecord
   # looks at the wit response, parses out foods, quantities and units into an array
   def extract_food
     foods = self.json_wit_response["entities"]["food_description"]
+    meal_types = ["breakfast", "lunch", "dinner", "snack"]
+    message = self.json_wit_response["_text"].downcase
+
+    meal_type = "Snack"
+
+    meal_types.each do |type|
+      if message.include?(type)
+        meal_type = type.capitalize
+        break
+      end
+
+    end
 
     foods_array = []
 
     foods.each do |food_hash|
+      puts "FOOD HASH"
+      puts food_hash
       entities = food_hash["entities"]
       food = entities["food"] ? entities["food"][0]["value"] : nil
+      quantity = entities["number"] ? entities["number"][0]["value"] : 1
+      units = entities["unit"] ? entities["unit"][0]["value"] : nil
+      original_description = food_hash["value"]
       if food == 'calories'
         calories = entities["number"] ? entities["number"][0]["value"] : 1
         food = "User Defined Calories"
+        puts entities["number"][0]["value"]
+        puts entities["number"][0]["value"]
+        puts entities["number"][0]["value"]
+        puts entities["number"][0]["value"]
+        puts calories
+        puts calories
+        puts calories
+        puts calories
       else
-        calories = extract_calories(food)
+        calories = (extract_calories(food) * quantity).round
       end
-      quantity = entities["number"] ? entities["number"][0]["value"] : 1
-      unit = entities["unit"] ? entities["unit"][0]["value"] : nil
-      original_description = food_hash["value"]
-
-      foods_array.push({
-        food: food,
-        quantity: quantity,
-        unit: unit,
-        calories: calories,
-        original_description: original_description
-      })
+      foods_array.push(
+        Meal.create!({
+          user: @user,
+          food_name: food,
+          quantity: quantity,
+          units: units,
+          calories: calories,
+          original_description: original_description,
+          meal_type: meal_type
+        })
+      )
+      p "HOPEFULY MEAL OBJECT HERE!!!"
+      p foods_array[-1]
+      p "HOPEFULY MEAL OBJECT HERE!!!"
     end
     foods_array
   end
@@ -258,6 +219,10 @@ class Message < ApplicationRecord
     @response_to_user += "Add calories: \"Add 500 calories\"\n"
   end
 
+  ############################
+  # REGISTRATION METHODS
+  ############################
+
   def ask_to_register
     @response_to_user = %Q(
     Hey there! We'd love to help you, but you need to be registered!\n\nReady to register? Just say "Register"
@@ -266,11 +231,66 @@ class Message < ApplicationRecord
     # reply_to_user_gif
   end
 
+  def register_user
+    return @response_to_user = "You are already registered!" if User.find_by(phone_number: self.phone_number)
+
+    @temp_user = TempUser.find_by(phone_number: self.phone_number)
+
+    if self.body == "reset" || self.body == 'Reset'
+      @temp_user.destroy if @temp_user
+      @temp_user = nil
+    end
+
+    if @temp_user
+      if @temp_user.weight_pounds
+        @temp_user.target_weight_pounds = self.body
+        @user = User.create(name: @temp_user.name, phone_number: @temp_user.phone_number, age: @temp_user.age, weight_pounds: @temp_user.weight_pounds, height_inches: @temp_user.height_inches, target_weight_pounds: @temp_user.target_weight_pounds, sex: @temp_user.sex)
+        @temp_user.destroy
+        message = "Thanks a lot! Your profile has been created and you can start tracking now!\n"
+        if "loosing weight"
+          message += "To loose weight, you should consume x calories, x less than your maintenance calories\n"
+        else
+          message += "To loose weight, you should consume x calories, x less than your maintenance calories\n"
+        end
+        message += "Based on your target weight, if you stick to this goal, you will reach your goal by XXXXX\n"
+        message += "Type \"help\" for a quick briefer"
+      else
+        if @temp_user.height_inches
+          @temp_user.weight_pounds = self.body
+          message = "(5/5) Last question... read carefully\n"
+          message += "To maintain your current weight, you should consume x calories\n"
+          message += "What is your target weight? 🤔🤔"
+        elsif @temp_user.sex
+          @temp_user.height_inches = self.body
+          message = "(4/5) What is your current weight?"
+        elsif @temp_user.age
+          @temp_user.sex = self.body
+          message = "(3/5) How tall are you in inches?"
+        elsif @temp_user.name
+          @temp_user.age = self.body
+          message = "(2/5) And, what is your sex?"
+        elsif @temp_user
+          @temp_user.name = self.body
+          message = "(1/5) Thanks, #{@temp_user.name}. How old are you?"
+        end
+        @temp_user.save
+      end
+    else
+      @temp_user = TempUser.create(phone_number: self.phone_number)
+      message = %Q(Hi there! My name is Vilde, your very-own wellness assistant. 🏋️. I’m very excited 🤗 to help you become more conscience of your eating habits and achieve your health goals😀.\n\nIn order to help, I will ask you some basic wellness questions.\n\nFirst, what should I call you? (say "reset" at any time if you make a mistake))
+    end
+    @response_to_user = message
+  end
+
   private
 
   def set_user
     @user = User.find_by(phone_number: self.phone_number)
   end
+
+  ############################
+  # SAMPLE API RESPONSES
+  ############################
 
   # sample api response, useful for studying/querying
   def sample_twilio_response
@@ -341,6 +361,10 @@ class Message < ApplicationRecord
   # sample api response, useful for studying/querying
   def sample_nutrionix_response
   end
+
+  ############################
+  # API CONFIGURATION METHODS
+  ############################
 
   def configure_twilio_client
     account_sid = ENV["TWILIO_ACCOUNT_SID"]
