@@ -26,6 +26,7 @@ class MessagesController < ApplicationController
   end
 
   def test_add_meal_intent
+    puts ENV["GOVIND_PHONE_NUMBER"]
     @message = Message.create!(phone_number: ENV["GOVIND_PHONE_NUMBER"], body: "I ate five cookies, a waffle, and 42 slices of cheese and an orange")
     @message.reply_to_user
     head :ok
@@ -38,7 +39,7 @@ class MessagesController < ApplicationController
   end
 
   def test_add_calories_intent
-    @message = Message.create!(phone_number: ENV["GOVIND_PHONE_NUMBER"], body: "Add 400 calories")
+    @message = Message.create!(phone_number: ENV["GOVIND_PHONE_NUMBER"], body: "Add 400 calories for lunch")
     @message.reply_to_user
     head :ok
   end
