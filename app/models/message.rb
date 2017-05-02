@@ -27,6 +27,8 @@ class Message < ApplicationRecord
       display_how_to
     when 'get_calories_summary'
       @response_to_user = @user.get_calories_summary
+    when 'greet'
+      greet
     else
       @response_to_user = "I HAVE NO IDEA WHAT YOU'RE TALKING ABOUT"
     end
@@ -50,6 +52,11 @@ class Message < ApplicationRecord
       message+= "😭 Sorry, we couldn't find the following items in the database #{message_fail.chomp(", ")}. If possible, try to be even more specific. You can also say things like 'Add 50 calories' if this isn't working out. 👍"
     end
     @response_to_user = message
+  end
+
+  def greet
+    greetings = ["Hey there! I am more useful when you tell me to track your meals.", "How's it going? I am more useful when you tell me to track your meals.", "Hello to you to! I am more useful when you tell me to track your meals."]
+    @response_to_user = greetings.sample
   end
 
   def get_caloric_information
