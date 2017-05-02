@@ -34,7 +34,7 @@ class Message < ApplicationRecord
 
   def add_meal
     foods_array = extract_food
-    message = "Thanks for sharing! We have added "
+    message = "Roger that! I have added "
     message_fail = ""
     foods_array.each do |food_obj|
       if food_obj[:food] == "User Defined Calories"
@@ -46,7 +46,7 @@ class Message < ApplicationRecord
           quantity: food_obj[:quantity],
           meal_type: 'Snack'
         })
-        message = "We have added #{food_obj[:calories]} to today's calories."
+        message = "Sweet. I have added #{food_obj[:calories]} to today's calorie count."
       elsif food_obj[:calories]
         total_calories =  (food_obj[:calories] * food_obj[:quantity].to_f).round
         Meal.create({
