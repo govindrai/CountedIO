@@ -20,9 +20,9 @@ class Message < ApplicationRecord
     when 'get_profile'
       @response_to_user = @user.generate_link_to_profile
     when 'capabilities'
-
+      display_capabilities
     when 'how_to'
-
+      display_how_to
     when 'get_calories_summary'
       @response_to_user = @user.get_calories_summary
     when 'add_calories'
@@ -193,6 +193,21 @@ class Message < ApplicationRecord
       # url: 'localhost.com/viewmyprofile'
       # media_url: 'http://coolwildlife.com/wp-content/uploads/galleries/post-3004/Fox%20Picture%20003.jpg'
     )
+  end
+
+  def display_capabilities
+    messages = ["You can track food by telling me what you ate. You can say things like 'I just had an apple, three slices of bread, and peanut butter'. When you wanna see you profile just simply ask me for it.", "You can add calories by telling me something like 'Add 400 calories please' or you can request nutritional information of a given food by asking 'How many calories are in a coke'", "Ask me how many calories you have consumed today or tell me what you ate. I will record it all!", "Say something like 'I just ate a coke, three waffles and a cup of coffee'" ]
+    @response_to_user = messages.sample
+  end
+
+  def display_how_to
+    @response_to_user = %Q(Adding food: "I just ate grilled chicken breast"\n
+        Show profile: "Show me my profile"\n
+        Registering: "I want to register"\n
+        Get daily calories: "How many calories have I had today"\n
+        Get caloric content: "How many calories are in an apple"\n
+        Add calories: "Add 500 calories"\n
+        )
   end
 
   private
