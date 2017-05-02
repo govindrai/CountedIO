@@ -129,12 +129,12 @@ class Message < ApplicationRecord
     @response_to_user = message
   end
 
-  def reset
-    value_to_reset = [{name:nil}, {age:nil}, {sex:nil}, {height_inches:nil}, {weight_pounds:nil}, {target_weight_pounds:nil}]
-    values = [@temp_user.name, @temp_user.age, @temp_user.sex, @temp_user.height_inches, @temp_user.weight_pounds, @temp_user.target_weight_pounds]
-    values.delete nil
-    @temp_user.update(values.count
-  end
+  # def reset
+  #   value_to_reset = [{name:nil}, {age:nil}, {sex:nil}, {height_inches:nil}, {weight_pounds:nil}, {target_weight_pounds:nil}]
+  #   values = [@temp_user.name, @temp_user.age, @temp_user.sex, @temp_user.height_inches, @temp_user.weight_pounds, @temp_user.target_weight_pounds]
+  #   values.delete nil
+  #   @temp_user.update(values.count
+  # end
 
   # looks at a JSON response from wit.ai and extracts intent
   def extract_intent
