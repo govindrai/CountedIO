@@ -20,12 +20,12 @@ class Message < ApplicationRecord
     elsif intent == 'get_profile'
       @response_to_user = @user.generate_link_to_profile
     else
-      # send twilio response saying "I have no idea what you're talking about"
+      @response_to_user = "I HAVE NO IDEA WHAT YOU'RE TALKING ABOUT"
     end
-    reply
   end
 
-  def reply
+  def reply_to_user
+    intent_controller
     configure_twilio_client
     @twilio_client.messages.create(
       to: self.phone_number,
@@ -86,15 +86,19 @@ class Message < ApplicationRecord
   def extract_food
     foods = self.json_wit_response["entities"]["food_description"]
     foods_array = []
-    foods.each do |food|
-      entities = food["entities"]
+    foods.each do |food_hash|
+      entities = food_hash["entities"]
       food = entities["food"] ? entities["food"][0]["value"] : nil
       quantity = entities["number"] ? entities["number"][0]["value"] : 1
       unit = entities["unit"] ? entities["unit"][0]["value"] : nil
+      original_description = food_hash["value"]
+
       foods_array.push({
         food: food,
         quantity: quantity,
-        unit: unit
+        unit: unit,
+        calories: extract_calories(food),
+        original_description: original_description
       })
     end
     foods_array
@@ -102,12 +106,14 @@ class Message < ApplicationRecord
 
   # queries nutritionix and extracts calories from output
   def extract_calories(food)
+    # SINGULARIZATION HAPPENS HERE
     nutritionix_response = queryNutritionix(food)
     nutritionix_response = JSON.parse(nutritionix_response.to_s)
-    nutritionix_response["hits"][0]["fields"]["nf_calories"]
+    nutritionix_response = nutritionix_response["hits"].count > 0 ? nutritionix_response["hits"][0]["fields"]["nf_calories"] : nil
   end
 
   def queryNutritionix(food)
+    puts food
     configure_nutritionix_client
 
     search_params = {
@@ -122,21 +128,27 @@ class Message < ApplicationRecord
 
   def add_meal
     foods_array = extract_food
-    message = "Thanks for sharing! We have added "
+    message_success = "Thanks for sharing! We have added "
+    message_fail = "Sorry, we couldn't find"
     foods_array.each do |food_obj|
-      calories = extract_calories(food_obj[:food].singularize)
+      if food_obj[:calories]
+        total_calories =  (food_obj[:calories] * food_obj[:quantity].to_f).round
 
-      Meal.create({
-        user: @user,
-        food_name: food_obj[:food],
-        calories: calories,
-        quantity: food_obj[:quantity],
-        meal_type: 'BreakfastCHANGETHIS'
-        })
+        Meal.create({
+          user: @user,
+          food_name: food_obj[:food],
+          calories: total_calories,
+          quantity: food_obj[:quantity],
+          meal_type: 'BreakfastCHANGETHIS'
+          })
 
-      message += "#{food_obj[:quantity]} #{food_obj[:food]} (#{extract_calories(food_obj[:food]) * food_obj[:quantity].to_f} calories), "
+        message_success += "#{food_obj[:original_description]} (#{total_calories} calories), "
+      else
+        message_fail += "#{food_obj[:food]}, "
+      end
     end
-    @response_to_user = message.chop(", ") + "!"
+    message_fail += "in the database! If possible, try to be even more specific. You can also say things like 'Add 50 calories' if this isn't working out. :)"
+    @response_to_user = message_success.chomp(", ") + message_fail + "!"
   end
 
   # sends sms to wit, updates the messages table
