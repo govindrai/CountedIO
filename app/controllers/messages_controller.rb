@@ -14,7 +14,7 @@ class MessagesController < ApplicationController
 
   def test_twilio_send
     @message = Message.new(body: "Hey there!", phone_number: ENV["GOVIND_PHONE_NUMBER"])
-    @message.send_test_message_to_govind
+    @message.sms_govind
     @message.save
     head :ok
   end
