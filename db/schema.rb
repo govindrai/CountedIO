@@ -10,19 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170501071940) do
+ActiveRecord::Schema.define(version: 20170502224323) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "meals", force: :cascade do |t|
     t.integer  "user_id"
-    t.string   "food_name",  null: false
-    t.integer  "calories",   null: false
-    t.integer  "quantity",   null: false
-    t.string   "meal_type",  null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.string   "food_name",            null: false
+    t.integer  "calories",             null: false
+    t.integer  "quantity",             null: false
+    t.string   "meal_type",            null: false
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
+    t.string   "original_description", null: false
+    t.string   "units"
     t.index ["user_id"], name: "index_meals_on_user_id", using: :btree
   end
 
@@ -55,7 +57,7 @@ ActiveRecord::Schema.define(version: 20170501071940) do
     t.integer  "age",                    null: false
     t.integer  "weight_pounds",          null: false
     t.integer  "height_inches",          null: false
-    t.string   "target_weight_pounds",   null: false
+    t.integer  "target_weight_pounds",   null: false
     t.string   "sex",                    null: false
     t.string   "randomized_profile_url", null: false
     t.datetime "created_at",             null: false
