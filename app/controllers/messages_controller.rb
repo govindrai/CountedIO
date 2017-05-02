@@ -55,6 +55,12 @@ class MessagesController < ApplicationController
     head :ok
   end
 
+  def test_greet_intent
+    @message = Message.create!(phone_number: ENV["GOVIND_PHONE_NUMBER"], body: "Hello there!")
+    @message.reply_to_user
+    head :ok
+  end
+
   private
 
   def message_params
