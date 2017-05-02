@@ -172,23 +172,27 @@ class Message < ApplicationRecord
     foods.each do |food_hash|
       entities = food_hash["entities"]
       food = entities["food"] ? entities["food"][0]["value"] : nil
+      quantity = entities["number"] ? entities["number"][0]["value"] : 1
+      unit = entities["unit"] ? entities["unit"][0]["value"] : nil
+      original_description = food_hash["value"]
       if food == 'calories'
         calories = entities["number"] ? entities["number"][0]["value"] : 1
         food = "User Defined Calories"
       else
-        calories = extract_calories(food)
+        calories = (extract_calories(food) * quantity).round
       end
-      quantity = entities["number"] ? entities["number"][0]["value"] : 1
-      unit = entities["unit"] ? entities["unit"][0]["value"] : nil
-      original_description = food_hash["value"]
-
-      foods_array.push({
-        food: food,
-        quantity: quantity,
-        unit: unit,
-        calories: calories,
-        original_description: original_description
-      })
+      foods_array.push(
+        Meal.create({
+          food: food,
+          quantity: quantity,
+          unit: unit,
+          calories: calories,
+          original_description: original_description
+        })
+      )
+      p "HOPEFULY MEAL OBJECT HERE!!!"
+      p foods_array[-1]
+      p "HOPEFULY MEAL OBJECT HERE!!!"
     end
     foods_array
   end
