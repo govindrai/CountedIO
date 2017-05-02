@@ -46,7 +46,7 @@ class Message < ApplicationRecord
           quantity: food_obj[:quantity],
           meal_type: 'Snack'
         })
-        message = "We have added #{calories} to today's calories."
+        message = "We have added #{food_obj[:calories]} to today's calories."
       elsif food_obj[:calories]
         total_calories =  (food_obj[:calories] * food_obj[:quantity].to_f).round
         Meal.create({
