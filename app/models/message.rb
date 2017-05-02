@@ -26,8 +26,7 @@ class Message < ApplicationRecord
     when 'get_calories_summary'
       @response_to_user = @user.get_calories_summary
     when 'add_calories'
-      message = self
-      @response_to_user = @user.add_calories(message)
+      add_calories
     else
       @response_to_user = "I HAVE NO IDEA WHAT YOU'RE TALKING ABOUT"
     end
@@ -45,6 +44,18 @@ class Message < ApplicationRecord
       end
     end
     @response_to_user = message
+  end
+
+  def add_calories
+    calories = self.json_wit_response["entities"]["food_description"][0]["entities"]["number"][0]["value"]
+    @meal = Meal.create({
+      calories: calories,
+      user: @user,
+      quantity: 1,
+      food_name: 'User Defined Calories',
+      meal_type: 'snack'
+      })
+    @response_to_user = "We have added #{calories} to your account."
   end
 
   def reply_to_user
