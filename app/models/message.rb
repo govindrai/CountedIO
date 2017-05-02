@@ -11,20 +11,37 @@ class Message < ApplicationRecord
     intent = extract_intent
 
     case intent
-      when 'register' || TempUser.find_by(phone_number: self.phone_number)
-        register_user
-      when 'add_meal'
-        add_meal
-      when 'caloric_information'
-        # do something
-      when 'get_profile'
-        @response_to_user = @user.generate_link_to_profile
-      when 'caloric_information'
-
-      else
-        # send twilio response saying "I have no idea what you're talking about"
+    when 'register' || TempUser.find_by(phone_number: self.phone_number)
+      register_user
+    when 'add_meal'
+      add_meal
+    when 'caloric_information'
+      get_caloric_information
+    when 'get_profile'
+      @response_to_user = @user.generate_link_to_profile
+    when 'caloric_information'
+      # do something
+    else
+      # send twilio response saying "I have no idea what you're talking about"
     end
     reply
+  end
+
+  def caloric_information
+    foods_array = extract_food
+    message=""
+    foods_array.each do |food_obj|
+      calories = extract_calories(food_obj[:food])
+      message += "#{food_obj[:original_description]} has "
+      Meal.create({
+        user: @user,
+        food_name: food_obj[:food],
+        calories: calories,
+        quantity: food_obj[:quantity],
+        meal_type: 'BreakfastCHANGETHIS'
+        })
+    end
+    @response_to_user = message.chop(", ") + "!"
   end
 
   def reply
