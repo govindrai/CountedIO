@@ -6,20 +6,20 @@ class Meal < ApplicationRecord
     Meal.where("user_id = ? AND created_at >= ?", user.id, (date_obj.to_time + 7.hours).to_datetime)
   end
 
-  def self.get_day_breakfast)user, date_obj)
-
+  def self.get_day_breakfast(user, date_obj)
+    Meal.where("user_id = ? AND created_at >= ? AND meal_type = ?", user.id, (date_obj.to_time + 7.hours).to_datetime, "Breakfast")
   end
 
   def self.get_day_lunch(user, date_obj)
-
+    Meal.where("user_id = ? AND created_at >= ? AND meal_type = ?", user.id, (date_obj.to_time + 7.hours).to_datetime, "Lunch")
   end
 
   def self.get_day_dinner(user, date_obj)
-
+    Meal.where("user_id = ? AND created_at >= ? AND meal_type = ?", user.id, (date_obj.to_time + 7.hours).to_datetime, "Dinner")
   end
 
-  def self.get_day_snack(user.date_obj)
-
+  def self.get_day_snack(user, date_obj)
+    Meal.where("user_id = ? AND created_at >= ? AND meal_type = ?", user.id, (date_obj.to_time + 7.hours).to_datetime, "Snack")
   end
 
 end
