@@ -22,7 +22,7 @@ class User < ApplicationRecord
 
   def get_calories_summary
     calories_consumed = self.meals.where("created_at >= ?", Time.now.beginning_of_day.in_time_zone("Pacific Time (US & Canada)")).pluck(:calories).inject {|acc, sum| acc + sum }
-    message = "You have consumed " + calories_consumed.to_s + " today."
+    message = "You have consumed " + calories_consumed.to_s + "calories today."
   end
 
 end

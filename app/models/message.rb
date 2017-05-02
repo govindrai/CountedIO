@@ -36,7 +36,7 @@ class Message < ApplicationRecord
 
   def ask_to_register
     @response_to_user = %Q(
-    Hey there! We'd love to help you, but you need to be registered!\n\nReady to register? Just say "Register
+    Hey there! We'd love to help you, but you need to be registered!\n\nReady to register? Just say "Register"
     )
     # @response_to_user = "https://media.giphy.com/media/zCmxiQtydu8kE/giphy.gif"
     # reply_to_user_gif
@@ -65,7 +65,7 @@ class Message < ApplicationRecord
       food_name: 'User Defined Calories',
       meal_type: 'snack'
       })
-    @response_to_user = "We have added #{calories} to your account."
+    @response_to_user = "We have added #{calories} to today's calories."
   end
 
   def reply_to_user
@@ -235,18 +235,21 @@ class Message < ApplicationRecord
   end
 
   def display_capabilities
-    messages = ["You can track food by telling me what you ate. You can say things like 'I just had an apple, three slices of bread, and peanut butter'. When you wanna see you profile just simply ask me for it.", "You can add calories by telling me something like 'Add 400 calories please' or you can request nutritional information of a given food by asking 'How many calories are in a coke'", "Ask me how many calories you have consumed today or tell me what you ate. I will record it all!", "Say something like 'I just ate a coke, three waffles and a cup of coffee'" ]
+    messages = [
+      "You can track food by telling me what you ate. You can say things like 'I just had an apple, three slices of bread, and peanut butter'. When you wanna see you profile just simply ask me for it.",
+      "You can add calories by telling me something like 'Add 400 calories please' or you can request nutritional information of a given food by asking 'How many calories are in a coke'",
+      "Ask me how many calories you have consumed today or tell me what you ate. I will record it all!", "Say something like 'I just ate a coke, three waffles and a cup of coffee'"
+    ]
     @response_to_user = messages.sample
   end
 
   def display_how_to
-    @response_to_user = %Q(Adding food: "I just ate grilled chicken breast"\n
-        Show profile: "Show me my profile"\n
-        Registering: "I want to register"\n
-        Get daily calories: "How many calories have I had today"\n
-        Get caloric content: "How many calories are in an apple"\n
-        Add calories: "Add 500 calories"\n
-        )
+    @response_to_user = "Adding food: \"I just ate grilled chicken breast\"\n"
+    @response_to_user += "Show profile: \"Show me my profile\"\n"
+    @response_to_user += "Registering: \"I want to register\"\n"
+    @response_to_user += "Get daily calories: \"How many calories have I had today\"\n"
+    @response_to_user += "Get caloric content: \"How many calories are in an apple\"\n"
+    @response_to_user += "Add calories: \"Add 500 calories\"\n"
   end
 
   private
