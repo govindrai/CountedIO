@@ -4,13 +4,15 @@ require 'nutritionix/api_1_1'
 require 'json'
 
 class Message < ApplicationRecord
-  after_create :message_wit, :set_user
+  after_create :message_wit, :set_user, :intent_controller
 
   # Takes a path based on intent
   def intent_controller
     intent = extract_intent
 
     case intent
+    when 'unknown_user'
+      ask_to_register
     when 'registration_in_progress', 'register'
       register_user
     when 'add_meal'
@@ -26,11 +28,18 @@ class Message < ApplicationRecord
     when 'get_calories_summary'
       @response_to_user = @user.get_calories_summary
     when 'add_calories'
-      message = self
-      @response_to_user = @user.add_calories(message)
+      add_calories
     else
       @response_to_user = "I HAVE NO IDEA WHAT YOU'RE TALKING ABOUT"
     end
+  end
+
+  def ask_to_register
+    @response_to_user = %Q(
+    Hey there! We'd love to help you, but you need to be registered!\n\nReady to register? Just say "Register"
+    )
+    # @response_to_user = "https://media.giphy.com/media/zCmxiQtydu8kE/giphy.gif"
+    # reply_to_user_gif
   end
 
   def get_caloric_information
@@ -47,13 +56,34 @@ class Message < ApplicationRecord
     @response_to_user = message
   end
 
+  def add_calories
+    calories = self.json_wit_response["entities"]["food_description"][0]["entities"]["number"][0]["value"]
+    @meal = Meal.create({
+      calories: calories,
+      user: @user,
+      quantity: 1,
+      food_name: 'User Defined Calories',
+      meal_type: 'snack'
+      })
+    @response_to_user = "We have added #{calories} to today's calories."
+  end
+
   def reply_to_user
-    intent_controller
     configure_twilio_client
     @twilio_client.messages.create(
       to: self.phone_number,
       from: ENV["TWILIO_PHONE_NUMBER"],
       body: @response_to_user
+    )
+  end
+
+  def reply_to_user_gif
+    configure_twilio_client
+    @twilio_client.messages.create(
+      to: self.phone_number,
+      from: ENV["TWILIO_PHONE_NUMBER"],
+      body: "_",
+      media_url: @response_to_user
     )
   end
 
@@ -76,7 +106,7 @@ class Message < ApplicationRecord
       else
         if @temp_user.height_inches
           @temp_user.weight_pounds = self.body
-          message = "What is your target weight?"
+          message = "Last question...what is your target weight? 🤔🤔"
         elsif @temp_user.sex
           @temp_user.height_inches = self.body
           message = "What is your current weight?"
@@ -85,24 +115,34 @@ class Message < ApplicationRecord
           message = "How tall are you in inches?"
         elsif @temp_user.name
           @temp_user.age = self.body
-          message = "What is your sex?"
+          message = "And, what is your sex?"
         elsif @temp_user
           @temp_user.name = self.body
-          message = "How old are you?"
+          message = "Thanks, #{@temp_user.name}. How old are you?"
         end
         @temp_user.save
       end
     else
       @temp_user = TempUser.create(phone_number: self.phone_number)
-      message = "Hey There!\nWhat is your name?\nYou can also say 'reset' or 'start over' at anytime to restart."
+      message = %Q(Hi there! My name is Vilde, your very-own wellness assistant. 🏋️. I’m very excited 🤗 to help you become more conscience of your eating habits and achieve your health goals😀.\n\nIn order to help, I will ask you some basic wellness questions.\n\nFirst, what should I call you? (say "reset" at any time if you make a mistake))
     end
     @response_to_user = message
   end
 
+  # def reset
+  #   value_to_reset = [{name:nil}, {age:nil}, {sex:nil}, {height_inches:nil}, {weight_pounds:nil}, {target_weight_pounds:nil}]
+  #   values = [@temp_user.name, @temp_user.age, @temp_user.sex, @temp_user.height_inches, @temp_user.weight_pounds, @temp_user.target_weight_pounds]
+  #   values.delete nil
+  #   @temp_user.update(values.count
+  # end
+
   # looks at a JSON response from wit.ai and extracts intent
   def extract_intent
-    return @intent = 'registration_in_progress' if TempUser.find_by(phone_number: self.phone_number)
     @intent ||= self.json_wit_response["entities"]["intent"][0]["value"] if self.json_wit_response["entities"]["intent"]
+    if !@user
+      @intent = "unknown_user" if @intent != "register" && !TempUser.find_by(phone_number: self.phone_number)
+      @intent = 'registration_in_progress' if TempUser.find_by(phone_number: self.phone_number)
+    end
     puts "INTENT = #{@intent}" #remove after debugging
     @intent
   end
@@ -131,7 +171,6 @@ class Message < ApplicationRecord
 
   # queries nutritionix and extracts calories from output
   def extract_calories(food)
-    # SINGULARIZATION HAPPENS HERE
     nutritionix_response = queryNutritionix(food)
     nutritionix_response = JSON.parse(nutritionix_response.to_s)
     nutritionix_response = nutritionix_response["hits"].count > 0 ? nutritionix_response["hits"][0]["fields"]["nf_calories"] : nil
@@ -196,18 +235,21 @@ class Message < ApplicationRecord
   end
 
   def display_capabilities
-    messages = ["You can track food by telling me what you ate. You can say things like 'I just had an apple, three slices of bread, and peanut butter'. When you wanna see you profile just simply ask me for it.", "You can add calories by telling me something like 'Add 400 calories please' or you can request nutritional information of a given food by asking 'How many calories are in a coke'", "Ask me how many calories you have consumed today or tell me what you ate. I will record it all!", "Say something like 'I just ate a coke, three waffles and a cup of coffee'" ]
+    messages = [
+      "You can track food by telling me what you ate. You can say things like 'I just had an apple, three slices of bread, and peanut butter'. When you wanna see you profile just simply ask me for it.",
+      "You can add calories by telling me something like 'Add 400 calories please' or you can request nutritional information of a given food by asking 'How many calories are in a coke'",
+      "Ask me how many calories you have consumed today or tell me what you ate. I will record it all!", "Say something like 'I just ate a coke, three waffles and a cup of coffee'"
+    ]
     @response_to_user = messages.sample
   end
 
   def display_how_to
-    @response_to_user = %Q(Adding food: "I just ate grilled chicken breast"\n
-        Show profile: "Show me my profile"\n
-        Registering: "I want to register"\n
-        Get daily calories: "How many calories have I had today"\n
-        Get caloric content: "How many calories are in an apple"\n
-        Add calories: "Add 500 calories"\n
-        )
+    @response_to_user = "Adding food: \"I just ate grilled chicken breast\"\n"
+    @response_to_user += "Show profile: \"Show me my profile\"\n"
+    @response_to_user += "Registering: \"I want to register\"\n"
+    @response_to_user += "Get daily calories: \"How many calories have I had today\"\n"
+    @response_to_user += "Get caloric content: \"How many calories are in an apple\"\n"
+    @response_to_user += "Add calories: \"Add 500 calories\"\n"
   end
 
   private

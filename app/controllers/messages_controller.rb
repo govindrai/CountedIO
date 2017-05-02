@@ -49,6 +49,12 @@ class MessagesController < ApplicationController
     head :ok
   end
 
+  def test_unknown_user
+    @message = Message.create!(phone_number: ENV["GOVIND_PHONE_NUMBER"], body: "My brotha")
+    @message.reply_to_user
+    head :ok
+  end
+
   private
 
   def message_params
