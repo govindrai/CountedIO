@@ -116,23 +116,32 @@ class Message < ApplicationRecord
         @temp_user.target_weight_pounds = self.body
         @user = User.create(name: @temp_user.name, phone_number: @temp_user.phone_number, age: @temp_user.age, weight_pounds: @temp_user.weight_pounds, height_inches: @temp_user.height_inches, target_weight_pounds: @temp_user.target_weight_pounds, sex: @temp_user.sex)
         @temp_user.destroy
-        message = "Your profile has been created"
+        message = "Thanks a lot! Your profile has been created and you can start tracking now!\n"
+        if loosing weight
+          message += "To loose weight, you should consume x calories, x less than your maintenance calories\n"
+        else
+          message += "To loose weight, you should consume x calories, x less than your maintenance calories\n"
+        end
+        message += "Based on your target weight, if you stick to this goal, you will reach your goal by XXXXX\n"
+        message += "Type \"help\" for a quick briefer"
       else
         if @temp_user.height_inches
           @temp_user.weight_pounds = self.body
-          message = "Last question...what is your target weight? 🤔🤔"
+          message = "(5/5) Last question... read carefully\n"
+          message += "To maintain your current weight, you should consume x calories\n"
+          message += "What is your target weight? 🤔🤔"
         elsif @temp_user.sex
           @temp_user.height_inches = self.body
-          message = "What is your current weight?"
+          message = "(4/5) What is your current weight?"
         elsif @temp_user.age
           @temp_user.sex = self.body
-          message = "How tall are you in inches?"
+          message = "(3/5) How tall are you in inches?"
         elsif @temp_user.name
           @temp_user.age = self.body
-          message = "And, what is your sex?"
+          message = "(2/5) And, what is your sex?"
         elsif @temp_user
           @temp_user.name = self.body
-          message = "Thanks, #{@temp_user.name}. How old are you?"
+          message = "(1/5) Thanks, #{@temp_user.name}. How old are you?"
         end
         @temp_user.save
       end
