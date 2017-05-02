@@ -27,10 +27,11 @@ class User < ApplicationRecord
   end
 
   def get_suggested_calories
-    if self.sex == "male"
-      suggested_male_calories
+    activity_level = {"Sitting all day": 1.2, "Seated work, no exercise": 1.3, "Seated work, no exercise": 1.4, "Moderately physical, no exercise": 1.5, "Moderately physical work, light exercise": 1.6, "Moderately physical work, heavy exercise": 1.7, "Heavy work/ heavy exercise": 1.8, "Above average physical activity": 2}
+    if self.sex == "male" || self.sex =="Male"
+      (1.4 * suggested_male_calories).round()
     else
-      suggested_female_calories
+      (1.4 * suggested_female_calories).round()
     end
   end
 
