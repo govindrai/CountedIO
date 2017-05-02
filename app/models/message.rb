@@ -11,7 +11,7 @@ class Message < ApplicationRecord
     intent = extract_intent
 
     case intent
-    when 'register' || TempUser.find_by(phone_number: self.phone_number)
+    when 'registration_in_progress', 'register'
       register_user
     when 'add_meal'
       add_meal
@@ -100,6 +100,7 @@ class Message < ApplicationRecord
 
   # looks at a JSON response from wit.ai and extracts intent
   def extract_intent
+    return @intent = 'registration_in_progress' if TempUser.find_by(phone_number: self.phone_number)
     @intent ||= self.json_wit_response["entities"]["intent"][0]["value"] if self.json_wit_response["entities"]["intent"]
     puts "INTENT = #{@intent}" #remove after debugging
     @intent
