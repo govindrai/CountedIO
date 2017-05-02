@@ -43,7 +43,7 @@ class Message < ApplicationRecord
           user: @user,
           food_name: food_obj[:food],
           calories: food_description[:calories],
-          quantity: food_obj[:quantity]
+          quantity: food_obj[:quantity],
           meal_type: 'Snack'
         })
         message = "We have added #{calories} to today's calories."
@@ -53,7 +53,7 @@ class Message < ApplicationRecord
           user: @user,
           food_name: food_obj[:food],
           calories: total_calories,
-          quantity: food_obj[:quantity]
+          quantity: food_obj[:quantity],
           meal_type: 'BreakfastCHANGETHIS'
         })
         message += "#{food_obj[:original_description]} (#{total_calories} calories), "
