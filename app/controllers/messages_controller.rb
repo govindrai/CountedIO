@@ -33,7 +33,12 @@ class MessagesController < ApplicationController
 
   def test_profile_intent
     @message = Message.create!(phone_number: ENV["GOVIND_PHONE_NUMBER"], body: "I would like to see my profile")
-    p @message
+    @message.reply_to_user
+    head :ok
+  end
+
+  def test_add_calories_intent
+    @message = Message.create!(phone_number: ENV["GOVIND_PHONE_NUMBER"], body: "Add 400 calories")
     @message.reply_to_user
     head :ok
   end

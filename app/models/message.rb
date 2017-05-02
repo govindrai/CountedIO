@@ -19,6 +19,12 @@ class Message < ApplicationRecord
       # do something
     elsif intent == 'get_profile'
       @response_to_user = @user.generate_link_to_profile
+
+    elsif intent == 'get_calories_summary'
+      @response_to_user = @user.get_calories_summary
+    elsif intent == 'add_calories'
+      message = self
+      @response_to_user = @user.add_calories(message)
     else
       @response_to_user = "I HAVE NO IDEA WHAT YOU'RE TALKING ABOUT"
     end
@@ -113,7 +119,6 @@ class Message < ApplicationRecord
   end
 
   def queryNutritionix(food)
-    puts food
     configure_nutritionix_client
 
     search_params = {
