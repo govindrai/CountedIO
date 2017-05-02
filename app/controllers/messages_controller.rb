@@ -25,7 +25,7 @@ class MessagesController < ApplicationController
     head :ok
   end
 
-  def test_add_item_intent
+  def test_add_meal_intent
     @message = Message.create!(phone_number: ENV["GOVIND_PHONE_NUMBER"], body: "I ate five cookies, a waffle, and 42 slices of cheese and an orange")
     @message.reply_to_user
     head :ok

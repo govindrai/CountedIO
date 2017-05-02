@@ -28,7 +28,7 @@ class User < ApplicationRecord
     else
       remaining_calories = get_suggested_calories.to_s
     end
-    message = "You have consumed " + calories_consumed.to_s + "calories today. You may only consume " + remaining_calories + " more to meet your daily goal."
+    message = "You have consumed #{calories_consumed} calories today. You may only consume #{remaining_calories} more to meet your daily goal."
   end
 
   def get_suggested_calories

@@ -27,19 +27,45 @@ class Message < ApplicationRecord
       display_how_to
     when 'get_calories_summary'
       @response_to_user = @user.get_calories_summary
-    when 'add_calories'
-      add_calories
     else
       @response_to_user = "I HAVE NO IDEA WHAT YOU'RE TALKING ABOUT"
     end
   end
 
-  def ask_to_register
-    @response_to_user = %Q(
-    Hey there! We'd love to help you, but you need to be registered!\n\nReady to register? Just say "Register"
-    )
-    # @response_to_user = "https://media.giphy.com/media/zCmxiQtydu8kE/giphy.gif"
-    # reply_to_user_gif
+  def add_meal
+    foods_array = extract_food
+    message = "Roger that! I have added "
+    message_fail = ""
+    foods_array.each do |food_obj|
+      if food_obj[:food] == "User Defined Calories"
+        puts food_obj
+        Meal.create({
+          user: @user,
+          food_name: food_obj[:food],
+          calories: food_obj[:calories],
+          quantity: food_obj[:quantity],
+          meal_type: 'Snack'
+        })
+        message = "Sweet. I have added #{food_obj[:calories]} to today's calorie count."
+      elsif food_obj[:calories]
+        total_calories =  (food_obj[:calories] * food_obj[:quantity].to_f).round
+        Meal.create({
+          user: @user,
+          food_name: food_obj[:food],
+          calories: total_calories,
+          quantity: food_obj[:quantity],
+          meal_type: 'BreakfastCHANGETHIS'
+        })
+        message += "#{food_obj[:original_description]} (#{total_calories} calories), "
+      else
+        message_fail += "#{food_obj[:food]}, "
+      end
+    end
+    message.chomp!(", ")
+    if message_fail != ""
+      message+= "😭 Sorry, we couldn't find the following items in the database #{message_fail.chomp(", ")}. If possible, try to be even more specific. You can also say things like 'Add 50 calories' if this isn't working out. 👍"
+    end
+    @response_to_user = message
   end
 
   def get_caloric_information
@@ -54,18 +80,6 @@ class Message < ApplicationRecord
       end
     end
     @response_to_user = message
-  end
-
-  def add_calories
-    calories = self.json_wit_response["entities"]["food_description"][0]["entities"]["number"][0]["value"]
-    @meal = Meal.create({
-      calories: calories,
-      user: @user,
-      quantity: 1,
-      food_name: 'User Defined Calories',
-      meal_type: 'snack'
-      })
-    @response_to_user = "We have added #{calories} to today's calories."
   end
 
   def reply_to_user
@@ -102,23 +116,32 @@ class Message < ApplicationRecord
         @temp_user.target_weight_pounds = self.body
         @user = User.create(name: @temp_user.name, phone_number: @temp_user.phone_number, age: @temp_user.age, weight_pounds: @temp_user.weight_pounds, height_inches: @temp_user.height_inches, target_weight_pounds: @temp_user.target_weight_pounds, sex: @temp_user.sex)
         @temp_user.destroy
-        message = "Your profile has been created"
+        message = "Thanks a lot! Your profile has been created and you can start tracking now!\n"
+        if loosing weight
+          message += "To loose weight, you should consume x calories, x less than your maintenance calories\n"
+        else
+          message += "To loose weight, you should consume x calories, x less than your maintenance calories\n"
+        end
+        message += "Based on your target weight, if you stick to this goal, you will reach your goal by XXXXX\n"
+        message += "Type \"help\" for a quick briefer"
       else
         if @temp_user.height_inches
           @temp_user.weight_pounds = self.body
-          message = "Last question...what is your target weight? 🤔🤔"
+          message = "(5/5) Last question... read carefully\n"
+          message += "To maintain your current weight, you should consume x calories\n"
+          message += "What is your target weight? 🤔🤔"
         elsif @temp_user.sex
           @temp_user.height_inches = self.body
-          message = "What is your current weight?"
+          message = "(4/5) What is your current weight?"
         elsif @temp_user.age
           @temp_user.sex = self.body
-          message = "How tall are you in inches?"
+          message = "(3/5) How tall are you in inches?"
         elsif @temp_user.name
           @temp_user.age = self.body
-          message = "And, what is your sex?"
+          message = "(2/5) And, what is your sex?"
         elsif @temp_user
           @temp_user.name = self.body
-          message = "Thanks, #{@temp_user.name}. How old are you?"
+          message = "(1/5) Thanks, #{@temp_user.name}. How old are you?"
         end
         @temp_user.save
       end
@@ -128,13 +151,6 @@ class Message < ApplicationRecord
     end
     @response_to_user = message
   end
-
-  # def reset
-  #   value_to_reset = [{name:nil}, {age:nil}, {sex:nil}, {height_inches:nil}, {weight_pounds:nil}, {target_weight_pounds:nil}]
-  #   values = [@temp_user.name, @temp_user.age, @temp_user.sex, @temp_user.height_inches, @temp_user.weight_pounds, @temp_user.target_weight_pounds]
-  #   values.delete nil
-  #   @temp_user.update(values.count
-  # end
 
   # looks at a JSON response from wit.ai and extracts intent
   def extract_intent
@@ -150,10 +166,18 @@ class Message < ApplicationRecord
   # looks at the wit response, parses out foods, quantities and units into an array
   def extract_food
     foods = self.json_wit_response["entities"]["food_description"]
+
     foods_array = []
+
     foods.each do |food_hash|
       entities = food_hash["entities"]
       food = entities["food"] ? entities["food"][0]["value"] : nil
+      if food == 'calories'
+        calories = entities["number"] ? entities["number"][0]["value"] : 1
+        food = "User Defined Calories"
+      else
+        calories = extract_calories(food)
+      end
       quantity = entities["number"] ? entities["number"][0]["value"] : 1
       unit = entities["unit"] ? entities["unit"][0]["value"] : nil
       original_description = food_hash["value"]
@@ -162,7 +186,7 @@ class Message < ApplicationRecord
         food: food,
         quantity: quantity,
         unit: unit,
-        calories: extract_calories(food),
+        calories: calories,
         original_description: original_description
       })
     end
@@ -187,31 +211,6 @@ class Message < ApplicationRecord
     }
 
     @nutritionix_client.nxql_search(search_params)
-  end
-
-  def add_meal
-    foods_array = extract_food
-    message_success = "Thanks for sharing! We have added "
-    message_fail = "Sorry, we couldn't find"
-    foods_array.each do |food_obj|
-      if food_obj[:calories]
-        total_calories =  (food_obj[:calories] * food_obj[:quantity].to_f).round
-
-        Meal.create({
-          user: @user,
-          food_name: food_obj[:food],
-          calories: total_calories,
-          quantity: food_obj[:quantity],
-          meal_type: 'BreakfastCHANGETHIS'
-          })
-
-        message_success += "#{food_obj[:original_description]} (#{total_calories} calories), "
-      else
-        message_fail += "#{food_obj[:food]}, "
-      end
-    end
-    message_fail += "in the database! If possible, try to be even more specific. You can also say things like 'Add 50 calories' if this isn't working out. :)"
-    @response_to_user = message_success.chomp(", ") + message_fail + "!"
   end
 
   # sends sms to wit, updates the messages table
@@ -250,6 +249,14 @@ class Message < ApplicationRecord
     @response_to_user += "Get daily calories: \"How many calories have I had today\"\n"
     @response_to_user += "Get caloric content: \"How many calories are in an apple\"\n"
     @response_to_user += "Add calories: \"Add 500 calories\"\n"
+  end
+
+  def ask_to_register
+    @response_to_user = %Q(
+    Hey there! We'd love to help you, but you need to be registered!\n\nReady to register? Just say "Register"
+    )
+    # @response_to_user = "https://media.giphy.com/media/zCmxiQtydu8kE/giphy.gif"
+    # reply_to_user_gif
   end
 
   private
