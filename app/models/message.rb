@@ -90,7 +90,7 @@ class Message < ApplicationRecord
         @temp_user.name = self.body
         message = "How old are you?"
       end
-      @temp_user.save if @temp_user
+      @temp_user.save
     else
       @temp_user = TempUser.create(phone_number: self.phone_number)
       message = "Hey There!\nWhat is your name?\nYou can also say 'reset' or 'start over' at anytime to restart."
