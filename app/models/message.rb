@@ -58,7 +58,7 @@ class Message < ApplicationRecord
   end
 
   def register_user
-    return "You are already registered!" if User.find_by(phone_number: self.phone_number)
+    return @response_to_user = "You are already registered!" if User.find_by(phone_number: self.phone_number)
 
     @temp_user = TempUser.find_by(phone_number: self.phone_number)
 
