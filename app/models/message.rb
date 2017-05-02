@@ -38,7 +38,7 @@ class Message < ApplicationRecord
     message_fail = ""
     foods_array.each do |food_obj|
       if food_obj[:food] == "User Defined Calories"
-        puts "MADE IT INTO USER DEFINED CALORIES ADD MEAL"
+        puts "MADE IT INTO USER DEFINED CALOR"
         Meal.create({
           user: @user,
           food_name: food_obj[:food],
@@ -64,14 +64,6 @@ class Message < ApplicationRecord
       message+= "😭 Sorry, we couldn't find the following items in the database #{message_fail.chomp(", ")}. If possible, try to be even more specific. You can also say things like 'Add 50 calories' if this isn't working out. 👍"
     end
     @response_to_user = message
-  end
-
-  def ask_to_register
-    @response_to_user = %Q(
-    Hey there! We'd love to help you, but you need to be registered!\n\nReady to register? Just say "Register"
-    )
-    # @response_to_user = "https://media.giphy.com/media/zCmxiQtydu8kE/giphy.gif"
-    # reply_to_user_gif
   end
 
   def get_caloric_information
@@ -246,6 +238,14 @@ class Message < ApplicationRecord
     @response_to_user += "Get daily calories: \"How many calories have I had today\"\n"
     @response_to_user += "Get caloric content: \"How many calories are in an apple\"\n"
     @response_to_user += "Add calories: \"Add 500 calories\"\n"
+  end
+
+  def ask_to_register
+    @response_to_user = %Q(
+    Hey there! We'd love to help you, but you need to be registered!\n\nReady to register? Just say "Register"
+    )
+    # @response_to_user = "https://media.giphy.com/media/zCmxiQtydu8kE/giphy.gif"
+    # reply_to_user_gif
   end
 
   private
