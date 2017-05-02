@@ -19,6 +19,10 @@ class Message < ApplicationRecord
       get_caloric_information
     when 'get_profile'
       @response_to_user = @user.generate_link_to_profile
+    when 'capabilities'
+
+    when 'how_to'
+
     else
       @response_to_user = "I HAVE NO IDEA WHAT YOU'RE TALKING ABOUT"
     end
