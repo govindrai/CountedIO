@@ -38,11 +38,10 @@ class Message < ApplicationRecord
     message_fail = ""
     foods_array.each do |food_obj|
       if food_obj[:food] == "User Defined Calories"
-        puts "MADE IT INTO USER DEFINED CALOR"
         Meal.create({
           user: @user,
           food_name: food_obj[:food],
-          calories: food_description[:calories],
+          calories: food_obj[:calories],
           quantity: food_obj[:quantity],
           meal_type: 'Snack'
         })
