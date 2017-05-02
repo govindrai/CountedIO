@@ -27,11 +27,41 @@ class Message < ApplicationRecord
       display_how_to
     when 'get_calories_summary'
       @response_to_user = @user.get_calories_summary
-    when 'add_calories'
-      add_calories
     else
       @response_to_user = "I HAVE NO IDEA WHAT YOU'RE TALKING ABOUT"
     end
+  end
+
+  def add_meal
+    foods_array = extract_food
+    message = "Thanks for sharing! We have added "
+    message_fail = ""
+    foods_array.each do |food_obj|
+      if food_obj[:food] == "User Defined Calories"
+        Meal.create({
+          user: @user,
+          food_name: food_obj[:food],
+          calories: food_description[:calories],
+          meal_type: 'Snack'
+        })
+        message = "We have added #{calories} to today's calories."
+      elsif food_obj[:calories]
+        total_calories =  (food_obj[:calories] * food_obj[:quantity].to_f).round
+        Meal.create({
+          user: @user,
+          food_name: food_obj[:food],
+          calories: total_calories,
+          meal_type: 'BreakfastCHANGETHIS'
+        })
+        message += "#{food_obj[:original_description]} (#{total_calories} calories), "
+      else
+        message_fail += "#{food_obj[:food]}, "
+      end
+    end
+    if message_fail != ""
+      message.chomp!(", ") += "😭 Sorry, we couldn't find the following items in the database #{message_fail.chomp(", ")}. If possible, try to be even more specific. You can also say things like 'Add 50 calories' if this isn't working out. 👍"
+    end
+    @response_to_user = message
   end
 
   def ask_to_register
@@ -54,18 +84,6 @@ class Message < ApplicationRecord
       end
     end
     @response_to_user = message
-  end
-
-  def add_calories
-    calories = self.json_wit_response["entities"]["food_description"][0]["entities"]["number"][0]["value"]
-    @meal = Meal.create({
-      calories: calories,
-      user: @user,
-      quantity: 1,
-      food_name: 'User Defined Calories',
-      meal_type: 'snack'
-      })
-    @response_to_user = "We have added #{calories} to today's calories."
   end
 
   def reply_to_user
@@ -129,13 +147,6 @@ class Message < ApplicationRecord
     @response_to_user = message
   end
 
-  # def reset
-  #   value_to_reset = [{name:nil}, {age:nil}, {sex:nil}, {height_inches:nil}, {weight_pounds:nil}, {target_weight_pounds:nil}]
-  #   values = [@temp_user.name, @temp_user.age, @temp_user.sex, @temp_user.height_inches, @temp_user.weight_pounds, @temp_user.target_weight_pounds]
-  #   values.delete nil
-  #   @temp_user.update(values.count
-  # end
-
   # looks at a JSON response from wit.ai and extracts intent
   def extract_intent
     @intent ||= self.json_wit_response["entities"]["intent"][0]["value"] if self.json_wit_response["entities"]["intent"]
@@ -150,10 +161,18 @@ class Message < ApplicationRecord
   # looks at the wit response, parses out foods, quantities and units into an array
   def extract_food
     foods = self.json_wit_response["entities"]["food_description"]
+
     foods_array = []
+
     foods.each do |food_hash|
       entities = food_hash["entities"]
       food = entities["food"] ? entities["food"][0]["value"] : nil
+      if food == 'calories'
+        calories = entities["number"] ? entities["number"][0]["value"] : 1
+        food = "User Defined Calories"
+      else
+        calories = extract_calories(food)
+      end
       quantity = entities["number"] ? entities["number"][0]["value"] : 1
       unit = entities["unit"] ? entities["unit"][0]["value"] : nil
       original_description = food_hash["value"]
@@ -162,7 +181,7 @@ class Message < ApplicationRecord
         food: food,
         quantity: quantity,
         unit: unit,
-        calories: extract_calories(food),
+        calories: calories,
         original_description: original_description
       })
     end
@@ -187,31 +206,6 @@ class Message < ApplicationRecord
     }
 
     @nutritionix_client.nxql_search(search_params)
-  end
-
-  def add_meal
-    foods_array = extract_food
-    message_success = "Thanks for sharing! We have added "
-    message_fail = "Sorry, we couldn't find"
-    foods_array.each do |food_obj|
-      if food_obj[:calories]
-        total_calories =  (food_obj[:calories] * food_obj[:quantity].to_f).round
-
-        Meal.create({
-          user: @user,
-          food_name: food_obj[:food],
-          calories: total_calories,
-          quantity: food_obj[:quantity],
-          meal_type: 'BreakfastCHANGETHIS'
-          })
-
-        message_success += "#{food_obj[:original_description]} (#{total_calories} calories), "
-      else
-        message_fail += "#{food_obj[:food]}, "
-      end
-    end
-    message_fail += "in the database! If possible, try to be even more specific. You can also say things like 'Add 50 calories' if this isn't working out. :)"
-    @response_to_user = message_success.chomp(", ") + message_fail + "!"
   end
 
   # sends sms to wit, updates the messages table
