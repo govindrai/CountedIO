@@ -117,7 +117,7 @@ class Message < ApplicationRecord
         @user = User.create(name: @temp_user.name, phone_number: @temp_user.phone_number, age: @temp_user.age, weight_pounds: @temp_user.weight_pounds, height_inches: @temp_user.height_inches, target_weight_pounds: @temp_user.target_weight_pounds, sex: @temp_user.sex)
         @temp_user.destroy
         message = "Thanks a lot! Your profile has been created and you can start tracking now!\n"
-        if loosing weight
+        if "loosing weight"
           message += "To loose weight, you should consume x calories, x less than your maintenance calories\n"
         else
           message += "To loose weight, you should consume x calories, x less than your maintenance calories\n"
