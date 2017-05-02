@@ -36,7 +36,7 @@ class Message < ApplicationRecord
 
   def ask_to_register
     @response_to_user = %Q(
-    Hey there! We'd love to help you, but you need to be registered!\nReady to register? Just say "Register
+    Hey there! We'd love to help you, but you need to be registered!\n\nReady to register? Just say "Register
     )
     # @response_to_user = "https://media.giphy.com/media/zCmxiQtydu8kE/giphy.gif"
     # reply_to_user_gif
@@ -93,9 +93,8 @@ class Message < ApplicationRecord
     @temp_user = TempUser.find_by(phone_number: self.phone_number)
 
     if self.body == "reset" || self.body == 'Reset'
-      @temp_user.restore_attributes
-      # @temp_user.destroy if @temp_user
-      # @temp_user = nil
+      @temp_user.destroy if @temp_user
+      @temp_user = nil
     end
 
     if @temp_user
@@ -107,7 +106,7 @@ class Message < ApplicationRecord
       else
         if @temp_user.height_inches
           @temp_user.weight_pounds = self.body
-          message = "What is your target weight?"
+          message = "Last question...what is your target weight? 🤔🤔"
         elsif @temp_user.sex
           @temp_user.height_inches = self.body
           message = "What is your current weight?"
@@ -116,21 +115,25 @@ class Message < ApplicationRecord
           message = "How tall are you in inches?"
         elsif @temp_user.name
           @temp_user.age = self.body
-          message = "What is your sex?"
+          message = "And, what is your sex?"
         elsif @temp_user
           @temp_user.name = self.body
-          message = "How old are you?"
+          message = "Thanks, #{@temp_user.name}. How old are you?"
         end
         @temp_user.save
       end
     else
       @temp_user = TempUser.create(phone_number: self.phone_number)
-      @response_to_user = "Hi there! My name is Vilde, your very-own wellness assistant. 🏋️. I’m very excited 🤗 to help you become more conscience of your eating habits and achieve your health goals😀.\n\nI need to ask you a couple of questions to get to know you a little better."
-      reply_to_user
-
-      message = %Q(What should I call you? (say "reset" at any time if you make a mistake))
+      message = %Q(Hi there! My name is Vilde, your very-own wellness assistant. 🏋️. I’m very excited 🤗 to help you become more conscience of your eating habits and achieve your health goals😀.\n\nIn order to help, I will ask you some basic wellness questions.\n\nFirst, what should I call you? (say "reset" at any time if you make a mistake))
     end
     @response_to_user = message
+  end
+
+  def reset
+    value_to_reset = [{name:nil}, {age:nil}, {sex:nil}, {height_inches:nil}, {weight_pounds:nil}, {target_weight_pounds:nil}]
+    values = [@temp_user.name, @temp_user.age, @temp_user.sex, @temp_user.height_inches, @temp_user.weight_pounds, @temp_user.target_weight_pounds]
+    values.delete nil
+    @temp_user.update(values.count
   end
 
   # looks at a JSON response from wit.ai and extracts intent
