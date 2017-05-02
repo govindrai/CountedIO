@@ -58,8 +58,9 @@ class Message < ApplicationRecord
         message_fail += "#{food_obj[:food]}, "
       end
     end
+    message.chomp!(", ")
     if message_fail != ""
-      message.chomp!(", ") += "😭 Sorry, we couldn't find the following items in the database #{message_fail.chomp(", ")}. If possible, try to be even more specific. You can also say things like 'Add 50 calories' if this isn't working out. 👍"
+      message+= "😭 Sorry, we couldn't find the following items in the database #{message_fail.chomp(", ")}. If possible, try to be even more specific. You can also say things like 'Add 50 calories' if this isn't working out. 👍"
     end
     @response_to_user = message
   end
