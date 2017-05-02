@@ -1,6 +1,6 @@
 class User < ApplicationRecord
-  has_many :meals, dependent: destroy
-  has_many :messages, dependent: destroy
+  has_many :meals, dependent: :destroy
+  has_many :messages, dependent: :destroy
 
   before_save :generate_randomized_profile_url
 
