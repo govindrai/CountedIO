@@ -27,4 +27,10 @@ class User < ApplicationRecord
     message = "You have consumed " + calories_consumed + " today."
   end
 
+  def add_calories(message)
+    calories = message.json_wit_response["entities"]["food_description"][0]["entities"]["number"][0]["value"]
+    @meal = Meal.create(calories: calories, user: self, quantity: 1, food_name: '', meal_type: 'snack',  )
+    message = "We have added " + calories + " to your account."
+  end
+
 end
