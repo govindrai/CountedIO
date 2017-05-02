@@ -4,23 +4,25 @@ require 'nutritionix/api_1_1'
 require 'json'
 
 class Message < ApplicationRecord
-  after_create :message_wit
+  after_create :message_wit, :set_user
 
   # Takes a path based on intent
   def intent_controller
     intent = extract_intent
-    @user = User.find_by(phone_number: self.phone_number)
 
-    if intent == 'register' || TempUser.find_by(phone_number: self.phone_number)
-      register_user
-    elsif intent == 'add_meal'
-      add_meal
-    elsif intent == 'caloric_information'
-      # do something
-    elsif intent == 'get_profile'
-      @response_to_user = @user.generate_link_to_profile
-    else
-      # send twilio response saying "I have no idea what you're talking about"
+    case intent
+      when 'register' || TempUser.find_by(phone_number: self.phone_number)
+        register_user
+      when 'add_meal'
+        add_meal
+      when 'caloric_information'
+        # do something
+      when 'get_profile'
+        @response_to_user = @user.generate_link_to_profile
+      when 'caloric_information'
+
+      else
+        # send twilio response saying "I have no idea what you're talking about"
     end
     reply
   end
@@ -160,6 +162,10 @@ class Message < ApplicationRecord
   end
 
   private
+
+  def set_user
+    @user = User.find_by(phone_number: self.phone_number)
+  end
 
   # sample api response, useful for studying/querying
   def sample_twilio_response
