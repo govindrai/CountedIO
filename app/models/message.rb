@@ -262,9 +262,7 @@ class Message < ApplicationRecord
       else
         if @temp_user.height_inches
           @temp_user.weight_pounds = self.body
-          message = "(5/5) Last question... read carefully\n"
-          message += "To maintain your current weight, you should consume x calories\n"
-          message += "What is your target weight? 🤔🤔"
+          message = "(5/5) Last question! What is your target weight? 🤔🤔"
         elsif @temp_user.sex
           @temp_user.height_inches = self.body
           message = "(4/5) What is your current weight?"
@@ -282,7 +280,7 @@ class Message < ApplicationRecord
       end
     else
       @temp_user = TempUser.create(phone_number: self.phone_number)
-      message = %Q(Hi there! My name is Vilde, your very-own wellness assistant. 🏋️. I’m very excited 🤗 to help you become more conscience of your eating habits and achieve your health goals😀.\n\nIn order to help, I will ask you some basic wellness questions.\n\nFirst, what should I call you? (say "reset" at any time if you make a mistake))
+      message = %Q(Hi there! My name is Vilde, your very-own wellness assistant. 🏋️. I’m very excited 🤗 to help you become more conscience of your eating habits and achieve your health goals. 😀\n\nIn order to help, I will ask you some basic wellness questions.\n\nFirst, what should I call you? (say "reset" at any time if you make a mistake))
     end
     @response_to_user = message
   end
