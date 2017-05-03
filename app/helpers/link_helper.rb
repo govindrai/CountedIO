@@ -27,4 +27,9 @@ module LinkHelper
     link = LinkHelper.user_show_base(user) + week
   end
 
+    def self.next_week(date, user)
+    week = "&week=" + (date + 7.days).strftime("%F") + '-' + (date + 14.days).strftime("%F")
+    link = LinkHelper.user_show_base(user) + week
+  end
+
 end
