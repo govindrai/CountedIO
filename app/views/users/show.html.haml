@@ -1,11 +1,11 @@
 
 
 %span.back
-  &#8678
+  = link_to "&#8678;".html_safe, "#{@date - 1.days}"
 %span
   = @date.strftime("%F")
 %span.forward
-  &#8680
+  = link_to "&#8680;".html_safe, LinkHelper.next_day(@date, @user)
 
 - if @authorized
   %h1= @user.name

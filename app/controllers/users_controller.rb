@@ -1,5 +1,6 @@
 class UsersController < ApplicationController
   before_action :set_user, only: [:show]
+  include LinkHelper
 
   def show
     if @user.randomized_profile_url == params[:random]
