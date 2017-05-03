@@ -3,7 +3,7 @@
 :javascript
   var ctx = $("#myChart");
   var data = {
-    labels: #{@chart_data[0]},
+    labels: ["Breakfast", "Lunch", "Dinner", "Snack", "Remaining Calories"],
     datasets: [
         {
             data: #{@chart_data[1]},

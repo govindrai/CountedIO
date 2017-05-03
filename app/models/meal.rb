@@ -23,9 +23,8 @@ class Meal < ApplicationRecord
 
   def self.get_pie_chart_data(user, date_obj)
     meal_labels =  ["Breakfast", "Lunch", "Dinner", "Snack", "Remaining Calories"]
-    p user
-    p date_obj
-    meal_values = [Meal.get_day_breakfast(user, date_obj).count, Meal.get_day_lunch(user, date_obj).count, Meal.get_day_dinner(user, date_obj).count, user.get_calories_summary_num]
+    calories_summary = user.get_calories_summary_num ? user.get_calories_summary_num : 0
+    meal_values = [Meal.get_day_breakfast(user, date_obj).sum(:calories), Meal.get_day_lunch(user, date_obj).sum(:calories), Meal.get_day_dinner(user, date_obj).sum(:calories), Meal.get_day_snack(user, date_obj).sum(:calories), calories_summary]
     package = [meal_labels, meal_values]
   end
 
