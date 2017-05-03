@@ -1,10 +1,18 @@
-%h2 @meal_type
+-4.times do |x|
+  {id:"#{Meal.get_meal_type[x]}-meals"}
+    %h2= Meal.get_meal_type[x]
 
-%table
-  %tbody
-    %tr
-      %td Item
-      %td Quantity
-      %td Serving
-      %td Calories
+    %table
+      %tbody
+        %tr
+          %td Item
+          %td Quantity
+          %td Serving
+          %td Calories
+          - meals[x].each_with_index do |meal, index|
+            %tr
+              %td= meal.name
+              %td= meal.quantity
+              %td= meal.units
+              %td= meal.calories
 

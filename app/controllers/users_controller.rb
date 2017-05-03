@@ -3,9 +3,8 @@ class UsersController < ApplicationController
   include LinkHelper
 
   def show
-    if @user.randomized_profile_url == params[:random]
-      @authorized = true
-    end
+    @authorized = true if @user.randomized_profile_url == params[:random]
+
     if params[:week]
       dates = params[:week].split('_')
       @range = (DateTime.parse(dates[0])..DateTime.parse(dates[1]))
@@ -13,8 +12,8 @@ class UsersController < ApplicationController
     elsif params[:month]
       @date = DateTime.new(DateTime.now.year, params[:month])
     else
-      @date = DateTime.parse(params[:date]) if params[:date]
-      @meals = get_day_meals(@user, @date)
+      @date = params[:date] ? DateTime.parse(params[:date]) : DateTime.now
+      @meals = Meal.get_day_meals(@user, @date)
       @chart_data = Meal.get_pie_chart_data(@user, @date)
     end
   end
