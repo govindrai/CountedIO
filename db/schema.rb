@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170503001953) do
+ActiveRecord::Schema.define(version: 20170503010707) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -59,13 +59,13 @@ ActiveRecord::Schema.define(version: 20170503001953) do
     t.integer  "height_inches",          null: false
     t.integer  "target_weight_pounds",   null: false
     t.string   "sex",                    null: false
-    t.string   "randomized_profile_url", null: false
+    t.string   "randomized_profile_url"
     t.datetime "created_at",             null: false
     t.datetime "updated_at",             null: false
     t.string   "name",                   null: false
-    t.integer  "maintenance_calories",   null: false
-    t.string   "weight_direction",       null: false
-    t.integer  "target_calories",        null: false
+    t.integer  "maintenance_calories"
+    t.string   "weight_direction"
+    t.integer  "target_calories"
     t.index ["phone_number"], name: "index_users_on_phone_number", using: :btree
   end
 

@@ -8,6 +8,11 @@ class UsersController < ApplicationController
     @meals = Meal.where(user: @user)
   end
 
+  def chart_testing
+    @user = User.first
+    @meals = Meal.where(user: @user)
+  end
+
   private
 
   def set_user

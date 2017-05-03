@@ -13,3 +13,9 @@
  *= require_tree .
  *= require_self
  */
+
+#chart-container {
+  width: 500px;
+  height: 500px;
+  margin: auto;
+}

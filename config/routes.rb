@@ -13,5 +13,6 @@ Rails.application.routes.draw do
   get '/test_caloric_information_intent', to: 'messages#test_caloric_information_intent'
   get '/test_add_calories_intent', to: 'messages#test_add_calories_intent'
   get '/test_unknown_user', to: 'messages#test_unknown_user'
+  get '/charttesting', to: 'users#chart_testing'
 
 end
