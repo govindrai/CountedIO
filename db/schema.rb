@@ -65,6 +65,7 @@ ActiveRecord::Schema.define(version: 20170502233553) do
     t.string   "name",                   null: false
     t.integer  "maintenance_calories",   null: false
     t.string   "weight_direction",       null: false
+    t.integer  "target_calories",        null: false
     t.index ["phone_number"], name: "index_users_on_phone_number", using: :btree
   end
 

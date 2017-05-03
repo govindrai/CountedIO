@@ -2,7 +2,7 @@ class User < ApplicationRecord
   has_many :meals, dependent: :destroy
   has_many :messages, dependent: :destroy
 
-  before_save :generate_randomized_profile_url, :set_maintainance_calories, :set_weight_direction
+  before_save :generate_randomized_profile_url, :set_maintainance_calories, :set_weight_goal_values
 
   def generate_link_to_profile
     base_url = "https://vildeio.herokuapp.com/profile/#{self.id}?random="
@@ -28,14 +28,25 @@ class User < ApplicationRecord
     self.randomized_profile_url = random_url
   end
 
-  def set_weight_direction
+  # sets weight direction and target calories
+  def set_weight_goal_values
     if self.target_weight_pounds < self.weight_pounds
       self.weight_direction = "Weight Gain"
+      self.target_calories = self.maintenance_calories + 500
     elsif self.target_weight_pounds > self.weight_pounds
       self.weight_direction = "Weight Loss"
+      self.target_calories = self.maintenance_calories - 500
     else
       self.weight_direction = "Maintain Weight"
+      self.target_calores = self.maintenance_calories
     end
+  end
+
+  def time_to_success
+    weeks = (self.target_weight_pounds - self.weight_pounds).to_i.abs
+    days = weeks * 7
+    date = (Date.today + days).strftime("%m/%d/%Y")
+    "#{days} days (#{date})"
   end
 
   def set_maintainance_calories
