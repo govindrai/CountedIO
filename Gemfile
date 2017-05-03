@@ -34,6 +34,7 @@ gem 'twilio-ruby', '~> 4.11.1'
 gem 'wit'
 gem 'nutritionix'
 gem 'chart-js-rails'
+gem 'normalize-rails'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development

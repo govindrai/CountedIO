@@ -91,6 +91,7 @@ GEM
     nio4r (2.0.0)
     nokogiri (1.7.1)
       mini_portile2 (~> 2.1.0)
+    normalize-rails (4.1.1)
     nutritionix (1.1.0)
       rest-client
     pg (0.20.0)
@@ -184,6 +185,7 @@ DEPENDENCIES
   jbuilder (~> 2.5)
   jquery-rails
   listen (~> 3.0.5)
+  normalize-rails
   nutritionix
   pg (~> 0.18)
   puma (~> 3.0)

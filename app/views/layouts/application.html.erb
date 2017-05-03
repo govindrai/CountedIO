@@ -3,10 +3,16 @@
   <head>
     <title>VildeIO</title>
     <%= csrf_meta_tags %>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <%= stylesheet_link_tag    'application', media: 'all' %>
     <%= javascript_include_tag 'application' %>
   </head>
+
+  <nav>
+    <%= link_to 'Day', 'links', class: "nav-1"%>
+    <%= link_to 'Week', 'links', class: "nav-2" %>
+    <%= link_to 'Month', 'links', class: "nav-3" %>
+  </nav>
 
   <body>
     <%= yield %>
