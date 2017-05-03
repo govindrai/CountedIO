@@ -14,3 +14,31 @@
 //= require Chart
 //= require jquery_ujs
 //= require_tree .
+
+$(document).ready(function () {
+  $('body').on("click", '.back', replaceContent)
+  $('body').on("click", '.forward', replaceContent)
+  $('body').on("click", '.refresh', refresh)
+
+})
+
+var replaceContent = function () {
+  var URL = $(this).children().attr('href')
+  $.ajax({
+    url: URL
+  })
+  .done(function (response) {
+    console.log(response)
+    $('body').append(response)
+  })
+}
+
+var refresh = function () {
+  myDoughnutChart.data.datasets[0].data = [45,123,213]
+  myDoughnutChart.update()
+}
+
+
+
+
+

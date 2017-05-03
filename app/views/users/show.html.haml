@@ -1,59 +1,18 @@
-%h1 This is a User Show page
+
+%button.refresh Refresh
+
+%span.back
+  = link_to "&#8678;".html_safe, LinkHelper.previous_day(@date, @user)
+%span
+  = @date.strftime("%F")
+%span.forward
+  = link_to "&#8680;".html_safe, LinkHelper.next_day(@date, @user)
 
 - if @authorized
   %h1= @user.name
-
-- if @meals
-  - @meals.each do |meal|
-    %h3= meal.food_name
-    %p= meal.calories
-
-%canvas#myChart {"width"=>"200" "height"=>"200"}
-
-:javascript
-  function showData(event, activeElements) {
-    console.log("SLDJFSLDJF")
-    console.log(activeElements)
-    activeElementass = activeElements
-    console.log(activeElements[0]._model.label)
-    $("#myChart").after("HERE ARE THE MEALS FOR " + activeElements[0]._model.label + " YAAASSS!!\n")
-  }
-
-:javascript
-  var ctx = $("#myChart");
-  var data = {
-    labels: [
-        "Breakfast",
-        "Lunch",
-        "Dinner",
-        "Snacks",
-        "Remaining Calories"
-    ],
-    datasets: [
-        {
-            data: [300, 500, 1000, 200, 200],
-            backgroundColor: [
-                "#FF6384",
-                "#36A2EB",
-                "#FFCE56",
-                "orange",
-                "green"
-            ],
-            hoverBackgroundColor: [
-                "#FF6384",
-                "#36A2EB",
-                "#FFCE56"
-            ]
-        }]
-  };
-
-  var myDoughnutChart = new Chart(ctx, {
-    type: 'doughnut',
-    data: data,
-    options: {
-      animation:{
-
-      },
-      onClick: showData
-    }
-  });
+  -if params[:week]
+    = render partial: 'week', locals: { meals: @meals}
+  -elsif params[:month]
+    = render partial: 'month', locals: { meals: @meals}
+  -else
+    = render partial: 'day', locals: { meals: @meals}

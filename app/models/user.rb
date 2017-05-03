@@ -6,17 +6,22 @@ class User < ApplicationRecord
 
   def generate_link_to_profile
     base_url = "https://vildeio.herokuapp.com/profile/#{self.id}?random="
-    message = "Here is your profile:  " + base_url + generate_randomized_profile_url
+    date = DateTime.now.strftime("%F")
+    message = "Here is your profile:  " + base_url + generate_randomized_profile_url + "&date=" + date
   end
 
   def get_calories_summary
-    calories_consumed = self.meals.where("created_at >= ?", Time.now.beginning_of_day.in_time_zone("Pacific Time (US & Canada)")).pluck(:calories).inject {|acc, sum| acc + sum }
+    calories_consumed = get_calories_summary_num
     if calories_consumed
       remaining_calories = (get_suggested_calories - calories_consumed).to_s
     else
       remaining_calories = get_suggested_calories.to_s
     end
     message = "You have consumed #{calories_consumed} calories today. You may only consume #{remaining_calories} more to meet your daily goal."
+  end
+
+  def get_calories_summary_num
+    self.meals.where("created_at >= ?", Time.now.beginning_of_day.in_time_zone("Pacific Time (US & Canada)")).pluck(:calories).inject {|acc, sum| acc + sum }
   end
 
   def time_to_success
