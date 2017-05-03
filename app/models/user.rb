@@ -38,11 +38,11 @@ class User < ApplicationRecord
   # sets weight direction and target calories
   def set_weight_goal_values
     if self.target_weight_pounds < self.weight_pounds
-      self.weight_direction = "Weight Gain"
-      self.target_calories = self.maintenance_calories + 500
-    elsif self.target_weight_pounds > self.weight_pounds
       self.weight_direction = "Weight Loss"
       self.target_calories = self.maintenance_calories - 500
+    elsif self.target_weight_pounds > self.weight_pounds
+      self.weight_direction = "Weight Gain"
+      self.target_calories = self.maintenance_calories + 500
     else
       self.weight_direction = "Maintain Weight"
       self.target_calores = self.maintenance_calories
