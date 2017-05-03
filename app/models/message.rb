@@ -252,9 +252,9 @@ class Message < ApplicationRecord
         when "Weight Loss"
           message += "To meet your goal, you should consume #{@user.target_calories} calories, 500 less than your maintenance calories (#{@user.maintenance_calories}) to lose weight.\n"
         when "Weight Gain"
-          message += "To meet your goal, you should consume #{@user.target_calores} calories, 500 more than your maintenance calories (#{user.maintenance_calories}) to gain weight\n"
+          message += "To meet your goal, you should consume #{@user.target_calories} calories, 500 more than your maintenance calories (#{user.maintenance_calories}) to gain weight\n"
         default
-          message += "Since you want to maintain weight, just keep your daily average intake to #{@user.target_calores}"
+          message += "Since you want to maintain weight, just keep your daily average intake to #{@user.target_calories}"
         end
 
         message += "If you stick to this goal, you will reach your goal in #{@user.time_to_success}\n"
