@@ -2,7 +2,7 @@ class User < ApplicationRecord
   has_many :meals, dependent: :destroy
   has_many :messages, dependent: :destroy
 
-  after_create :generate_randomized_profile_url, :set_maintenance_calories, :set_weight_goal_values
+  before_create :generate_randomized_profile_url, :set_maintenance_calories, :set_weight_goal_values
 
   def generate_link_to_profile
     base_url = "https://vildeio.herokuapp.com/profile/#{self.id}?random="
@@ -30,10 +30,10 @@ class User < ApplicationRecord
 
   # sets weight direction and target calories
   def set_weight_goal_values
-    if self.target_weight_pounds.to_i < self.weight_pounds.to_i
+    if self.target_weight_pounds < self.weight_pounds
       self.weight_direction = "Weight Gain"
       self.target_calories = self.maintenance_calories + 500
-    elsif self.target_weight_pounds.to_i > self.weight_pounds.to_i
+    elsif self.target_weight_pounds > self.weight_pounds
       self.weight_direction = "Weight Loss"
       self.target_calories = self.maintenance_calories - 500
     else
@@ -53,9 +53,9 @@ class User < ApplicationRecord
     activity_level = {"Sitting all day": 1.2, "Seated work, no exercise": 1.3, "Seated work, light exercise": 1.4, "Moderately physical, no exercise": 1.5, "Moderately physical work, light exercise": 1.6, "Moderately physical work, heavy exercise": 1.7, "Heavy work/ heavy exercise": 1.8, "Above average physical activity": 2}
 
     if self.sex == "male" || self.sex =="Male"
-      (1.4 * bmr_formula_male).round()
+      self.maintenance_calories = (1.4 * bmr_formula_male).round()
     else
-      (1.4 * bmr_formula_female).round()
+      self.maintenance_calories = (1.4 * bmr_formula_female).round()
     end
   end
 
