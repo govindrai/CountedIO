@@ -19,6 +19,13 @@ class User < ApplicationRecord
     message = "You have consumed #{calories_consumed} calories today. You may only consume #{remaining_calories} more to meet your daily goal."
   end
 
+  def time_to_success
+    weeks = (self.target_weight_pounds - self.weight_pounds).to_i.abs
+    days = weeks * 7
+    date = (Date.today + days).strftime("%m/%d/%Y")
+    "#{days} days (#{date})"
+  end
+
   private
 
   def generate_randomized_profile_url
@@ -40,13 +47,6 @@ class User < ApplicationRecord
       self.weight_direction = "Maintain Weight"
       self.target_calores = self.maintenance_calories
     end
-  end
-
-  def time_to_success
-    weeks = (self.target_weight_pounds - self.weight_pounds).to_i.abs
-    days = weeks * 7
-    date = (Date.today + days).strftime("%m/%d/%Y")
-    "#{days} days (#{date})"
   end
 
   def set_maintenance_calories
