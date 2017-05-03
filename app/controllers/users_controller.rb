@@ -7,18 +7,21 @@ class UsersController < ApplicationController
       @authorized = true
     end
 
-
-    if params[:week]
-      dates = params[:week].split('_')
-      @range = (DateTime.parse(dates[0])..DateTime.parse(dates[1]))
-      @date =  DateTime.parse(dates[0])
-    elsif params[:month]
-      @date = DateTime.new(DateTime.now.year, params[:month])
+    if request.xhr?
+      @chart_data = {data: Meal.get_pie_chart_data(@user, @date)}.to_json
+      head :ok
     else
-      @date = DateTime.parse(params[:date])
+      if params[:week]
+        dates = params[:week].split('_')
+        @range = (DateTime.parse(dates[0])..DateTime.parse(dates[1]))
+        @date =  DateTime.parse(dates[0])
+      elsif params[:month]
+        @date = DateTime.new(DateTime.now.year, params[:month])
+      else
+        @date = DateTime.parse(params[:date])
+      end
+        @chart_data = Meal.get_pie_chart_data(@user, @date)
     end
-    @meals = Meal.where(user: @user)
-    @chart_data = Meal.get_pie_chart_data(@user, @date)
   end
 
   private
