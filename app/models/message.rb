@@ -65,7 +65,7 @@ class Message < ApplicationRecord
     foods_array.each do |food_obj|
       if food_obj[:calories]
         total_calories =  (food_obj[:calories] * food_obj[:quantity].to_f).round
-        message += "#{food_obj[:original_description]} has/have #{total_calories} calories.\n"
+        message += "A #{food_obj[:original_description]} has #{total_calories} calories. YUM! 😋\n"
       else
         message += "I'm sorry we weren't able to find #{food_obj[:original_description]} in the database"
       end
@@ -211,12 +211,13 @@ class Message < ApplicationRecord
   end
 
   def display_how_to
-    @response_to_user = "Adding food: \"I just ate grilled chicken breast\"\n"
-    @response_to_user += "Show profile: \"Show me my profile\"\n"
-    @response_to_user += "Registering: \"I want to register\"\n"
-    @response_to_user += "Get daily calories: \"How many calories have I had today\"\n"
-    @response_to_user += "Get caloric content: \"How many calories are in an apple\"\n"
-    @response_to_user += "Add calories: \"Add 500 calories\"\n"
+    @response_to_user = "Common commands:\n\n"
+    @response_to_user += "Adding food: \"I just ate grilled chicken breast\"\n\n"
+    @response_to_user += "Show profile: \"Show me my profile\"\\nn"
+    @response_to_user += "Registering: \"I want to register\"\\nn"
+    @response_to_user += "Get daily calories: \"How many calories have I had today\"\\nn"
+    @response_to_user += "Get caloric content: \"How many calories are in an apple\"\\nn"
+    @response_to_user += "Add calories: \"Add 500 calories\""
   end
 
   ############################
@@ -246,19 +247,19 @@ class Message < ApplicationRecord
         @temp_user.target_weight_pounds = self.body
         @user = User.create(name: @temp_user.name, phone_number: @temp_user.phone_number, age: @temp_user.age, weight_pounds: @temp_user.weight_pounds, height_inches: @temp_user.height_inches, target_weight_pounds: @temp_user.target_weight_pounds, sex: @temp_user.sex)
         @temp_user.destroy
-        message = "Thanks a lot! Your profile has been created and you can start tracking now!\n"
+        message = "Thanks a lot! Your profile has been created and you can start tracking now!\n\n"
 
         case @user.weight_direction
         when "Weight Loss"
-          message += "To meet your goal, you should consume #{@user.target_calories} calories, 500 less than your maintenance calories (#{@user.maintenance_calories}) to lose weight.\n"
+          message += "To meet your goal, you should consume #{@user.target_calories} calories, 500 less than your maintenance calories (#{@user.maintenance_calories}).\n\n"
         when "Weight Gain"
-          message += "To meet your goal, you should consume #{@user.target_calories} calories, 500 more than your maintenance calories (#{user.maintenance_calories}) to gain weight\n"
+          message += "To meet your goal, you should consume #{@user.target_calories} calories, 500 more than your maintenance calories (#{user.maintenance_calories}).\n\n"
         default
           message += "Since you want to maintain weight, just keep your daily average intake to #{@user.target_calories}"
         end
 
-        message += "If you stick to this goal, you will reach your goal in #{@user.time_to_success}\n"
-        message += "Type \"help\" for a quick briefer"
+        message += "If you stick to this goal, you will reach your goal in #{@user.time_to_success}. YOU CAN DO IT!! 🤗\n\n"
+        message += "If you need help, just ask!"
       else
         if @temp_user.height_inches
           @temp_user.weight_pounds = self.body
