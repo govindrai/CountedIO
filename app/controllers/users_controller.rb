@@ -5,6 +5,7 @@ class UsersController < ApplicationController
     if @user.randomized_profile_url == params[:random]
       @authorized = true
     end
+    @date = Time.now
     @meals = Meal.where(user: @user)
   end
 

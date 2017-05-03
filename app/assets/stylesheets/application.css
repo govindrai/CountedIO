@@ -27,6 +27,47 @@ body {
 
 nav {
   display: flex;
+  height: 60px;
+  margin: 0;
+}
+
+button {
+  text-decoration: none;
+  color: white;
+  padding: 0;
+  margin: 0;
+  font-size: 25px;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+#nav-1 {
+  background-color: #FF6384
+}
+
+#nav-1:hover {
+  background-color: #FF6384
+}
+
+#nav-2 {
+  background-color: #36A2EB
+}
+
+#nav-2:hover {
+  background-color: #36A2EB
+}
+
+#nav-3 {
+  background-color: #FFCE56
+}
+
+#nav-3:hover {
+  background-color: #FFCE56
 }
 
 .col-1 {width: 8.33%;}
@@ -45,5 +86,5 @@ nav {
 [class*="col-"] {
     float: left;
     padding: 15px;
-    border: 1px solid red;
+    border: 1px solid white;
 }
