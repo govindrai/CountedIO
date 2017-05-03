@@ -20,6 +20,10 @@ class User < ApplicationRecord
     message = "You have consumed #{calories_consumed} calories today. You may only consume #{remaining_calories} more to meet your daily goal."
   end
 
+  def get_calories_summary_num
+
+  end
+
   def time_to_success
     weeks = (self.target_weight_pounds - self.weight_pounds).to_i.abs
     days = weeks * 7

@@ -7,6 +7,8 @@ class UsersController < ApplicationController
       @authorized = true
     end
 
+    @chart_data = Meal.get_pie_chart_data(@user, @date)
+
     if params[:week]
       dates = params[:week].split('_')
       @range = (DateTime.parse(dates[0])..DateTime.parse(dates[1]))

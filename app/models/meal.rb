@@ -21,4 +21,10 @@ class Meal < ApplicationRecord
     Meal.where("user_id = ? AND created_at >= ? AND meal_type = ?", user.id, (date_obj.beginning_of_day.to_time - 7.hours).to_datetime, "Snack")
   end
 
+  def self.get_pie_chart_data(user, date_obj)
+    meal_labels =  ["Breakfast", "Lunch", "Dinner", "Snack", "Remaining Calories"]
+    meal_values = [Meal.get_day_breakfast(user, date_obj).count, Meal.get_day_lunch(user, date_obj).count, Meal.get_day_dinner(user, date_obj).count, ]
+    package = [meal_labels, meal_values]
+  end
+
 end

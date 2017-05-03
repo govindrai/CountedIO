@@ -2,7 +2,7 @@ module LinkHelper
 
   def self.user_show_base(user)
     base = Rails.application.routes.url_helpers.profile_path(user.id)
-    random = "/?&random=" + user.randomized_profile_url
+    random = "?&random=" + user.randomized_profile_url
     link = base + random
   end
 

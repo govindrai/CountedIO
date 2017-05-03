@@ -3,14 +3,10 @@
 :javascript
   var ctx = $("#myChart");
   var data = {
-    labels: [
-        "Red",
-        "Blue",
-        "Yellow"
-    ],
+    labels: #{@chart_data[0]},
     datasets: [
         {
-            data: [300, 50, 100],
+            data: #{@chart_data[1]},
             backgroundColor: [
                 "#FF6384",
                 "#36A2EB",
