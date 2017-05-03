@@ -15,4 +15,15 @@ module LinkHelper
     date = "&date=" + (date - 1.days).strftime("%F")
     link = LinkHelper.user_show_base(user) + date
   end
+
+  def self.this_week(date, user)
+    week = "&week=" + (date - 7.days).strftime("%F") + '-' + (date).strftime("%F")
+    link = LinkHelper.user_show_base(user) + week
+  end
+
+
+  def
+
+  end
+
 end

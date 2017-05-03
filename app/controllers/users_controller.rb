@@ -6,7 +6,14 @@ class UsersController < ApplicationController
     if @user.randomized_profile_url == params[:random]
       @authorized = true
     end
-    @date = DateTime.parse(params[:date])
+
+    if params[:week]
+      @date =  ''
+    elsif params[:month]
+      @date = ''
+    else
+      @date = DateTime.parse(params[:date])
+    end
     @meals = Meal.where(user: @user)
   end
 

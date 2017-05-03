@@ -1,7 +1,7 @@
 
 
 %span.back
-  = link_to "&#8678;".html_safe, "#{@date - 1.days}"
+  = link_to "&#8678;".html_safe, LinkHelper.previous_day(@date, @user)
 %span
   = @date.strftime("%F")
 %span.forward
