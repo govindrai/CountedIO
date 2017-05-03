@@ -6,7 +6,8 @@ class User < ApplicationRecord
 
   def generate_link_to_profile
     base_url = "https://vildeio.herokuapp.com/profile/#{self.id}?random="
-    message = "Here is your profile:  " + base_url + generate_randomized_profile_url
+    date = DateTime.now.strftime("%F")
+    message = "Here is your profile:  " + base_url + generate_randomized_profile_url + "&date=" + date
   end
 
   def get_calories_summary
