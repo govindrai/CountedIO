@@ -11,7 +11,7 @@ class User < ApplicationRecord
   end
 
   def get_calories_summary
-    calories_consumed = self.meals.where("created_at >= ?", Time.now.beginning_of_day.in_time_zone("Pacific Time (US & Canada)")).pluck(:calories).inject {|acc, sum| acc + sum }
+    calories_consumed = get_calories_summary_num
     if calories_consumed
       remaining_calories = (get_suggested_calories - calories_consumed).to_s
     else
@@ -21,7 +21,7 @@ class User < ApplicationRecord
   end
 
   def get_calories_summary_num
-
+    self.meals.where("created_at >= ?", Time.now.beginning_of_day.in_time_zone("Pacific Time (US & Canada)")).pluck(:calories).inject {|acc, sum| acc + sum }
   end
 
   def time_to_success
