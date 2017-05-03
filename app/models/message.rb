@@ -254,7 +254,7 @@ class Message < ApplicationRecord
           message += "To meet your goal, you should consume #{@user.target_calories} calories, 500 less than your maintenance calories (#{@user.maintenance_calories}).\n\n"
         when "Weight Gain"
           message += "To meet your goal, you should consume #{@user.target_calories} calories, 500 more than your maintenance calories (#{@user.maintenance_calories}).\n\n"
-        default
+        else
           message += "Since you want to maintain weight, just keep your daily average intake to #{@user.target_calories}"
         end
 
