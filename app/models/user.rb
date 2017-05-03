@@ -2,7 +2,7 @@ class User < ApplicationRecord
   has_many :meals, dependent: :destroy
   has_many :messages, dependent: :destroy
 
-  before_save :generate_randomized_profile_url, :set_maintainance_calories, :set_weight_goal_values
+  before_create :generate_randomized_profile_url, :set_maintainance_calories, :set_weight_goal_values
 
   def generate_link_to_profile
     base_url = "https://vildeio.herokuapp.com/profile/#{self.id}?random="
