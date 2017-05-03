@@ -2,7 +2,7 @@ class User < ApplicationRecord
   has_many :meals, dependent: :destroy
   has_many :messages, dependent: :destroy
 
-  before_create :generate_randomized_profile_url, :set_maintainance_calories, :set_weight_goal_values
+  after_create :generate_randomized_profile_url, :set_maintenance_calories, :set_weight_goal_values
 
   def generate_link_to_profile
     base_url = "https://vildeio.herokuapp.com/profile/#{self.id}?random="
@@ -49,7 +49,7 @@ class User < ApplicationRecord
     "#{days} days (#{date})"
   end
 
-  def set_maintainance_calories
+  def set_maintenance_calories
     activity_level = {"Sitting all day": 1.2, "Seated work, no exercise": 1.3, "Seated work, light exercise": 1.4, "Moderately physical, no exercise": 1.5, "Moderately physical work, light exercise": 1.6, "Moderately physical work, heavy exercise": 1.7, "Heavy work/ heavy exercise": 1.8, "Above average physical activity": 2}
 
     if self.sex == "male" || self.sex =="Male"
