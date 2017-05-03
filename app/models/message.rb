@@ -247,12 +247,17 @@ class Message < ApplicationRecord
         @user = User.create(name: @temp_user.name, phone_number: @temp_user.phone_number, age: @temp_user.age, weight_pounds: @temp_user.weight_pounds, height_inches: @temp_user.height_inches, target_weight_pounds: @temp_user.target_weight_pounds, sex: @temp_user.sex)
         @temp_user.destroy
         message = "Thanks a lot! Your profile has been created and you can start tracking now!\n"
-        if "loosing weight"
-          message += "To loose weight, you should consume x calories, x less than your maintenance calories\n"
-        else
-          message += "To loose weight, you should consume x calories, x less than your maintenance calories\n"
+
+        case @user.weight_direction
+        when "Weight Loss"
+          message += "To meet your goal, you should consume #{@user.target_calories} calories, 500 less than your maintenance calories (#{@user.maintenance_calories}) to lose weight.\n"
+        when "Weight Gain"
+          message += "To meet your goal, you should consume #{@user.target_calores} calories, 500 more than your maintenance calories (#{user.maintenance_calories}) to gain weight\n"
+        default
+          message += "Since you want to maintain weight, just keep your daily average intake to #{@user.target_calores}"
         end
-        message += "Based on your target weight, if you stick to this goal, you will reach your goal by XXXXX\n"
+
+        message += "If you stick to this goal, you will reach your goal in #{@user.time_to_success}\n"
         message += "Type \"help\" for a quick briefer"
       else
         if @temp_user.height_inches

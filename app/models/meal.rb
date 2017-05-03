@@ -1,7 +1,6 @@
 class Meal < ApplicationRecord
   belongs_to :user
 
-
   def self.get_day_meals(user, date_obj)
     Meal.where("user_id = ? AND created_at >= ?", user.id, (date_obj.beginning_of_day.to_time - 7.hours).to_datetime)
   end
