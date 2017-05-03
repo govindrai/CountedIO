@@ -7,7 +7,6 @@ class UsersController < ApplicationController
       @authorized = true
     end
 
-    @chart_data = Meal.get_pie_chart_data(@user, @date)
 
     if params[:week]
       dates = params[:week].split('_')
@@ -19,6 +18,7 @@ class UsersController < ApplicationController
       @date = DateTime.parse(params[:date])
     end
     @meals = Meal.where(user: @user)
+    @chart_data = Meal.get_pie_chart_data(@user, @date)
   end
 
   private
