@@ -37,4 +37,14 @@ module LinkHelper
     link = LinkHelper.user_show_base(user) + month
   end
 
+  def self.next_month(date, user)
+    month = "&month=" + (date.month + 1).to_s
+    link = LinkHelper.user_show_base(user) + month
+  end
+
+  def self.previous_month(date, user)
+    month = "&month=" + (date.month - 1).to_s
+    link = LinkHelper.user_show_base(user) + month
+  end
+
 end
