@@ -6,8 +6,6 @@ class UsersController < ApplicationController
     if @user.randomized_profile_url == params[:random]
       @authorized = true
     end
-
-
     if params[:week]
       dates = params[:week].split('_')
       @range = (DateTime.parse(dates[0])..DateTime.parse(dates[1]))
@@ -15,15 +13,10 @@ class UsersController < ApplicationController
     elsif params[:month]
       @date = DateTime.new(DateTime.now.year, params[:month])
     else
-      @date = DateTime.parse(params[:date])
+      @date = DateTime.parse(params[:date]) if params[:date]
+      @meals = get_day_meals(@user, @date)
+      @chart_data = Meal.get_pie_chart_data(@user, @date)
     end
-    @meals = Meal.where(user: @user)
-    @chart_data = Meal.get_pie_chart_data(@user, @date)
-  end
-
-  def chart_testing
-    @user = User.first
-    @meals = Meal.where(user: @user)
   end
 
   private
