@@ -8,9 +8,11 @@ class UsersController < ApplicationController
     end
 
     if params[:week]
-      @date =  ''
+      dates = params[:week].split('_')
+      @range = (DateTime.parse(dates[0])..DateTime.parse(dates[1]))
+      @date =  DateTime.parse(dates[0])
     elsif params[:month]
-      @date = ''
+      @date = DateTime.new(DateTime.now.year, params[:month])
     else
       @date = DateTime.parse(params[:date])
     end

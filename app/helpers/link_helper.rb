@@ -2,7 +2,7 @@ module LinkHelper
 
   def self.user_show_base(user)
     base = Rails.application.routes.url_helpers.profile_path(user.id)
-    random = "&random=" + user.randomized_profile_url
+    random = "/?&random=" + user.randomized_profile_url
     link = base + random
   end
 
@@ -17,18 +17,17 @@ module LinkHelper
   end
 
   def self.this_week(date, user)
-    week = "&week=" + (date - 7.days).strftime("%F") + '-' + (date).strftime("%F")
+    week = "&week=" + (date - 7.days).strftime("%F") + '_' + (date).strftime("%F")
     link = LinkHelper.user_show_base(user) + week
   end
 
-
   def self.previous_week(date, user)
-    week = "&week=" + (date - 14.days).strftime("%F") + '-' + (date - 7.days).strftime("%F")
+    week = "&week=" + (date - 14.days).strftime("%F") + '_' + (date - 7.days).strftime("%F")
     link = LinkHelper.user_show_base(user) + week
   end
 
   def self.next_week(date, user)
-    week = "&week=" + (date + 7.days).strftime("%F") + '-' + (date + 14.days).strftime("%F")
+    week = "&week=" + (date + 7.days).strftime("%F") + '_' + (date + 14.days).strftime("%F")
     link = LinkHelper.user_show_base(user) + week
   end
 
