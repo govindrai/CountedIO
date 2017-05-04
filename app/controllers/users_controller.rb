@@ -3,7 +3,6 @@ class UsersController < ApplicationController
   include LinkHelper
 
   def show
-
   end
 
   private
