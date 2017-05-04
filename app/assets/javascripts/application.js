@@ -29,9 +29,9 @@ $(document).ready(function () {
 var replaceContent = function (e) {
   e.preventDefault();
   var URL = $(this)[0].baseURI
-  var date = $(this).parent().parent().find('.date').text();
+  var date = $(this).parent().parent().find('.date')
   var direction = $(this).attr('class')
-  var data = `date=${date}&direction=${direction}`
+  var data = `date=${date.text()}&direction=${direction}`
 
   $.ajax({
     url: URL,
@@ -42,7 +42,7 @@ var replaceContent = function (e) {
     console.log("original data", myDoughnutChart.data.datasets[0].data)
     console.log("new_data", response.data)
     console.log(response.date)
-    $('.date').text(response.date)
+    date.text(response.date)
     myDoughnutChart.data.datasets[0].data = response.data
     myDoughnutChart.update();
   })
