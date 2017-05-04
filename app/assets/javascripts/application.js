@@ -19,17 +19,24 @@ $(document).ready(function () {
   $('body').on("click", '.back', replaceContent)
   $('body').on("click", '.forward', replaceContent)
   $('body').on("click", '.refresh', refresh)
-
 })
 
 var replaceContent = function () {
-  var URL = $(this).children().attr('href')
+  var URL = $(this)[0].baseURI
   $.ajax({
-    url: URL
+    url: URL,
+    method: 'get'
   })
   .done(function (response) {
-    console.log(response)
-    $('body').append(response)
+    console.log(response.data)
+    console.log(myDoughnutChart.data.datasets[0].data)
+    myDoughnutChart.data.datasets[0].data = response.data
+    console.log(myDoughnutChart)
+    console.log(myDoughnutChart.data.datasets[0].data)
+    myDoughnutChart.update();
+  })
+  .fail(function () {
+    console.log("Shit is messed up")
   })
 }
 
