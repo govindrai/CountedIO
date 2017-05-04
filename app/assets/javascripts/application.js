@@ -155,7 +155,7 @@ var getMonthData = function () {
   })
 }
 
-var getDayMeals = function (response) {
+var getDayMeals = function () {
   var baseUrl = $(document)[0].URL.split("?")
   var url = baseUrl[0] + "/get_day_meals" + "?" + baseUrl[1]
   $.ajax({
