@@ -29,7 +29,7 @@ class User < ApplicationRecord
   def get_bar_chart_data(date)
     weekly_calories = []
     7.times do |x|
-      meal_values = self.get_pie_chart_data(date + x)
+      meal_values = self.get_pie_chart_data(date + x + 1)
       meal_values.pop
       weekly_calories.push(meal_values.inject(0,:+))
     end

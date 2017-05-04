@@ -1,4 +1,8 @@
+
+
 = render partial: 'day'
 = render partial: 'week'
 = render partial: 'month'
-= render partial: 'meals/meals_by_type', locals: {meals: @meals}
+
+:javascript
+  var getDay = $.ajax
