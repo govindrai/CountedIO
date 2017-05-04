@@ -21,7 +21,7 @@ class User < ApplicationRecord
   end
 
   def get_calories_summary_num
-    self.meals.where("created_at >= ?", Time.now.beginning_of_day.in_time_zone("Pacific Time (US & Canada)")).pluck(:calories).inject {|acc, sum| acc + sum }
+    self.meals.where("created_at >= ?", Time.now.beginning_of_day.in_time_zone("Pacific Time (US & Canada)")).sum(:calories)
   end
 
   def time_to_success
