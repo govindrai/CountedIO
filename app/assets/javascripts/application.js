@@ -19,6 +19,7 @@ $(document).ready(function () {
   $('body').on("click", '.back', replaceContent)
   $('body').on("click", '.forward', replaceContent)
   $('body').on("click", '.refresh', refresh)
+  $('body').on('click', '.close-meals', closeMeals)
 })
 
 var replaceContent = function (e) {
@@ -48,8 +49,9 @@ var replaceContent = function (e) {
   })
 }
 
-var closeMeals = function () {
-
+var closeMeals = function (e) {
+  e.preventDefault();
+  $(this).parent().toggle()
 }
 
 var refresh = function () {
