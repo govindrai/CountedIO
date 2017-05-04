@@ -3,7 +3,6 @@ class UsersController < ApplicationController
   include LinkHelper
 
   def show
-
     @authorized = true if @user.randomized_profile_url == params[:random]
 
     if params[:week]
@@ -20,7 +19,13 @@ class UsersController < ApplicationController
 
 
     if request.xhr?
-      @chart_data = {data: Meal.get_pie_chart_data(@user, @date)}.to_json
+      if params[:direction] == 'forward'
+        @date = DateTime.parse(params[:date]) + 1
+      else
+        @date = DateTime.parse(params[:date]) - 1
+      end
+
+      @chart_data = {data: Meal.get_pie_chart_data(@user, @date), date: @date.strftime("%F")}.to_json
       render json: @chart_data, layout:false
     else
       @chart_data = Meal.get_pie_chart_data(@user, @date)

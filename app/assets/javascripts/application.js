@@ -21,18 +21,26 @@ $(document).ready(function () {
   $('body').on("click", '.refresh', refresh)
 })
 
-var replaceContent = function () {
+var replaceContent = function (e) {
+  e.preventDefault();
+  console.log(this)
   var URL = $(this)[0].baseURI
+  var date = $('.date').text()
+  var direction = $(this).attr('class')
+  var data = `date=${date}&direction=${direction}`
+  console.log(data)
+
   $.ajax({
     url: URL,
-    method: 'get'
+    method: 'get',
+    data: data
   })
   .done(function (response) {
-    console.log(response.data)
-    console.log(myDoughnutChart.data.datasets[0].data)
+    console.log("original data", myDoughnutChart.data.datasets[0].data)
+    console.log("new_data", response.data)
+    console.log(response.date)
+    $('.date').text(response.date)
     myDoughnutChart.data.datasets[0].data = response.data
-    console.log(myDoughnutChart)
-    console.log(myDoughnutChart.data.datasets[0].data)
     myDoughnutChart.update();
   })
   .fail(function () {
