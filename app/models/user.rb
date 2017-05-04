@@ -5,53 +5,54 @@ class User < ApplicationRecord
   before_create :generate_randomized_profile_url, :set_maintenance_calories, :set_weight_goal_values
 
   def get_calories_consumed
-    self.meals.where("created_at >= ?", Time.now.beginning_of_day.in_time_zone("Pacific Time (US & Canada)")).sum(:calories)
+    self.meals.where("created_at >= ? AND create_at <=", today_PST, tomorrow_PST).sum(:calories)
   end
 
-  def time_to_success
+  #############################
+  # Get meals for a certain day and/or meal_type
+  #############################
+  def get_all_meals(date)
+    [get_breakfast_meals(date), get_lunch_meals(date), get_dinner_meals(date), get_snack_meals( date)]
+  end
+
+  def get_breakfast_meals(date)
+    self.meals.where("created_at >= ? AND created_at <= ? AND meal_type = ?", today_PST, tomorrow_PST, "Breakfast")
+  end
+
+  def get_lunch_meals(date)
+    self.meals.where("created_at >= ? AND created_at <= ? AND meal_type = ?", today_PST, tomorrow_PST, "Lunch")
+  end
+
+  def get_dinner_meals(date)
+    self.meals.where("created_at >= ? AND created_at <= ? AND meal_type = ?", today_PST, tomorrow_PST, "Dinner")
+  end
+
+  def get_snack_meals(date)
+    self.meals.where("created_at >= ? AND created_at <= ? AND meal_type = ?", today_PST, tomorrow_PST, "Snack")
+  end
+
+  def get_pie_chart_data(date)
+    calories_remaining = user.target_calories - get_calories_consumed
+    calories_remaining = 0 if calories_remaining < 0
+
+    meal_values = [get_breakfast_meals(date).sum(:calories), get_lunch_meals(date).sum(:calories), get_dinner_meals(date).sum(:calories), get_snack_meals(date).sum(:calories), calories_remaining]
+  end
+
+  def get_time_to_success
     weeks = (self.target_weight_pounds - self.weight_pounds).to_i.abs
     days = weeks * 7
     date = (Date.today + days).strftime("%m/%d/%Y")
     "#{days} days (#{date})"
   end
 
-  def get_day_meals(date_obj)
-    [Meal.get_day_breakfast(date_obj), Meal.get_day_lunch(date_obj), Meal.get_day_dinner(date_obj), Meal.get_day_snack( date_obj)]
-  end
-
-  def get_day_breakfast(date_obj)
-    Meal.where("user_id = ? AND created_at >= ? AND created_at <= ? AND meal_type = ?", user.id, (date_obj.beginning_of_day.to_time - 7.hours).to_datetime, (date_obj.beginning_of_day.to_time - 7.hours).to_datetime + 1.days, "Breakfast")
-  end
-
-  def get_day_lunch(date_obj)
-    Meal.where("user_id = ? AND created_at >= ? AND created_at <= ? AND meal_type = ?", user.id, (date_obj.beginning_of_day.to_time - 7.hours).to_datetime, (date_obj.beginning_of_day.to_time - 7.hours).to_datetime + 1.days, "Lunch")
-  end
-
-  def get_day_dinner(date_obj)
-    Meal.where("user_id = ? AND created_at >= ? AND created_at <= ? AND meal_type = ?", user.id, (date_obj.beginning_of_day.to_time - 7.hours).to_datetime, (date_obj.beginning_of_day.to_time - 7.hours).to_datetime + 1.days, "Dinner")
-  end
-
-  def get_day_snack(date_obj)
-    Meal.where("user_id = ? AND created_at >= ? AND created_at <= ? AND meal_type = ?", user.id, (date_obj.beginning_of_day.to_time - 7.hours).to_datetime, (date_obj.beginning_of_day.to_time - 7.hours).to_datetime + 1.days, "Snack")
-  end
-
-  def get_pie_chart_data(user, date_obj)
-    calories_eaten = user.get_calories_summary_num
-    puts("CALORIES EATEN BRUH:", calories_eaten)
-    calories_remaining = user.target_calories - calories_eaten
-    calories_remaining = 0 if calories_remaining < 0
-
-    meal_values = [Meal.get_day_breakfast(user, date_obj).sum(:calories), Meal.get_day_lunch(user, date_obj).sum(:calories), Meal.get_day_dinner(user, date_obj).sum(:calories), Meal.get_day_snack(user, date_obj).sum(:calories), calories_remaining]
-  end
-
-  def self.get_meal_types
-    ['Breakfast', 'Lunch', 'Dinner', 'Snack']
-  end
-
   private
 
-  def convertToPST(datetime)
+  def today_PST
+    Time.now.beginning_of_day.in_time_zone("Pacific Time (US & Canada)")
+  end
 
+  def tomorrow_PST
+    Time.now.beginning_of_day.in_time_zone("Pacific Time (US & Canada)") + 1.days
   end
 
   def generate_randomized_profile_url
