@@ -12,12 +12,28 @@
 :javascript
   var dtx = $("#monthChart");
   var data = {
-        labels: ["Date1", "Date2", "Date3", "Date4", "Date5", "Date6", "Date7","Date1", "Date2", "Date3", "Date4", "Date5", "Date6", "Date7","Date1", "Date2", "Date3", "Date4", "Date5", "Date6", "Date7","Date1", "Date2", "Date3", "Date4", "Date5", "Date6", "Date7","Date29", "Date30"],
+        labels: [],
       datasets: [{
-        data: [1800, 1600, 400, 900, 700, 100,1800, 1600, 400, 900, 700, 100,1800, 1600, 400, 900, 700, 1001800, 1600, 400, 900, 700, 100,1800, 1600, 400, 900, 700, 100]
-      },{
+        data: [],
+        backgroundColor: [
+          "#FF6384",
+          "#36A2EB",
+          "#FFCE56",
+          "#FFA500",
+          "#2EDF2E"
+        ],
+        borderColor: [
+          "#E55A77",
+          "#3399DE",
+          "#EEC04F",
+          "#EB9800",
+          "#28BF28"
+        ],
+        borderWidth: 1
+      },
+      {
         type: 'line',
-        data: [2000,1000,200,100,2000,3000,2000]
+        data: []
       }
       ]
     }
