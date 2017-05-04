@@ -1,6 +1,6 @@
 .day
   .change-page
-    %span.change-page-link
+    %span.change-page-link.day-link
       = link_to "&#8678;".html_safe, get_day_data_path(@user), class: 'back dayChart'
     %span.date.change-page-link
       = @date.strftime("%F")

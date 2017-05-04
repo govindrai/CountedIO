@@ -17,12 +17,16 @@
 
 $(document).ready(function () {
 
-  $('body').on("click", '#nav-1', toggleDay)
-  $('body').on("click", '#nav-2', toggleWeek)
-  $('body').on("click", '#nav-3', toggleMonth)
-  $('body').on("click", '.back', replaceContent)
-  $('body').on("click", '.forward', replaceContent)
-  $('body').on('click', '.close-meals', closeMeals)
+  $('body').on("click", '#nav-1', toggleDay);
+  $('body').on("click", '#nav-2', toggleWeek);
+  $('body').on("click", '#nav-3', toggleMonth);
+  $('body').on("click", '.back', replaceContent);
+  $('body').on("click", '.forward', replaceContent);
+  $('body').on('click', '.close-meals', closeMeals);
+  console.log("IN THE DOCUMENT READY")
+  getDayData();
+  console.log("IN THE DOCUMENT READY")
+
 })
 
 var replaceContent = function (e) {
@@ -42,7 +46,10 @@ var replaceContent = function (e) {
     data: data
   })
   .done(function (response) {
-    console.log(response)
+    console.log("This is the date from the page")
+    console.log(date)
+    console.log("This is the date from the server")
+    console.log(response.date)
     date.text(response.date)
     if (chartID == 'dayChart') {
       dayChart.data.datasets[0].data = response.data
@@ -53,7 +60,6 @@ var replaceContent = function (e) {
       weekChart.data.datasets[1].data = response.target_calories
       weekChart.update();
     } else {
-      console.log("HITTING THIS ROUTE")
       monthChart.data.datasets[0].data = response.data
       monthChart.data.labels = response.labels
       monthChart.data.datasets[1].data = response.target_calories
@@ -95,24 +101,23 @@ var hideTabs = function () {
 }
 
 
-
-var getDay = $.ajax({
-    url: URL,
-    method: 'get',
-    data: data
-})
-
-
-var getDay = function () {
-  debugger
+var getDayData = function () {
+  console.log("Hello")
   var URL = $('.day-link').children()[0].href
+  var date = $('.day-date')
   $.ajax({
     url: URL,
-    method: 'get',
-    data: data
+    method: 'get'
   })
   .done(function (response) {
+    console.log("GETTING getDay")
+    date.text(response.date)
     dayChart.data.datasets[0].data = response.data
     dayChart.update();
   })
+  .fail(function (response) {
+    console.log("Something is messed up.")
+  })
 }
+
+
