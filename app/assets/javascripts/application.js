@@ -32,7 +32,7 @@ $(document).ready(function () {
 
 var replaceContent = function (e) {
   e.preventDefault();
-  var URL = $(this).attr('href')
+  var url = $(this).attr('href')
   var date = $(this).parent().parent().find('.date')
   var direction = $(this).attr('class')
   var data = `date=${date.text().substring(0,11)}&direction=${direction}`
@@ -42,15 +42,11 @@ var replaceContent = function (e) {
   console.log(data);
 
   $.ajax({
-    url: URL,
+    url: url,
     method: 'get',
     data: data
   })
   .done(function (response) {
-    console.log("This is the date from the page")
-    console.log(date)
-    console.log("This is the date from the server")
-    console.log(response.date)
     date.text(response.date)
     if (chartID == 'dayChart') {
       dayChart.data.datasets[0].data = response.data
@@ -70,6 +66,26 @@ var replaceContent = function (e) {
   .fail(function () {
     console.log("Shit is messed up")
   })
+
+
+  var baseUrl = $(document)[0].URL.split("?")
+  var url = baseUrl[0] + "/get_day_meals" + "?" + baseUrl[1]
+  var date = $(this).parent().parent().find('.date')
+  var direction = $(this).attr('class')
+  var data = `date=${date.text().substring(0,11)}&direction=${direction}`
+
+  $.ajax({
+    url: url,
+    method: 'get',
+    data: data
+  })
+  .done(function (response) {
+    $('.foods-container').replaceWith(response)
+  })
+  .fail(function () {
+    console.log("This function has failed")
+  })
+
 }
 
 var closeMeals = function (e) {
@@ -168,6 +184,27 @@ var getDayMeals = function () {
   })
   .fail(function (response) {
     console.log("Something is messed up.")
+  })
+}
+
+
+var getDayMealsOnToggle = function () {
+  var baseUrl = $(document)[0].URL.split("?")
+  var url = baseUrl[0] + "/get_day_meals" + "?" + baseUrl[1]
+  var date = $(this).parent().parent().find('.date')
+  var direction = $(this).attr('class')
+  var data = `date=${date.text().substring(0,11)}&direction=${direction}`
+
+  $.ajax({
+    url: url,
+    method: 'get',
+    data: data
+  })
+  .done(function (response) {
+    $('.foods-container').replaceWith(response)
+  })
+  .fail(function () {
+    console.log("This function has failed")
   })
 }
 

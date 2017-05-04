@@ -66,16 +66,16 @@ class UsersController < ApplicationController
   end
 
   def get_day_meals
+    p params
     if request.xhr?
       @date = params[:date] ? DateTime.parse(params[:date]) : DateTime.now
       if params[:direction]
         if params[:direction].include?('forward')
-          date =  @date + 1.months
+          @date += 1
         elsif params[:direction].include?('back')
-          date = @date - 1.months
+          p "HITTING THIS OTHER BITCH"
+          @date -= 1
         end
-      else
-        date = @date
       end
       @meals = @user.get_all_meals(@date)
       render partial: 'get_day_meals', layout: false, locals: { meals: @meals}
