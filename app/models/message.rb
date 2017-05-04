@@ -20,7 +20,7 @@ class Message < ApplicationRecord
     when 'caloric_information'
       get_caloric_information
     when 'get_profile'
-      @response_to_user = @user.generate_link_to_profile
+      get_profile
     when 'capabilities'
       display_capabilities
     when 'how_to'
@@ -32,6 +32,10 @@ class Message < ApplicationRecord
     else
       @response_to_user = "I HAVE NO IDEA WHAT YOU'RE TALKING ABOUT"
     end
+  end
+
+  def get_profile
+    @response_to_user = "View your profile: https://vildeio.herokuapp.com/profile/#{@user.id}?random=#{@user.generate_randomized_profile_url}"
   end
 
   def add_meal
@@ -55,7 +59,11 @@ class Message < ApplicationRecord
   end
 
   def greet
-    greetings = ["Hey there! I am more useful when you tell me to track your meals.", "How's it going? I am more useful when you tell me to track your meals.", "Hello to you to! I am more useful when you tell me to track your meals."]
+    greetings = [
+      "Hey there! I am more useful when you tell me to track your meals.",
+      "How's it going? I am more useful when you tell me to track your meals.",
+      "Hello to you to! I am more useful when you tell me to track your meals."
+    ]
     @response_to_user = greetings.sample
   end
 
