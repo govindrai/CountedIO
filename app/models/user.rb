@@ -19,7 +19,7 @@ class User < ApplicationRecord
       end
   end
 
-  def get_calories_consumed
+  def get_calories_consumed(date)
     self.meals.where("created_at >= ? AND created_at <= ?", today_PST, tomorrow_PST).sum(:calories)
   end
 
@@ -61,6 +61,10 @@ class User < ApplicationRecord
   end
 
   private
+
+  def date_to_PST(date)
+    DateTime
+  end
 
   def today_PST
     Time.now.beginning_of_day.in_time_zone("Pacific Time (US & Canada)")
