@@ -107,7 +107,7 @@ var getDayData = function () {
   })
   .done(function (response) {
     console.log("GETTING getDay")
-    date.text(response.dateLabel)
+    console.log(response)
     dayChart.data.datasets[0].data = response.data
     dayChart.update();
   })
@@ -160,7 +160,7 @@ var getDayMeals = function () {
     method: 'get'
   })
   .done(function (response) {
-    console.log(response)
+    // console.log(response)
     $('body').append(response)
   })
   .fail(function (response) {
