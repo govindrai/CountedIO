@@ -1,3 +1,4 @@
+
 %canvas#myChart {"width"=>"200" "height"=>"200"}
 
 :javascript
@@ -9,10 +10,10 @@
 :javascript
   var ctx = $("#myChart");
   var data = {
-    labels: ["Breakfast", "Lunch", "Dinner", "Snacks", "Calories Remaining"],
+    labels: ["Breakfast", "Lunch", "Dinner", "Snack", "Remaining Calories"],
     datasets: [
         {
-            data: [300, 500, 1000, 250, 200],
+            data: #{@chart_data},
             backgroundColor: [
                 "#FF6384",
                 "#36A2EB",

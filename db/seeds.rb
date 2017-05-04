@@ -6,10 +6,10 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
-User.destroy_all
+# gov = User.create(name:"govind", age:24, weight_pounds:190, target_weight_pounds:175, height_inches:70, sex:"male", phone_number: "+19257779777")
 
 
-gov = User.create(name:"govind", age:24, weight_pounds:190, target_weight_pounds:175, height_inches:70, sex:"male", phone_number: "+19257779777")
+# gov = User.create(name:"govind", age:24, weight_pounds:190, target_weight_pounds:175, height_inches:70, sex:"male", phone_number: "+19257779777")
 
 dan = User.create(name: "Daniel Welsh", phone_number: "+17802636496", age: 20, weight_pounds: 170, target_weight_pounds: 180, sex: "male", height_inches: 74)
 
@@ -32,6 +32,7 @@ Meal.create(user: dan, food_name: "Grilled Chicken Breast", calories: 300, quant
 Meal.create(user: dan, food_name: "Cake", calories: 300, quantity: 1, meal_type: "Dinner", original_description: "lala")
 
 Meal.create(user: dan, food_name: "Cake", calories: 500, quantity: 1, meal_type: "Dinner", original_description: "lala")
+
 
 
 

@@ -16,6 +16,20 @@ class UsersController < ApplicationController
       @meals = Meal.get_day_meals(@user, @date)
       @chart_data = Meal.get_pie_chart_data(@user, @date)
     end
+
+
+    if request.xhr?
+      if params[:direction] == 'forward'
+        @date = DateTime.parse(params[:date]) + 1
+      else
+        @date = DateTime.parse(params[:date]) - 1
+      end
+
+      @chart_data = {data: Meal.get_pie_chart_data(@user, @date), date: @date.strftime("%F")}.to_json
+      render json: @chart_data, layout:false
+    else
+      @chart_data = Meal.get_pie_chart_data(@user, @date)
+    end
   end
 
   private
