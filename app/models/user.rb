@@ -5,8 +5,8 @@ class User < ApplicationRecord
   before_create :generate_randomized_profile_url, :set_maintenance_calories, :set_weight_goal_values
 
   def get_line_chart_data(date)
-    month_int = User.months_to_int(date)
-    days = User.days_in_month[month_int]
+    month_int = date.month
+    days = User.days_in_month[month_int - 1].to_i
     monthly_calories = []
     days.times do |x|
       meal_values = self.get_pie_chart_data(date + x)
@@ -26,13 +26,14 @@ class User < ApplicationRecord
     weekly_calories
   end
 
+  #FIXME there is an edge case on the first of the month as UTC then drops to the month before.
   def self.generate_month_label(date)
     date.strftime("%B")
   end
 
-  # def self.days_in_month
-  #   %w(31 30 28 30 31 30 31 31 30 31 30 31)
-  # end
+  def self.days_in_month
+    %w(31 30 28 30 31 30 31 31 30 31 30 31)
+  end
 
   # def self.months
   #   %w(January February March April May June July August September October November December)

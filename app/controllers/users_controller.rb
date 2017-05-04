@@ -57,18 +57,14 @@ class UsersController < ApplicationController
 
   def get_month_data
     if request.xhr?
-      @date = DateTime.parse(params[:date])
+      @date = DateTime.parse(params[:date]).beginning_of_month
       puts @date
       if params[:direction].include?('forward')
-        date1 =  @date + 7
-        date2 =  date1 + 7
-        puts date1
-        puts date2
+        date =  @date + 1.months
       else
-        date1 = @date - 7
-        date2 = @date
+        date = @date - 1.months
       end
-      data = {data: @user.get_line_chart_data(date1), date: User.generate_month_label(date1)}.to_json
+      data = {data: @user.get_line_chart_data(date), date: User.generate_month_label(date)}.to_json
       render json: data, layout:false
     end
   end
