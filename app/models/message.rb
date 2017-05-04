@@ -26,7 +26,7 @@ class Message < ApplicationRecord
     when 'how_to'
       display_how_to
     when 'get_calories_summary'
-      @response_to_user = @user.get_calories_summary
+      get_calories_summary
     when 'greet'
       greet
     else
@@ -79,6 +79,18 @@ class Message < ApplicationRecord
       end
     end
     @response_to_user = message
+  end
+
+  def get_calories_summary
+    calories_consumed = @user.get_calories_consumed
+    remaining_calories = self.target_calories - calories_consumed
+    if remaining_calories < 0
+      message = "😧 UH OH. It seems like you've overate! You've consumed #{calories_consumed} calories, #{remaining_calories.abs} more than your daily goal. You can workout to offset these extra calories!"
+    elsif remaining_calories == 0
+      message = "WOW. You've consumed exactly #{calories_consumed} calories which is your daily goal. YOU ROCK. Don't eat more unless you work out."
+    else
+      message = "You have consumed #{calories_consumed} calories today. You can consume #{remaining_calories} more to meet stay within your daily goal. Keep up the good work, #{@user.name}!"
+    end
   end
 
   def reply_to_user
@@ -189,26 +201,6 @@ class Message < ApplicationRecord
     @nutritionix_client.nxql_search(search_params)
   end
 
-  # sends sms to wit, updates the messages table
-  def message_wit
-    configure_wit_client
-    wit_response = @wit_client.message(self.body)
-    self.update(json_wit_response: wit_response)
-  end
-
-  # useful for checking if Twilio is working
-  # useful for testing different message parameters such as url/media_url
-  def sms_govind
-    configure_twilio_client
-    @twilio_client.messages.create(
-      from: ENV["TWILIO_PHONE_NUMBER"],
-      to: ENV["GOVIND_PHONE_NUMBER"],
-      body: 'Show me my profile',
-      # url: 'localhost.com/viewmyprofile'
-      # media_url: 'http://coolwildlife.com/wp-content/uploads/galleries/post-3004/Fox%20Picture%20003.jpg'
-    )
-  end
-
   def display_capabilities
     messages = [
       "You can track food by telling me what you ate. You can say things like 'I just had an apple, three slices of bread, and peanut butter'. When you wanna see you profile just simply ask me for it.",
@@ -226,6 +218,26 @@ class Message < ApplicationRecord
     @response_to_user += "Get daily calories: \"How many calories have I had today\"\\nn"
     @response_to_user += "Get caloric content: \"How many calories are in an apple\"\\nn"
     @response_to_user += "Add calories: \"Add 500 calories\""
+  end
+
+  # sends sms to wit, updates the messages table
+  def message_wit
+    configure_wit_client
+    wit_response = @wit_client.message(self.body)
+    self.update(json_wit_response: wit_response)
+  end
+
+  # useful for checking if Twilio is working (for testing purposes only)
+  # useful for testing different message parameters such as url/media_url
+  def sms_govind
+    configure_twilio_client
+    @twilio_client.messages.create(
+      from: ENV["TWILIO_PHONE_NUMBER"],
+      to: ENV["GOVIND_PHONE_NUMBER"],
+      body: 'Show me my profile',
+      # url: 'localhost.com/viewmyprofile'
+      # media_url: 'http://coolwildlife.com/wp-content/uploads/galleries/post-3004/Fox%20Picture%20003.jpg'
+    )
   end
 
   ############################

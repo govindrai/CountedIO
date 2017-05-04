@@ -4,23 +4,7 @@ class User < ApplicationRecord
 
   before_create :generate_randomized_profile_url, :set_maintenance_calories, :set_weight_goal_values
 
-  def generate_link_to_profile
-    base_url = "https://vildeio.herokuapp.com/profile/#{self.id}?random="
-    date = DateTime.now.strftime("%F")
-    message = "Here is your profile:  " + base_url + generate_randomized_profile_url + "&date=" + date
-  end
-
-  def get_calories_summary
-    calories_consumed = get_calories_summary_num
-    if calories_consumed
-      remaining_calories = (get_suggested_calories - calories_consumed).to_s
-    else
-      remaining_calories = get_suggested_calories.to_s
-    end
-    message = "You have consumed #{calories_consumed} calories today. You may only consume #{remaining_calories} more to meet your daily goal."
-  end
-
-  def get_calories_summary_num
+  def get_calories_consumed
     self.meals.where("created_at >= ?", Time.now.beginning_of_day.in_time_zone("Pacific Time (US & Canada)")).sum(:calories)
   end
 
@@ -87,7 +71,7 @@ class User < ApplicationRecord
       self.target_calories = self.maintenance_calories + 500
     else
       self.weight_direction = "Maintain Weight"
-      self.target_calores = self.maintenance_calories
+      self.target_calories = self.maintenance_calories
     end
   end
 
