@@ -5,7 +5,6 @@ class User < ApplicationRecord
   has_many :messages, dependent: :destroy
   before_create :generate_randomized_profile_url, :set_maintenance_calories, :set_weight_goal_values
 
-  # works for all graphs
   def get_data(date, range, direction)
     {data: get_chart_data(date, range), dataLabels: get_chart_data_labels(date, range), dateLabel: get_date_range_label(date, direction), targetCalories: get_target_calories(date, range)}.to_json
   end

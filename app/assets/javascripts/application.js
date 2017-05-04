@@ -17,12 +17,17 @@
 
 $(document).ready(function () {
 
-  $('body').on("click", '#nav-1', toggleDay)
-  $('body').on("click", '#nav-2', toggleWeek)
-  $('body').on("click", '#nav-3', toggleMonth)
-  $('body').on("click", '.back', replaceContent)
-  $('body').on("click", '.forward', replaceContent)
-  $('body').on('click', '.close-meals', closeMeals)
+  $('body').on("click", '#nav-1', toggleDay);
+  $('body').on("click", '#nav-2', toggleWeek);
+  $('body').on("click", '#nav-3', toggleMonth);
+  $('body').on("click", '.back', replaceContent);
+  $('body').on("click", '.forward', replaceContent);
+  $('body').on('click', '.close-meals', closeMeals);
+  getDayData();
+  getWeekData();
+  getMonthData();
+  getDayMeals();
+
 })
 
 var replaceContent = function (e) {
@@ -42,7 +47,10 @@ var replaceContent = function (e) {
     data: data
   })
   .done(function (response) {
-    console.log(response)
+    console.log("This is the date from the page")
+    console.log(date)
+    console.log("This is the date from the server")
+    console.log(response.date)
     date.text(response.date)
     if (chartID == 'dayChart') {
       dayChart.data.datasets[0].data = response.data
@@ -53,7 +61,6 @@ var replaceContent = function (e) {
       weekChart.data.datasets[1].data = response.target_calories
       weekChart.update();
     } else {
-      console.log("HITTING THIS ROUTE")
       monthChart.data.datasets[0].data = response.data
       monthChart.data.labels = response.labels
       monthChart.data.datasets[1].data = response.target_calories
@@ -94,5 +101,74 @@ var hideTabs = function () {
   $('.month').hide();
 }
 
+
+var getDayData = function () {
+  var URL = $('.day-link').children()[0].href
+  $.ajax({
+    url: URL,
+    method: 'get'
+  })
+  .done(function (response) {
+    console.log("GETTING getDay")
+    date.text(response.date)
+    dayChart.data.datasets[0].data = response.data
+    dayChart.update();
+  })
+  .fail(function (response) {
+    console.log("Something is messed up.")
+  })
+}
+
+var getWeekData = function () {
+  var URL = $('.week-link').children()[0].href
+  $.ajax({
+    url: URL,
+    method: 'get'
+  })
+  .done(function (response) {
+    console.log(response)
+    weekChart.data.datasets[0].data = response.data
+    weekChart.data.labels = response.labels
+    weekChart.data.datasets[1].data = response.target_calories
+    weekChart.update();
+  })
+  .fail(function (response) {
+    console.log("Something is messed up.")
+  })
+}
+
+var getMonthData = function () {
+  var URL = $('.month-link').children()[0].href
+  $.ajax({
+    url: URL,
+    method: 'get'
+  })
+  .done(function (response) {
+    console.log(response)
+    monthChart.data.datasets[0].data = response.data
+    monthChart.data.labels = response.labels
+    monthChart.data.datasets[1].data = response.target_calories
+    monthChart.update();
+  })
+  .fail(function (response) {
+    console.log("Something is messed up.")
+  })
+}
+
+var getDayMeals = function () {
+  var baseUrl = $(document)[0].URL.split("?")
+  var url = baseUrl[0] + "/get_day_meals" + "?" + baseUrl[1]
+  $.ajax({
+    url: url,
+    method: 'get'
+  })
+  .done(function (response) {
+    console.log(response)
+    $('body').append(response)
+  })
+  .fail(function (response) {
+    console.log("Something is messed up.")
+  })
+}
 
 
