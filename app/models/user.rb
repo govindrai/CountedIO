@@ -83,8 +83,13 @@ class User < ApplicationRecord
     meal_values = [get_meals(date, 'Breakfast').sum(:calories), get_meals(date, 'Lunch').sum(:calories), get_meals(date, 'Dinner').sum(:calories), get_meals(date, 'Snack').sum(:calories), calories_remaining]
   end
 
-  def get_pie_chart_labels(date)
 
+  def get_target_calories_week
+    target_calories = []
+    7.times do |time|
+      target_calories.push(self.target_calories)
+    end
+    target_calories
   end
 
   def get_time_to_success

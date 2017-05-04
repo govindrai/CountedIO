@@ -46,11 +46,12 @@ var replaceContent = function (e) {
     date.text(response.date)
     if (chartID == 'dayChart') {
       dayChart.data.datasets[0].data = response.data
-      dayChart.data.labels = response.labels
       dayChart.update();
     } else if (chartID == 'weekChart') {
       weekChart.data.datasets[0].data = response.data
       weekChart.data.labels = response.labels
+      weekChart.data.datasets[1].data = response.target_calories
+      debugger
       weekChart.update();
     } else {
       console.log("HITTING THIS ROUTE")
