@@ -23,10 +23,9 @@ $(document).ready(function () {
   $('body').on("click", '.back', replaceContent);
   $('body').on("click", '.forward', replaceContent);
   $('body').on('click', '.close-meals', closeMeals);
-  console.log("IN THE DOCUMENT READY")
   getDayData();
   getWeekData();
-  console.log("IN THE DOCUMENT READY")
+  getMonthData();
 
 })
 
@@ -131,6 +130,25 @@ var getWeekData = function () {
     weekChart.data.labels = response.labels
     weekChart.data.datasets[1].data = response.target_calories
     weekChart.update();
+  })
+  .fail(function (response) {
+    console.log("Something is messed up.")
+  })
+}
+
+var getMonthData = function () {
+  debugger
+  var URL = $('.month-link').children()[0].href
+  $.ajax({
+    url: URL,
+    method: 'get'
+  })
+  .done(function (response) {
+    console.log(response)
+    monthChart.data.datasets[0].data = response.data
+    monthChart.data.labels = response.labels
+    monthChart.data.datasets[1].data = response.target_calories
+    monthChart.update();
   })
   .fail(function (response) {
     console.log("Something is messed up.")

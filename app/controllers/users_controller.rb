@@ -6,20 +6,7 @@ class UsersController < ApplicationController
     if @user.authorized?(params[:random])
       @date = params[:date] ? DateTime.parse(params[:date]) : DateTime.now
       @meals = @user.get_all_meals(@date)
-
-      if request.xhr?
-        if params[:direction] == 'forward'
-          @date += 1
-        elsif params[:direction] == 'back'
-          @date -= 1
-        else
-          @date = @date
-        end
-        data = {data: @user.get_pie_chart_data(@date), date: @date.strftime("%F")}.to_json
-        render json: data, layout:false
-      else
-        @chart_data = @user.get_pie_chart_data(@date)
-      end
+      @chart_data = @user.get_pie_chart_data(@date)
     else
       render plain: "USER NOT AUTHORIZED"
     end
@@ -63,13 +50,17 @@ class UsersController < ApplicationController
 
   def get_month_data
     if request.xhr?
-      @date = DateTime.parse(params[:date]).beginning_of_month
-      puts @date
-      if params[:direction].include?('forward')
-        date =  @date + 1.months
+      @date = params[:date] ? DateTime.parse(params[:date]).beginning_of_month : DateTime.now.beginning_of_month
+      if params[:direction]
+        if params[:direction].include?('forward')
+          date =  @date + 1.months
+        elsif params[:direction].include?('back')
+          date = @date - 1.months
+        end
       else
-        date = @date - 1.months
+        date = @date
       end
+
       data = {data: @user.get_line_chart_data(date), date: User.generate_month_label(date), labels: @user.get_line_chart_labels(date), target_calories: @user.get_target_calories_month(@date)}.to_json
       render json: data, layout:false
     end

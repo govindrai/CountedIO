@@ -1,6 +1,6 @@
 .month.hidden
   .change-page
-    %span.change-page-link
+    %span.change-page-link.month-link
       = link_to "&#8678;".html_safe, get_month_data_path(@user), class: 'back monthChart'
     %span.date.change-page-link
       = User.generate_month_label(@date)
