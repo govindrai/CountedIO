@@ -57,7 +57,6 @@ var replaceContent = function (e) {
       monthChart.data.datasets[0].data = response.data
       monthChart.data.labels = response.labels
       monthChart.data.datasets[1].data = response.target_calories
-      debugger
       monthChart.update();
     }
   })
