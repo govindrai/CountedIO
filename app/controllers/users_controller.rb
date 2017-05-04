@@ -71,16 +71,13 @@ class UsersController < ApplicationController
       @date = params[:date] ? DateTime.parse(params[:date]) : DateTime.now
       if params[:direction]
         if params[:direction].include?('forward')
-          date =  @date + 1.months
+          @date += 1
         elsif params[:direction].include?('back')
           p "HITTING THIS OTHER BITCH"
-          date = @date - 1.months
+          @date -= 1
         end
-      else
-        date = @date
       end
-      @meals = @user.get_all_meals(date)
-      p @meals
+      @meals = @user.get_all_meals(@date)
       render partial: 'get_day_meals', layout: false, locals: { meals: @meals}
     end
   end
