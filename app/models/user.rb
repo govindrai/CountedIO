@@ -4,6 +4,35 @@ class User < ApplicationRecord
 
   before_create :generate_randomized_profile_url, :set_maintenance_calories, :set_weight_goal_values
 
+  def some_method
+    if authorized(params[:random])
+      if params[:week]
+        dates = params[:week].split('_')
+        @range = (DateTime.parse(dates[0])..DateTime.parse(dates[1]))
+        @date =  DateTime.parse(dates[0])
+      elsif params[:month]
+        @date = DateTime.new(DateTime.now.year, params[:month])
+      else
+        @date = params[:date] ? DateTime.parse(params[:date]) : DateTime.now
+        @meals = Meal.get_day_meals(@user, @date)
+        @chart_data = Meal.get_pie_chart_data(@user, @date)
+      end
+
+      if request.xhr?
+        if params[:direction] == 'forward'
+          @date = DateTime.parse(params[:date]) + 1
+        else
+          @date = DateTime.parse(params[:date]) - 1
+        end
+
+        @chart_data = {data: Meal.get_pie_chart_data(@user, @date), date: @date.strftime("%F")}.to_json
+        render json: @chart_data, layout:false
+      else
+        @chart_data = Meal.get_pie_chart_data(@user, @date)
+      end
+    end
+  end
+
   def get_calories_consumed
     self.meals.where("created_at >= ? AND create_at <=", today_PST, tomorrow_PST).sum(:calories)
   end
@@ -27,6 +56,10 @@ class User < ApplicationRecord
     days = weeks * 7
     date = (Date.today + days).strftime("%m/%d/%Y")
     "#{days} days (#{date})"
+  end
+
+  def authorized?(url_param)
+    self.randomized_profile_url == url_param
   end
 
   private
