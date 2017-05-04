@@ -6,8 +6,8 @@ class User < ApplicationRecord
   before_create :generate_randomized_profile_url, :set_maintenance_calories, :set_weight_goal_values
 
   # works for all graphs
-  def get_data(date, range)
-    {data: get_chart_data(date, range), dataLabels: get_chart_data_labels(date, range), dateLabel: get_date_range_label(date, range), targetCalories: get_target_calories(date, range)}.to_json
+  def get_data(date, range, direction)
+    {data: get_chart_data(date, range), dataLabels: get_chart_data_labels(date, range), dateLabel: get_date_range_label(date, direction), targetCalories: get_target_calories(date, range)}.to_json
   end
 
   def get_chart_data(date, range)
