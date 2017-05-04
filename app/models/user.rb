@@ -20,7 +20,7 @@ class User < ApplicationRecord
   end
 
   def get_calories_consumed(date)
-    self.meals.where("created_at >= ? AND created_at <= ?", today_PST, tomorrow_PST).sum(:calories)
+    self.meals.where("created_at >= ? AND created_at <= ?", date_to_PST(date)[0],date_to_PST(date)[1]).sum(:calories)
   end
 
   def get_all_meals(date)
@@ -28,11 +28,11 @@ class User < ApplicationRecord
   end
 
   def get_meals(date, meal_type)
-    self.meals.where("created_at >= ? AND created_at <= ? AND meal_type = ?", today_PST, tomorrow_PST, meal_type)
+    self.meals.where("created_at >= ? AND created_at <= ? AND meal_type = ?", date_to_PST(date)[0],date_to_PST(date)[1], meal_type)
   end
 
   def get_pie_chart_data(date)
-    calories_remaining = self.target_calories - get_calories_consumed
+    calories_remaining = self.target_calories - get_calories_consumed(date)
     calories_remaining = 0 if calories_remaining < 0
     meal_values = [get_meals(date, 'Breakfast').sum(:calories), get_meals(date, 'Lunch').sum(:calories), get_meals(date, 'Dinner').sum(:calories), get_meals(date, 'Snack').sum(:calories), calories_remaining]
   end
@@ -56,14 +56,13 @@ class User < ApplicationRecord
     random = %w(a b c d e f g h i j k l m n o p q r s t u v w y z A B C D E F G H I J K L M N O P Q R S T U V W Y Z 1 2 3 4 5 6 7 8 9)
     random_url = ''
     10.times {|time| random_url += random.sample }
-    self.update(randomized_profile_url: random_url)
-    random_url
+    self.randomized_profile_url = random_url
   end
 
   private
 
   def date_to_PST(date)
-    DateTime
+    [date.beginning_of_day.in_time_zone("Pacific Time (US & Canada)"), date.beginning_of_day.in_time_zone("Pacific Time (US & Canada)") + 1.days]
   end
 
   def today_PST

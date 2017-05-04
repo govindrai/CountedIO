@@ -6,7 +6,10 @@
       = @date.strftime("%F")
     %span.change-page-link
       = link_to "&#8680;".html_safe, LinkHelper.next_day(@date, @user), class: 'forward'
-  %canvas#dayChart {"width"=>"200" "height"=>"200"}
+  .canvas-container
+    %canvas#dayChart
+    .middle-text YOU DONE GOOFED BRO
+
 
   :javascript
     function showDayData(event, activeElements) {
