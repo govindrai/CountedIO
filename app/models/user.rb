@@ -3,11 +3,15 @@ class User < ApplicationRecord
 
   has_many :meals, dependent: :destroy
   has_many :messages, dependent: :destroy
-
   before_create :generate_randomized_profile_url, :set_maintenance_calories, :set_weight_goal_values
 
-  # works for both line and bar graphs
+  # works for all graphs
+  def get_data(date, range)
+    {data: get_chart_data(date, range), dataLabels: get_chart_data_labels(date, range), dateLabel: get_date_range_label(date, range), targetCalories: get_target_calories(date, range)}.to_json
+  end
+
   def get_chart_data(date, range)
+    return get_pie_chart_data(date) if range == "Day"
     days = range == "Week" ? 7 : get_days_in_month(date)
     Array.new(days) do |x|
       meal_values = self.get_pie_chart_data(date + x)
@@ -16,8 +20,8 @@ class User < ApplicationRecord
     end
   end
 
-  # works for both line and bar graphs
   def get_chart_data_labels(date, range)
+    return if range == "Day"
     days = range == "Week" ? 7 : get_days_in_month(date)
     if days == 7
       Array.new(days) { |x| get_weekday(date - (6 - x).days) }
@@ -27,8 +31,20 @@ class User < ApplicationRecord
   end
 
   def get_target_calories(date, range)
+    return if range == "Day"
     days = range == "Week" ? 7 : get_days_in_month(date)
     Array.new(days, self.target_calories)
+  end
+
+  def get_date_range_label(date, range)
+    case range
+    when "Day"
+      generate_day_label(date)
+    when "Week"
+      generate_week_label(date)
+    when "Month"
+      generate_month_label(date)
+    end
   end
 
   def get_calories_consumed(date)
@@ -68,10 +84,6 @@ class User < ApplicationRecord
     random_url = ''
     10.times {|time| random_url += random.sample }
     self.randomized_profile_url = random_url
-  end
-
-  def self.date_to_PST(date)
-    [date.beginning_of_day.in_time_zone("Pacific Time (US & Canada)"), date.beginning_of_day.in_time_zone("Pacific Time (US & Canada)") + 1.days]
   end
 
   private

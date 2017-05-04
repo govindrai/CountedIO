@@ -3,7 +3,7 @@
     %span.change-page-link
       = link_to "&#8678;".html_safe, get_week_data_path(@user), class: 'back weekChart'
     %span.date.change-page-link
-      = User.generate_week_label(@date - 7, @date)
+      = @user.generate_week_label(@date - 7, @date)
     %span.change-page-link
       = link_to "&#8680;".html_safe, get_week_data_path(@user), class: 'forward weekChart'
   .canvas-container
