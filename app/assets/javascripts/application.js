@@ -47,23 +47,19 @@ var replaceContent = function (e) {
     data: data
   })
   .done(function (response) {
-    console.log("This is the date from the page")
-    console.log(date)
-    console.log("This is the date from the server")
-    console.log(response.date)
-    date.text(response.date)
+    date.text(response.dateLabel)
     if (chartID == 'dayChart') {
       dayChart.data.datasets[0].data = response.data
       dayChart.update();
     } else if (chartID == 'weekChart') {
       weekChart.data.datasets[0].data = response.data
-      weekChart.data.labels = response.labels
-      weekChart.data.datasets[1].data = response.target_calories
+      weekChart.data.labels = response.dataLabels
+      weekChart.data.datasets[1].data = response.targetCalories
       weekChart.update();
     } else {
       monthChart.data.datasets[0].data = response.data
-      monthChart.data.labels = response.labels
-      monthChart.data.datasets[1].data = response.target_calories
+      monthChart.data.labels = response.dataLabels
+      monthChart.data.datasets[1].data = response.targetCalories
       monthChart.update();
     }
   })
@@ -103,14 +99,15 @@ var hideTabs = function () {
 
 
 var getDayData = function () {
-  var URL = $('.day-link').children()[0].href
+  var URL = $('.day-link').children()[0].href + "?direction=none&range=Day"
+  console.log(URL)
   $.ajax({
     url: URL,
     method: 'get'
   })
   .done(function (response) {
     console.log("GETTING getDay")
-    date.text(response.date)
+    date.text(response.dateLabel)
     dayChart.data.datasets[0].data = response.data
     dayChart.update();
   })
@@ -120,7 +117,7 @@ var getDayData = function () {
 }
 
 var getWeekData = function () {
-  var URL = $('.week-link').children()[0].href
+  var URL = $('.week-link').children()[0].href + "?direction=none&range=Week"
   $.ajax({
     url: URL,
     method: 'get'
@@ -128,8 +125,8 @@ var getWeekData = function () {
   .done(function (response) {
     console.log(response)
     weekChart.data.datasets[0].data = response.data
-    weekChart.data.labels = response.labels
-    weekChart.data.datasets[1].data = response.target_calories
+    weekChart.data.labels = response.dataLabels
+    weekChart.data.datasets[1].data = response.targetCalories
     weekChart.update();
   })
   .fail(function (response) {
@@ -138,7 +135,7 @@ var getWeekData = function () {
 }
 
 var getMonthData = function () {
-  var URL = $('.month-link').children()[0].href
+  var URL = $('.month-link').children()[0].href + "?direction=none&range=Month"
   $.ajax({
     url: URL,
     method: 'get'
@@ -146,8 +143,8 @@ var getMonthData = function () {
   .done(function (response) {
     console.log(response)
     monthChart.data.datasets[0].data = response.data
-    monthChart.data.labels = response.labels
-    monthChart.data.datasets[1].data = response.target_calories
+    monthChart.data.labels = response.dataLabels
+    monthChart.data.datasets[1].data = response.targetCalories
     monthChart.update();
   })
   .fail(function (response) {

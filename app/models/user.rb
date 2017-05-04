@@ -6,14 +6,14 @@ class User < ApplicationRecord
   before_create :generate_randomized_profile_url, :set_maintenance_calories, :set_weight_goal_values
 
   def get_data(date, range, direction)
-    {data: get_chart_data(date, range), dataLabels: get_chart_data_labels(date, range), dateLabel: get_date_range_label(date, direction), targetCalories: get_target_calories(date, range)}.to_json
+    {data: get_chart_data(date, range), dataLabels: get_chart_data_labels(date, range), dateLabel: get_date_range_label(date, range, direction), targetCalories: get_target_calories(date, range)}.to_json
   end
 
   def get_chart_data(date, range)
     return get_pie_chart_data(date) if range == "Day"
     days = range == "Week" ? 7 : get_days_in_month(date)
     Array.new(days) do |x|
-      meal_values = self.get_pie_chart_data(date + x)
+      meal_values = self.get_pie_chart_data(date + x + 1)
       meal_values.pop
       meal_values.inject(0,:+)
     end
@@ -35,14 +35,14 @@ class User < ApplicationRecord
     Array.new(days, self.target_calories)
   end
 
-  def get_date_range_label(date, range)
+  def get_date_range_label(date, range, direction)
     case range
     when "Day"
-      generate_day_label(date)
+      generate_day_label(date, direction)
     when "Week"
-      generate_week_label(date)
+      generate_week_label(date, direction)
     when "Month"
-      generate_month_label(date)
+      generate_month_label(date, direction)
     end
   end
 
