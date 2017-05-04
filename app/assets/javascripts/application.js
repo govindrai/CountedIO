@@ -51,6 +51,7 @@ var replaceContent = function (e) {
       weekChart.data.datasets[0].data = response.data
       weekChart.update();
     } else {
+      console.log("HITTING THIS ROUTE")
       monthChart.data.datasets[0].data = response.data
       monthChart.update();
     }

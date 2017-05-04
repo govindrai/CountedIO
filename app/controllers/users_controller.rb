@@ -68,7 +68,7 @@ class UsersController < ApplicationController
         date1 = @date - 7
         date2 = @date
       end
-      data = {data: @user.get_bar_chart_data(date1), date: User.generate_week_label(date1, date2)}.to_json
+      data = {data: @user.get_line_chart_data(date1), date: User.generate_month_label(date1)}.to_json
       render json: data, layout:false
     end
   end

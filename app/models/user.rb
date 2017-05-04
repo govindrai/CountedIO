@@ -27,20 +27,20 @@ class User < ApplicationRecord
   end
 
   def self.generate_month_label(date)
-    User.months[User.date_to_PST(date)[0].month]
+    date.strftime("%B")
   end
 
-  def self.days_in_month
-    %w(31 30 28 30 31 30 31 31 30 31 30 31)
-  end
+  # def self.days_in_month
+  #   %w(31 30 28 30 31 30 31 31 30 31 30 31)
+  # end
 
-  def self.months
-    %w(January February March April May June July August September October November December)
-  end
+  # def self.months
+  #   %w(January February March April May June July August September October November December)
+  # end
 
-  def self.months_to_int(date)
-    User.months.find_index(User.date_to_PST(date)[0].month) + 1
-  end
+  # def self.months_to_int(date)
+  #   User.months[User.date_to_PST(date)[0].month + 1]
+  # end
 
   def self.generate_week_label(date1,date2)
     "#{(date1).strftime("%F")} - #{date2.strftime("%F")}"
