@@ -4,6 +4,13 @@
 :javascript
   function showDayData(event, activeElements) {
     data = activeElements[0]._model.label
+    console.log(activeElements[0])
+    var target = '#' + data + "-meals"
+    $('#Breakfast-meals').hide()
+    $('#Lunch-meals').hide()
+    $('#Dinner-meals').hide()
+    $('#Snack-meals').hide()
+    $(target).toggle()
   }
 
 
@@ -38,3 +45,6 @@
       onClick: showDayData
     }
   });
+
+
+

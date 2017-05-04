@@ -1,15 +1,12 @@
-
-%button.refresh Refresh
-
-%span
-  = link_to "&#8678;".html_safe, LinkHelper.previous_day(@date, @user), class: 'back'
-%span.date
-  = @date.strftime("%F")
-%span
-  = link_to "&#8680;".html_safe, LinkHelper.next_day(@date, @user), class: 'forward'
+.change-page
+  %span.change-page-link
+    = link_to "&#8678;".html_safe, LinkHelper.previous_day(@date, @user), class: 'back'
+  %span.date.change-page-link
+    = @date.strftime("%F")
+  %span.change-page-link
+    = link_to "&#8680;".html_safe, LinkHelper.next_day(@date, @user), class: 'forward'
 
 - if @authorized
-  %h1= @user.name
   -if params[:week]
     = render partial: 'week', locals: { meals: @meals}
   -elsif params[:month]

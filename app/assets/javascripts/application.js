@@ -48,11 +48,14 @@ var replaceContent = function (e) {
   })
 }
 
+var closeMeals = function () {
+
+}
+
 var refresh = function () {
   myDoughnutChart.data.datasets[0].data = [45,123,213]
   myDoughnutChart.update()
 }
-
 
 
 

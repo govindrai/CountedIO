@@ -24,7 +24,7 @@ class UsersController < ApplicationController
       else
         @date = DateTime.parse(params[:date]) - 1
       end
-
+      p @date
       @chart_data = {data: Meal.get_pie_chart_data(@user, @date), date: @date.strftime("%F")}.to_json
       render json: @chart_data, layout:false
     else
