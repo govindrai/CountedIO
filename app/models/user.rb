@@ -8,15 +8,18 @@ class User < ApplicationRecord
 
   end
 
-  def unused_logic_here
-      if params[:week]
-        dates = params[:week].split('_')
-        @range = (DateTime.parse(dates[0])..DateTime.parse(dates[1]))
-        @date =  DateTime.parse(dates[0])
-      elsif params[:month]
-        @date = DateTime.new(DateTime.now.year, params[:month])
-      else
-      end
+  def get_bar_chart_data(date)
+    weekly_calories = []
+    7.times do |x|
+      meal_values = self.get_pie_chart_data(date + x)
+      meal_values.pop
+      weekly_calories.push(meal_values.inject(0,:+))
+    end
+    weekly_calories
+  end
+
+  def self.generate_week_label(date1,date2)
+    "#{(date1).strftime("%F")} - #{date2.strftime("%F")}"
   end
 
   def get_calories_consumed(date)

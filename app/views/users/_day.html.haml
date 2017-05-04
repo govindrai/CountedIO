@@ -1,11 +1,11 @@
 .day
   .change-page
     %span.change-page-link
-      = link_to "&#8678;".html_safe, get_day_data_path(@user), class: 'back'
+      = link_to "&#8678;".html_safe, get_day_data_path(@user), class: 'back dayChart'
     %span.date.change-page-link
       = @date.strftime("%F")
     %span.change-page-link
-      = link_to "&#8680;".html_safe, get_day_data_path(@user), class: 'forward'
+      = link_to "&#8680;".html_safe, get_day_data_path(@user), class: 'forward dayChart'
   .canvas-container
     %canvas#dayChart
     .middle-text YOU DONE GOOFED BRO
@@ -47,7 +47,7 @@
           }]
     };
 
-    var myDoughnutChart = new Chart(ctx, {
+    var dayChart = new Chart(ctx, {
       type: 'doughnut',
       data: data,
       options: {

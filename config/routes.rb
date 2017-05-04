@@ -4,7 +4,8 @@ Rails.application.routes.draw do
   resources :messages
   match '/profile/:user_id', to: 'users#show',  via: 'get', as: :profile
 
-  post '/profile/:user_id/get_day_data', to: 'users#get_day_data', as: :get_day_data
+  get '/profile/:user_id/get_day_data', to: 'users#get_day_data', as: :get_day_data
+  get '/profile/:user_id/get_week_data', to: 'users#get_week_data', as: :get_week_data
 
 
 

@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: [:show]
+  before_action :set_user
   include LinkHelper
 
   def show
@@ -33,6 +33,25 @@ class UsersController < ApplicationController
         @date -= 1
       end
       data = {data: @user.get_pie_chart_data(@date), date: @date.strftime("%F")}.to_json
+      render json: data, layout:false
+    end
+  end
+
+  def get_week_data
+    if request.xhr?
+      puts "IN GET WEEK DATA BIATCH"
+      @date = DateTime.parse(params[:date])
+      puts @date
+      if params[:direction].include?('forward')
+        date1 =  @date + 7
+        date2 =  date1 + 7
+        puts date1
+        puts date2
+      else
+        date1 = @date - 7
+        date2 = @date
+      end
+      data = {data: @user.get_bar_chart_data(date1), date: User.generate_week_label(date1, date2)}.to_json
       render json: data, layout:false
     end
   end

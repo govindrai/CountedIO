@@ -22,16 +22,19 @@ $(document).ready(function () {
   $('body').on("click", '#nav-3', toggleMonth)
   $('body').on("click", '.back', replaceContent)
   $('body').on("click", '.forward', replaceContent)
-  $('body').on("click", '.refresh', refresh)
   $('body').on('click', '.close-meals', closeMeals)
 })
 
 var replaceContent = function (e) {
   e.preventDefault();
-  var URL = $(this)[0].baseURI
+  var URL = $(this).attr('href')
   var date = $(this).parent().parent().find('.date')
   var direction = $(this).attr('class')
-  var data = `date=${date.text()}&direction=${direction}`
+  var data = `date=${date.text().substring(0,11)}&direction=${direction}`
+  var chartID = this.classList[1]
+  // debugger
+  console.log(chartID);
+  console.log(data);
 
   $.ajax({
     url: URL,
@@ -39,12 +42,17 @@ var replaceContent = function (e) {
     data: data
   })
   .done(function (response) {
-    console.log("original data", myDoughnutChart.data.datasets[0].data)
-    console.log("new_data", response.data)
-    console.log(response.date)
+    console.log(response)
     date.text(response.date)
-    myDoughnutChart.data.datasets[0].data = response.data
-    myDoughnutChart.update();
+    if (chartID == 'dayChart') {
+      dayChart.data.datasets[0].data = response.data
+      dayChart.update();
+    } else if (chartID == 'weekChart') {
+      weekChart.data.datasets[0].data = response.data
+      weekChart.update();
+    } else {
+      // MONTH CHART HERE
+    }
   })
   .fail(function () {
     console.log("Shit is messed up")
@@ -54,11 +62,6 @@ var replaceContent = function (e) {
 var closeMeals = function (e) {
   e.preventDefault();
   $(this).parent().toggle();
-}
-
-var refresh = function () {
-  myDoughnutChart.data.datasets[0].data = [45,123,213];
-  myDoughnutChart.update();
 }
 
 var toggleDay = function (e) {
@@ -72,7 +75,6 @@ var toggleWeek = function (e) {
   hideTabs();
   $('.week').toggle();
 }
-
 
 var toggleMonth = function (e) {
   e.preventDefault();
