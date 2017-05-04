@@ -96,3 +96,23 @@ var hideTabs = function () {
 
 
 
+var getDay = $.ajax({
+    url: URL,
+    method: 'get',
+    data: data
+})
+
+
+var getDay = function () {
+  debugger
+  var URL = $('.day-link').children()[0].href
+  $.ajax({
+    url: URL,
+    method: 'get',
+    data: data
+  })
+  .done(function (response) {
+    dayChart.data.datasets[0].data = response.data
+    dayChart.update();
+  })
+}

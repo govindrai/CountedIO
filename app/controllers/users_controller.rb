@@ -10,8 +10,10 @@ class UsersController < ApplicationController
       if request.xhr?
         if params[:direction] == 'forward'
           @date += 1
-        else
+        elsif params[:direction] == 'back'
           @date -= 1
+        else
+          @date = @date
         end
         data = {data: @user.get_pie_chart_data(@date), date: @date.strftime("%F")}.to_json
         render json: data, layout:false
@@ -25,12 +27,14 @@ class UsersController < ApplicationController
 
   def get_day_data
     if request.xhr?
-      @date = DateTime.parse(params[:date])
+      @date = if params[:date] ? DateTime.parse(params[:date]) : DateTime.now
       @meals = @user.get_all_meals(@date)
       if params[:direction] == 'forward'
         @date += 1
-      else
+      elsif params[:direction] == 'back'
         @date -= 1
+      else
+        @date
       end
       data = {data: @user.get_pie_chart_data(@date), date: @date.strftime("%F"), labels: []}.to_json
       render json: data, layout:false
