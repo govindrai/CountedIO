@@ -4,8 +4,11 @@ class User < ApplicationRecord
 
   before_create :generate_randomized_profile_url, :set_maintenance_calories, :set_weight_goal_values
 
-  def some_method
-    if authorized(params[:random])
+  def get_day_show_data(params)
+
+  end
+
+  def unused_logic_here
       if params[:week]
         dates = params[:week].split('_')
         @range = (DateTime.parse(dates[0])..DateTime.parse(dates[1]))
@@ -13,28 +16,11 @@ class User < ApplicationRecord
       elsif params[:month]
         @date = DateTime.new(DateTime.now.year, params[:month])
       else
-        @date = params[:date] ? DateTime.parse(params[:date]) : DateTime.now
-        @meals = Meal.get_day_meals(@user, @date)
-        @chart_data = Meal.get_pie_chart_data(@user, @date)
       end
-
-      if request.xhr?
-        if params[:direction] == 'forward'
-          @date = DateTime.parse(params[:date]) + 1
-        else
-          @date = DateTime.parse(params[:date]) - 1
-        end
-
-        @chart_data = {data: Meal.get_pie_chart_data(@user, @date), date: @date.strftime("%F")}.to_json
-        render json: @chart_data, layout:false
-      else
-        @chart_data = Meal.get_pie_chart_data(@user, @date)
-      end
-    end
   end
 
   def get_calories_consumed
-    self.meals.where("created_at >= ? AND create_at <=", today_PST, tomorrow_PST).sum(:calories)
+    self.meals.where("created_at >= ? AND created_at <= ?", today_PST, tomorrow_PST).sum(:calories)
   end
 
   def get_all_meals(date)
@@ -46,7 +32,7 @@ class User < ApplicationRecord
   end
 
   def get_pie_chart_data(date)
-    calories_remaining = user.target_calories - get_calories_consumed
+    calories_remaining = self.target_calories - get_calories_consumed
     calories_remaining = 0 if calories_remaining < 0
     meal_values = [get_meals(date, 'Breakfast').sum(:calories), get_meals(date, 'Lunch').sum(:calories), get_meals(date, 'Dinner').sum(:calories), get_meals(date, 'Snack').sum(:calories), calories_remaining]
   end
@@ -62,6 +48,18 @@ class User < ApplicationRecord
     self.randomized_profile_url == url_param
   end
 
+  def get_profile_url
+    "https://vildeio.herokuapp.com/profile/#{self.id}?random=#{generate_randomized_profile_url}"
+  end
+
+  def generate_randomized_profile_url
+    random = %w(a b c d e f g h i j k l m n o p q r s t u v w y z A B C D E F G H I J K L M N O P Q R S T U V W Y Z 1 2 3 4 5 6 7 8 9)
+    random_url = ''
+    10.times {|time| random_url += random.sample }
+    self.update(randomized_profile_url: random_url)
+    random_url
+  end
+
   private
 
   def today_PST
@@ -70,13 +68,6 @@ class User < ApplicationRecord
 
   def tomorrow_PST
     Time.now.beginning_of_day.in_time_zone("Pacific Time (US & Canada)") + 1.days
-  end
-
-  def generate_randomized_profile_url
-    random = %w(a b c d e f g h i j k l m n o p q r s t u v w y z A B C D E F G H I J K L M N O P Q R S T U V W Y Z 1 2 3 4 5 6 7 8 9)
-    random_url = ''
-    10.times {|time| random_url += random.sample }
-    self.randomized_profile_url = random_url
   end
 
   # sets weight direction and target calories

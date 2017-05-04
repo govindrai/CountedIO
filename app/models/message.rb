@@ -43,7 +43,7 @@ class Message < ApplicationRecord
   end
 
   def get_profile
-    @response_to_user = "View your profile: https://vildeio.herokuapp.com/profile/#{@user.id}?random=#{@user.generate_randomized_profile_url}"
+    @response_to_user = "View your profile: #{@user.get_profile_url}"
   end
 
   def add_meal
