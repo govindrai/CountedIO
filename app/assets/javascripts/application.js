@@ -51,12 +51,13 @@ var replaceContent = function (e) {
       weekChart.data.datasets[0].data = response.data
       weekChart.data.labels = response.labels
       weekChart.data.datasets[1].data = response.target_calories
-      debugger
       weekChart.update();
     } else {
       console.log("HITTING THIS ROUTE")
       monthChart.data.datasets[0].data = response.data
       monthChart.data.labels = response.labels
+      monthChart.data.datasets[1].data = response.target_calories
+      debugger
       monthChart.update();
     }
   })

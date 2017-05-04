@@ -64,7 +64,7 @@ class UsersController < ApplicationController
       else
         date = @date - 1.months
       end
-      data = {data: @user.get_line_chart_data(date), date: User.generate_month_label(date), labels: @user.get_line_chart_labels(date)}.to_json
+      data = {data: @user.get_line_chart_data(date), date: User.generate_month_label(date), labels: @user.get_line_chart_labels(date), target_calories: @user.get_target_calories_month(@date)}.to_json
       render json: data, layout:false
     end
   end

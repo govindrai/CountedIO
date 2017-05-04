@@ -84,9 +84,21 @@ class User < ApplicationRecord
   end
 
 
+
+  #REFACTOR THESE TWO METHODS INTO ONE
   def get_target_calories_week
     target_calories = []
     7.times do |time|
+      target_calories.push(self.target_calories)
+    end
+    target_calories
+  end
+
+  def get_target_calories_month(date)
+    month_int = date.month
+    days = User.days_in_month[month_int - 1].to_i
+    target_calories = []
+    days.times do |time|
       target_calories.push(self.target_calories)
     end
     target_calories
