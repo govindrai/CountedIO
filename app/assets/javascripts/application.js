@@ -55,20 +55,38 @@ var replaceContent = function (e) {
 
 var closeMeals = function (e) {
   e.preventDefault();
-  $(this).parent().toggle()
+  $(this).parent().toggle();
 }
 
 var refresh = function () {
-  myDoughnutChart.data.datasets[0].data = [45,123,213]
-  myDoughnutChart.update()
+  myDoughnutChart.data.datasets[0].data = [45,123,213];
+  myDoughnutChart.update();
 }
 
 var toggleDay = function (e) {
   e.preventDefault();
+  hideTabs();
   $('.day').toggle();
-
 }
 
+var toggleWeek = function (e) {
+  e.preventDefault();
+  hideTabs();
+  $('.week').toggle();
+}
+
+
+var toggleMonth = function (e) {
+  e.preventDefault();
+  hideTabs();
+  $('.month').toggle();
+}
+
+var hideTabs = function () {
+  $('.day').hide();
+  $('.week').hide();
+  $('.month').hide();
+}
 
 
 

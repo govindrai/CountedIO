@@ -2,9 +2,9 @@
 
 - if @authorized
   -if params[:week]
-    = render partial: 'week', locals: { meals: @meals}
   -elsif params[:month]
-    = render partial: 'month', locals: { meals: @meals}
   -else
     = render partial: 'day' # REMOVED LOCALS HERE
+    = render partial: 'week'
+    = render partial: 'month'
     = render partial: 'meals/meals_by_type', locals: {meals: @meals}
