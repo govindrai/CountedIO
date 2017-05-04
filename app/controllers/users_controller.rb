@@ -26,6 +26,10 @@ class UsersController < ApplicationController
     end
   end
 
+  def month
+
+  end
+
   private
 
   def set_user
