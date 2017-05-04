@@ -30,7 +30,8 @@ var replaceContent = function (e) {
   e.preventDefault();
   console.log(this)
   var URL = $(this)[0].baseURI
-  var date = $('.date').text()
+  var date = $(this).parent().parent().find('.date').text();
+  debugger
   var direction = $(this).attr('class')
   var data = `date=${date}&direction=${direction}`
   console.log(data)
