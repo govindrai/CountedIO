@@ -32,7 +32,7 @@ class UsersController < ApplicationController
       else
         @date -= 1
       end
-      data = {data: @user.get_pie_chart_data(@date), date: @date.strftime("%F")}.to_json
+      data = {data: @user.get_pie_chart_data(@date), date: @date.strftime("%F"), labels: []}.to_json
       render json: data, layout:false
     end
   end
@@ -50,7 +50,7 @@ class UsersController < ApplicationController
         date1 = @date - 7
         date2 = @date
       end
-      data = {data: @user.get_bar_chart_data(date1), date: User.generate_week_label(date1, date2)}.to_json
+      data = {data: @user.get_bar_chart_data(date1), date: User.generate_week_label(date1, date2), labels: []}.to_json
       render json: data, layout:false
     end
   end
@@ -64,7 +64,7 @@ class UsersController < ApplicationController
       else
         date = @date - 1.months
       end
-      data = {data: @user.get_line_chart_data(date), date: User.generate_month_label(date)}.to_json
+      data = {data: @user.get_line_chart_data(date), date: User.generate_month_label(date), labels: @user.get_line_chart_labels(date)}.to_json
       render json: data, layout:false
     end
   end

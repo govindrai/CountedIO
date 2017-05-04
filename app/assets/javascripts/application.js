@@ -53,7 +53,9 @@ var replaceContent = function (e) {
     } else {
       console.log("HITTING THIS ROUTE")
       monthChart.data.datasets[0].data = response.data
+      monthChart.data.labels = response.labels
       monthChart.update();
+      debugger
     }
   })
   .fail(function () {

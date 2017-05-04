@@ -13,7 +13,17 @@ class User < ApplicationRecord
       meal_values.pop
       monthly_calories.push(meal_values.inject(0,:+))
     end
-    monthly_calories
+      monthly_calories
+  end
+
+  def get_line_chart_labels(date)
+    month_int = date.month
+    days = User.days_in_month[month_int - 1].to_i
+    days_labels = []
+    days.times do |x|
+      days_labels.push(x + 1)
+    end
+    days_labels
   end
 
   def get_bar_chart_data(date)
