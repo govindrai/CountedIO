@@ -29,7 +29,6 @@ class UsersController < ApplicationController
     if request.xhr?
       @date = params[:date] ? DateTime.parse(params[:date]) : DateTime.now
       @meals = @user.get_all_meals(@date)
-      "HERE IS DIRECTION"
       if params[:direction]
         if params[:direction].include?('forward')
           @date += 1
@@ -44,13 +43,15 @@ class UsersController < ApplicationController
 
   def get_week_data
     if request.xhr?
-      @date = DateTime.parse(params[:date])
-      puts @date
-      if params[:direction].include?('forward')
-        date1 =  @date + 7
-        date2 =  date1 + 7
-        puts date1
-        puts date2
+      @date = params[:date] ? DateTime.parse(params[:date]) : DateTime.now
+      if params[:direction]
+        if params[:direction].include?('forward')
+          date1 =  @date + 7
+          date2 =  date1 + 7
+        elsif params[:direction].include?('back')
+          date1 = @date - 7
+          date2 = @date
+        end
       else
         date1 = @date - 7
         date2 = @date
