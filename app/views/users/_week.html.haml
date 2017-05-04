@@ -12,29 +12,29 @@
 :javascript
   var dtx = $("#weekChart");
   var data = {
-        labels: [],
-      datasets: [{
-        data: [],
-        backgroundColor: [
-          "#FF6384",
-          "#36A2EB",
-          "#FFCE56",
-          "#FFA500",
-          "#2EDF2E"
-        ],
-        borderColor: [
-          "#E55A77",
-          "#3399DE",
-          "#EEC04F",
-          "#EB9800",
-          "#28BF28"
-        ],
-        borderWidth: 1
-      },
-      {
-        type: 'line',
-        data: []
-      }
+      labels: [],
+      datasets: [
+          {
+              data: #{@chart_data},
+              backgroundColor: [
+                "#FF6384",
+                "#36A2EB",
+                "#FFCE56",
+                "#FFA500",
+                "#2EDF2E"
+              ],
+              hoverBackgroundColor: [
+                "#E55A77",
+                "#3399DE",
+                "#EEC04F",
+                "#EB9800",
+                "#28BF28"
+              ]
+          },
+          {
+              type: 'line',
+              data: []
+          }
       ]
     }
 
@@ -59,3 +59,4 @@
       }
     }
   });
+

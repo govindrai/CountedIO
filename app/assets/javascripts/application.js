@@ -26,6 +26,7 @@ $(document).ready(function () {
   getDayData();
   getWeekData();
   getMonthData();
+  getDayMeals();
 
 })
 
@@ -148,6 +149,22 @@ var getMonthData = function () {
     monthChart.data.labels = response.labels
     monthChart.data.datasets[1].data = response.target_calories
     monthChart.update();
+  })
+  .fail(function (response) {
+    console.log("Something is messed up.")
+  })
+}
+
+var getDayMeals = function (response) {
+  var baseUrl = $(document)[0].URL.split("?")
+  var url = baseUrl[0] + "/get_day_meals" + "?" + baseUrl[1]
+  $.ajax({
+    url: url,
+    method: 'get'
+  })
+  .done(function (response) {
+    console.log(response)
+    $('body').append(response)
   })
   .fail(function (response) {
     console.log("Something is messed up.")
