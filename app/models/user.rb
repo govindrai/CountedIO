@@ -27,7 +27,7 @@ class User < ApplicationRecord
   end
 
   def self.generate_month_label(date)
-    User.months[User.date_to_PST(date).month]
+    User.months[User.date_to_PST(date)[0].month]
   end
 
   def self.days_in_month
@@ -39,7 +39,7 @@ class User < ApplicationRecord
   end
 
   def self.months_to_int(date)
-    User.months.find_index(User.date_to_PST(date).month) + 1
+    User.months.find_index(User.date_to_PST(date)[0].month) + 1
   end
 
   def self.generate_week_label(date1,date2)
@@ -87,7 +87,7 @@ class User < ApplicationRecord
   end
 
 
-  def User.date_to_PST(date)
+  def self.date_to_PST(date)
     [date.beginning_of_day.in_time_zone("Pacific Time (US & Canada)"), date.beginning_of_day.in_time_zone("Pacific Time (US & Canada)") + 1.days]
   end
 
