@@ -49,9 +49,14 @@ var replaceContent = function (e) {
       dayChart.update();
     } else if (chartID == 'weekChart') {
       weekChart.data.datasets[0].data = response.data
+      weekChart.data.labels = response.labels
+      weekChart.data.datasets[1].data = response.target_calories
       weekChart.update();
     } else {
+      console.log("HITTING THIS ROUTE")
       monthChart.data.datasets[0].data = response.data
+      monthChart.data.labels = response.labels
+      monthChart.data.datasets[1].data = response.target_calories
       monthChart.update();
     }
   })

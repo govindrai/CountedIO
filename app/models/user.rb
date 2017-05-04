@@ -5,15 +5,25 @@ class User < ApplicationRecord
   before_create :generate_randomized_profile_url, :set_maintenance_calories, :set_weight_goal_values
 
   def get_line_chart_data(date)
-    month_int = User.months_to_int(date)
-    days = User.days_in_month[month_int]
+    month_int = date.month
+    days = User.days_in_month[month_int - 1].to_i
     monthly_calories = []
     days.times do |x|
       meal_values = self.get_pie_chart_data(date + x)
       meal_values.pop
       monthly_calories.push(meal_values.inject(0,:+))
     end
-    monthly_calories
+      monthly_calories
+  end
+
+  def get_line_chart_labels(date)
+    month_int = date.month
+    days = User.days_in_month[month_int - 1].to_i
+    days_labels = []
+    days.times do |x|
+      days_labels.push(x + 1)
+    end
+    days_labels
   end
 
   def get_bar_chart_data(date)
@@ -26,21 +36,31 @@ class User < ApplicationRecord
     weekly_calories
   end
 
+  def get_bar_chart_labels(date)
+    weekly_labels = []
+    7.times do |x|
+      weekly_labels.push((date - (6 - x).days).strftime('%A'))
+    end
+    weekly_labels
+  end
+
+  #FIXME there is an edge case on the first of the month as UTC then drops to the month before.
   def self.generate_month_label(date)
-    User.months[User.date_to_PST(date).month]
+    date.strftime("%B")
   end
 
   def self.days_in_month
+    # DateTime.now.end_of_month.day
     %w(31 30 28 30 31 30 31 31 30 31 30 31)
   end
 
-  def self.months
-    %w(January February March April May June July August September October November December)
-  end
+  # def self.months
+  #   %w(January February March April May June July August September October November December)
+  # end
 
-  def self.months_to_int(date)
-    User.months.find_index(User.date_to_PST(date).month) + 1
-  end
+  # def self.months_to_int(date)
+  #   User.months[User.date_to_PST(date)[0].month + 1]
+  # end
 
   def self.generate_week_label(date1,date2)
     "#{(date1).strftime("%F")} - #{date2.strftime("%F")}"
@@ -63,6 +83,20 @@ class User < ApplicationRecord
     calories_remaining = 0 if calories_remaining < 0
     meal_values = [get_meals(date, 'Breakfast').sum(:calories), get_meals(date, 'Lunch').sum(:calories), get_meals(date, 'Dinner').sum(:calories), get_meals(date, 'Snack').sum(:calories), calories_remaining]
   end
+
+
+
+  #REFACTOR THESE TWO METHODS INTO ONE
+  def get_target_calories_week
+    Array.new(7, self.target_calories)
+  end
+
+  def get_target_calories_month(date)
+    month_int = date.month
+    # FIGURE THE MONTH INT THING OUT MAYBE NOT -1
+    Array.new(User.days_in_month[month_int - 1].to_i, self.target_calories)
+  end
+
 
   def get_time_to_success
     weeks = (self.target_weight_pounds - self.weight_pounds).to_i.abs
@@ -87,7 +121,7 @@ class User < ApplicationRecord
   end
 
 
-  def User.date_to_PST(date)
+  def self.date_to_PST(date)
     [date.beginning_of_day.in_time_zone("Pacific Time (US & Canada)"), date.beginning_of_day.in_time_zone("Pacific Time (US & Canada)") + 1.days]
   end
 

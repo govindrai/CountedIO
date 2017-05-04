@@ -32,7 +32,7 @@ class UsersController < ApplicationController
       else
         @date -= 1
       end
-      data = {data: @user.get_pie_chart_data(@date), date: @date.strftime("%F")}.to_json
+      data = {data: @user.get_pie_chart_data(@date), date: @date.strftime("%F"), labels: []}.to_json
       render json: data, layout:false
     end
   end
@@ -50,25 +50,21 @@ class UsersController < ApplicationController
         date1 = @date - 7
         date2 = @date
       end
-      data = {data: @user.get_bar_chart_data(date1), date: User.generate_week_label(date1, date2)}.to_json
+      data = {data: @user.get_bar_chart_data(date1), date: User.generate_week_label(date1, date2), labels: @user.get_bar_chart_labels(@date), target_calories: @user.get_target_calories_week}.to_json
       render json: data, layout:false
     end
   end
 
   def get_month_data
     if request.xhr?
-      @date = DateTime.parse(params[:date])
+      @date = DateTime.parse(params[:date]).beginning_of_month
       puts @date
       if params[:direction].include?('forward')
-        date1 =  @date + 7
-        date2 =  date1 + 7
-        puts date1
-        puts date2
+        date =  @date + 1.months
       else
-        date1 = @date - 7
-        date2 = @date
+        date = @date - 1.months
       end
-      data = {data: @user.get_bar_chart_data(date1), date: User.generate_week_label(date1, date2)}.to_json
+      data = {data: @user.get_line_chart_data(date), date: User.generate_month_label(date), labels: @user.get_line_chart_labels(date), target_calories: @user.get_target_calories_month(@date)}.to_json
       render json: data, layout:false
     end
   end
