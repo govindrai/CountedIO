@@ -5,6 +5,8 @@ Rails.application.routes.draw do
   match '/profile/:user_id', to: 'users#show',  via: 'get', as: :profile
 
 
+
+
   # Routes for Testing
   get '/test_greet_intent', to: 'messages#test_greet_intent'
   get '/test_twilio_send', to: 'messages#test_twilio_send'
