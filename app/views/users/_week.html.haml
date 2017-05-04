@@ -10,12 +10,6 @@
     %canvas#weekChart
 
 :javascript
-  function doSomething(event, activeElements) {
-    console.log(activeElements)
-    data = activeElements[0]._model.label
-  }
-
-:javascript
   var dtx = $("#weekChart");
   var data = {
         labels: ["Date1", "Date2", "Date3", "Date4", "Date5", "Date6", "Date7"],
@@ -59,7 +53,6 @@
         text: "YO MOMMMA",
         fontSize: 36
       },
-      onClick: doSomething,
       scales: {
         yAxes: [{
           ticks: {

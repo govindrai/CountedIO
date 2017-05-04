@@ -4,8 +4,16 @@ class User < ApplicationRecord
 
   before_create :generate_randomized_profile_url, :set_maintenance_calories, :set_weight_goal_values
 
-  def get_day_show_data(params)
-
+  def get_line_chart_data(date)
+    month_int = User.months_to_int(date)
+    days = User.days_in_month[month_int]
+    monthly_calories = []
+    days.times do |x|
+      meal_values = self.get_pie_chart_data(date + x)
+      meal_values.pop
+      monthly_calories.push(meal_values.inject(0,:+))
+    end
+    monthly_calories
   end
 
   def get_bar_chart_data(date)
@@ -18,12 +26,28 @@ class User < ApplicationRecord
     weekly_calories
   end
 
+  def self.generate_month_label(date)
+    User.months[User.date_to_PST(date).month]
+  end
+
+  def self.days_in_month
+    %w(31 30 28 30 31 30 31 31 30 31 30 31)
+  end
+
+  def self.months
+    %w(January February March April May June July August September October November December)
+  end
+
+  def self.months_to_int(date)
+    User.months.find_index(User.date_to_PST(date).month) + 1
+  end
+
   def self.generate_week_label(date1,date2)
     "#{(date1).strftime("%F")} - #{date2.strftime("%F")}"
   end
 
   def get_calories_consumed(date)
-    self.meals.where("created_at >= ? AND created_at <= ?", date_to_PST(date)[0],date_to_PST(date)[1]).sum(:calories)
+    self.meals.where("created_at >= ? AND created_at <= ?", User.date_to_PST(date)[0],User.date_to_PST(date)[1]).sum(:calories)
   end
 
   def get_all_meals(date)
@@ -31,7 +55,7 @@ class User < ApplicationRecord
   end
 
   def get_meals(date, meal_type)
-    self.meals.where("created_at >= ? AND created_at <= ? AND meal_type = ?", date_to_PST(date)[0],date_to_PST(date)[1], meal_type)
+    self.meals.where("created_at >= ? AND created_at <= ? AND meal_type = ?", User.date_to_PST(date)[0],User.date_to_PST(date)[1], meal_type)
   end
 
   def get_pie_chart_data(date)
@@ -62,11 +86,13 @@ class User < ApplicationRecord
     self.randomized_profile_url = random_url
   end
 
-  private
 
-  def date_to_PST(date)
+  def User.date_to_PST(date)
     [date.beginning_of_day.in_time_zone("Pacific Time (US & Canada)"), date.beginning_of_day.in_time_zone("Pacific Time (US & Canada)") + 1.days]
   end
+
+  private
+
 
   def today_PST
     Time.now.beginning_of_day.in_time_zone("Pacific Time (US & Canada)")

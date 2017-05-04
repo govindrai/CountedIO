@@ -6,6 +6,7 @@ Rails.application.routes.draw do
 
   get '/profile/:user_id/get_day_data', to: 'users#get_day_data', as: :get_day_data
   get '/profile/:user_id/get_week_data', to: 'users#get_week_data', as: :get_week_data
+  get '/profile/:user_id/get_month_data', to: 'users#get_month_data', as: :get_month_data
 
 
 

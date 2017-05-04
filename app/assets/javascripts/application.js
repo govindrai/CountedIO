@@ -51,7 +51,8 @@ var replaceContent = function (e) {
       weekChart.data.datasets[0].data = response.data
       weekChart.update();
     } else {
-      // MONTH CHART HERE
+      monthChart.data.datasets[0].data = response.data
+      monthChart.update();
     }
   })
   .fail(function () {
