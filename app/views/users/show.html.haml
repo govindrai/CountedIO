@@ -15,8 +15,5 @@
   -elsif params[:month]
     = render partial: 'month', locals: { meals: @meals}
   -else
-    = render partial: 'day', locals: { meals: @meals}
-
-
-
-
+    = render partial: 'day' # REMOVED LOCALS HERE
+    = render partial: 'meals/meals_by_type', locals: {meals: @meals}

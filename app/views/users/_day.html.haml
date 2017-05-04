@@ -1,21 +1,31 @@
 %canvas#myChart {"width"=>"200" "height"=>"200"}
 
 :javascript
+  function showDayData(event, activeElements) {
+    data = activeElements[0]._model.label
+  }
+
+
+:javascript
   var ctx = $("#myChart");
   var data = {
-    labels: #{@chart_data[0]},
+    labels: ["Breakfast", "Lunch", "Dinner", "Snacks", "Calories Remaining"],
     datasets: [
         {
-            data: #{@chart_data[1]},
+            data: [300, 500, 1000, 250, 200],
             backgroundColor: [
                 "#FF6384",
                 "#36A2EB",
-                "#FFCE56"
+                "#FFCE56",
+                "orange",
+                "green"
             ],
             hoverBackgroundColor: [
                 "#FF6384",
                 "#36A2EB",
-                "#FFCE56"
+                "#FFCE56",
+                "orange",
+                "green"
             ]
         }]
   };
@@ -24,8 +34,6 @@
     type: 'doughnut',
     data: data,
     options: {
-      animation:{
-
-      }
+      onClick: showDayData
     }
   });
