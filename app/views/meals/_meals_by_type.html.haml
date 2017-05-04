@@ -1,4 +1,4 @@
-.foods-container
+.foods-container.col-12
   -4.times do |x|
     .food-container.hidden{id:"#{Meal.get_meal_types[x]}-meals"}
       %h2= Meal.get_meal_types[x]

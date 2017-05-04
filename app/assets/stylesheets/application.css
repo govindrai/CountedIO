@@ -122,7 +122,10 @@ td,tr,th {
 }
 
 .food-container {
-  /*display: none;*/
+  margin: auto;
+  display: flex;
+  align-items: center;
+  align-content: center;
 }
 
 .hidden {
