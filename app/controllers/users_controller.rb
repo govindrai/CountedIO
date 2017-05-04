@@ -1,39 +1,76 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: [:show]
+  before_action :set_user
   include LinkHelper
 
   def show
-    @authorized = true if @user.randomized_profile_url == params[:random]
-
-    if params[:week]
-      dates = params[:week].split('_')
-      @range = (DateTime.parse(dates[0])..DateTime.parse(dates[1]))
-      @date =  DateTime.parse(dates[0])
-    elsif params[:month]
-      @date = DateTime.new(DateTime.now.year, params[:month])
-    else
+    if @user.authorized?(params[:random])
       @date = params[:date] ? DateTime.parse(params[:date]) : DateTime.now
-      @meals = Meal.get_day_meals(@user, @date)
-      @chart_data = Meal.get_pie_chart_data(@user, @date)
-    end
+      @meals = @user.get_all_meals(@date)
 
-
-    if request.xhr?
-      if params[:direction] == 'forward'
-        @date = DateTime.parse(params[:date]) + 1
+      if request.xhr?
+        if params[:direction] == 'forward'
+          @date += 1
+        else
+          @date -= 1
+        end
+        data = {data: @user.get_pie_chart_data(@date), date: @date.strftime("%F")}.to_json
+        render json: data, layout:false
       else
-        @date = DateTime.parse(params[:date]) - 1
+        @chart_data = @user.get_pie_chart_data(@date)
       end
-      p @date
-      @chart_data = {data: Meal.get_pie_chart_data(@user, @date), date: @date.strftime("%F")}.to_json
-      render json: @chart_data, layout:false
     else
-      @chart_data = Meal.get_pie_chart_data(@user, @date)
+      render plain: "USER NOT AUTHORIZED"
     end
   end
 
-  def month
+  def get_day_data
+    if request.xhr?
+      @date = DateTime.parse(params[:date])
+      @meals = @user.get_all_meals(@date)
+      if params[:direction] == 'forward'
+        @date += 1
+      else
+        @date -= 1
+      end
+      data = {data: @user.get_pie_chart_data(@date), date: @date.strftime("%F")}.to_json
+      render json: data, layout:false
+    end
+  end
 
+  def get_week_data
+    if request.xhr?
+      @date = DateTime.parse(params[:date])
+      puts @date
+      if params[:direction].include?('forward')
+        date1 =  @date + 7
+        date2 =  date1 + 7
+        puts date1
+        puts date2
+      else
+        date1 = @date - 7
+        date2 = @date
+      end
+      data = {data: @user.get_bar_chart_data(date1), date: User.generate_week_label(date1, date2)}.to_json
+      render json: data, layout:false
+    end
+  end
+
+  def get_month_data
+    if request.xhr?
+      @date = DateTime.parse(params[:date])
+      puts @date
+      if params[:direction].include?('forward')
+        date1 =  @date + 7
+        date2 =  date1 + 7
+        puts date1
+        puts date2
+      else
+        date1 = @date - 7
+        date2 = @date
+      end
+      data = {data: @user.get_bar_chart_data(date1), date: User.generate_week_label(date1, date2)}.to_json
+      render json: data, layout:false
+    end
   end
 
   private

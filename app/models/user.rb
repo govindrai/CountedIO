@@ -4,40 +4,102 @@ class User < ApplicationRecord
 
   before_create :generate_randomized_profile_url, :set_maintenance_calories, :set_weight_goal_values
 
-  def generate_link_to_profile
-    base_url = "https://vildeio.herokuapp.com/profile/#{self.id}?random="
-    date = DateTime.now.strftime("%F")
-    message = "Here is your profile:  " + base_url + generate_randomized_profile_url + "&date=" + date
-  end
-
-  def get_calories_summary
-    calories_consumed = get_calories_summary_num
-    if calories_consumed
-      remaining_calories = (get_suggested_calories - calories_consumed).to_s
-    else
-      remaining_calories = get_suggested_calories.to_s
+  def get_line_chart_data(date)
+    month_int = User.months_to_int(date)
+    days = User.days_in_month[month_int]
+    monthly_calories = []
+    days.times do |x|
+      meal_values = self.get_pie_chart_data(date + x)
+      meal_values.pop
+      monthly_calories.push(meal_values.inject(0,:+))
     end
-    message = "You have consumed #{calories_consumed} calories today. You may only consume #{remaining_calories} more to meet your daily goal."
+    monthly_calories
   end
 
-  def get_calories_summary_num
-    self.meals.where("created_at >= ?", Time.now.beginning_of_day.in_time_zone("Pacific Time (US & Canada)")).sum(:calories)
+  def get_bar_chart_data(date)
+    weekly_calories = []
+    7.times do |x|
+      meal_values = self.get_pie_chart_data(date + x)
+      meal_values.pop
+      weekly_calories.push(meal_values.inject(0,:+))
+    end
+    weekly_calories
   end
 
-  def time_to_success
+  def self.generate_month_label(date)
+    User.months[User.date_to_PST(date).month]
+  end
+
+  def self.days_in_month
+    %w(31 30 28 30 31 30 31 31 30 31 30 31)
+  end
+
+  def self.months
+    %w(January February March April May June July August September October November December)
+  end
+
+  def self.months_to_int(date)
+    User.months.find_index(User.date_to_PST(date).month) + 1
+  end
+
+  def self.generate_week_label(date1,date2)
+    "#{(date1).strftime("%F")} - #{date2.strftime("%F")}"
+  end
+
+  def get_calories_consumed(date)
+    self.meals.where("created_at >= ? AND created_at <= ?", User.date_to_PST(date)[0],User.date_to_PST(date)[1]).sum(:calories)
+  end
+
+  def get_all_meals(date)
+    [get_meals(date, "Breakfast"), get_meals(date, "Lunch"), get_meals(date, "Dinner"), get_meals(date, "Snack")]
+  end
+
+  def get_meals(date, meal_type)
+    self.meals.where("created_at >= ? AND created_at <= ? AND meal_type = ?", User.date_to_PST(date)[0],User.date_to_PST(date)[1], meal_type)
+  end
+
+  def get_pie_chart_data(date)
+    calories_remaining = self.target_calories - get_calories_consumed(date)
+    calories_remaining = 0 if calories_remaining < 0
+    meal_values = [get_meals(date, 'Breakfast').sum(:calories), get_meals(date, 'Lunch').sum(:calories), get_meals(date, 'Dinner').sum(:calories), get_meals(date, 'Snack').sum(:calories), calories_remaining]
+  end
+
+  def get_time_to_success
     weeks = (self.target_weight_pounds - self.weight_pounds).to_i.abs
     days = weeks * 7
     date = (Date.today + days).strftime("%m/%d/%Y")
     "#{days} days (#{date})"
   end
 
-  private
+  def authorized?(url_param)
+    self.randomized_profile_url == url_param
+  end
+
+  def get_profile_url
+    "https://vildeio.herokuapp.com/profile/#{self.id}?random=#{generate_randomized_profile_url}"
+  end
 
   def generate_randomized_profile_url
     random = %w(a b c d e f g h i j k l m n o p q r s t u v w y z A B C D E F G H I J K L M N O P Q R S T U V W Y Z 1 2 3 4 5 6 7 8 9)
     random_url = ''
     10.times {|time| random_url += random.sample }
     self.randomized_profile_url = random_url
+  end
+
+
+  def User.date_to_PST(date)
+    [date.beginning_of_day.in_time_zone("Pacific Time (US & Canada)"), date.beginning_of_day.in_time_zone("Pacific Time (US & Canada)") + 1.days]
+  end
+
+  private
+
+
+  def today_PST
+    Time.now.beginning_of_day.in_time_zone("Pacific Time (US & Canada)")
+  end
+
+  def tomorrow_PST
+    Time.now.beginning_of_day.in_time_zone("Pacific Time (US & Canada)") + 1.days
   end
 
   # sets weight direction and target calories
@@ -50,7 +112,7 @@ class User < ApplicationRecord
       self.target_calories = self.maintenance_calories + 500
     else
       self.weight_direction = "Maintain Weight"
-      self.target_calores = self.maintenance_calories
+      self.target_calories = self.maintenance_calories
     end
   end
 
@@ -71,7 +133,4 @@ class User < ApplicationRecord
   def bmr_formula_female
     bmr = 10 * (self.weight_pounds * 0.453592) + 6.25 * (self.height_inches * 2.54) - 5 * self.age - 161
   end
-
-
-
 end

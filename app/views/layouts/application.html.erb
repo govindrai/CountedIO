@@ -2,9 +2,8 @@
 <html>
   <head>
     <title>VildeIO</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <%= csrf_meta_tags %>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
     <%= stylesheet_link_tag    'application', media: 'all' %>
     <%= javascript_include_tag 'application' %>
   </head>
@@ -12,7 +11,6 @@
   <nav>
     <button class="col-4 nav-link" id="nav-1">
       Day
-      <!-- Will link to:  <%= LinkHelper.this_week(@date, @user) %> -->
     </button>
     <button class="col-4 nav-link" id="nav-2">
       Week

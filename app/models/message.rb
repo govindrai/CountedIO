@@ -20,18 +20,30 @@ class Message < ApplicationRecord
     when 'caloric_information'
       get_caloric_information
     when 'get_profile'
-      @response_to_user = @user.generate_link_to_profile
+      get_profile
     when 'capabilities'
       display_capabilities
     when 'how_to'
       display_how_to
     when 'get_calories_summary'
-      @response_to_user = @user.get_calories_summary
+      get_calories_summary
     when 'greet'
-      greet
+      get_greeting
     else
-      @response_to_user = "I HAVE NO IDEA WHAT YOU'RE TALKING ABOUT"
+      get_default_response
     end
+  end
+
+  def get_default_response
+    default_responses = [
+      "I won't lie, I have no idea how to answer that",
+      "You have broken me....jk. I am more useful when you use me to track. :)"
+    ]
+    @response_to_user = default_responses.sample
+  end
+
+  def get_profile
+    @response_to_user = "View your profile: #{@user.get_profile_url}"
   end
 
   def add_meal
@@ -54,8 +66,12 @@ class Message < ApplicationRecord
     @response_to_user = message
   end
 
-  def greet
-    greetings = ["Hey there! I am more useful when you tell me to track your meals.", "How's it going? I am more useful when you tell me to track your meals.", "Hello to you to! I am more useful when you tell me to track your meals."]
+  def get_greeting
+    greetings = [
+      "Hey there! I am more useful when you tell me to track your meals.",
+      "How's it going? I am more useful when you tell me to track your meals.",
+      "Hello to you to! I am more useful when you tell me to track your meals."
+    ]
     @response_to_user = greetings.sample
   end
 
@@ -71,6 +87,18 @@ class Message < ApplicationRecord
       end
     end
     @response_to_user = message
+  end
+
+  def get_calories_summary
+    calories_consumed = @user.get_calories_consumed
+    remaining_calories = self.target_calories - calories_consumed
+    if remaining_calories < 0
+      message = "😧 UH OH. It seems like you've overate! You've consumed #{calories_consumed} calories, #{remaining_calories.abs} more than your daily goal. You can workout to offset these extra calories!"
+    elsif remaining_calories == 0
+      message = "WOW. You've consumed exactly #{calories_consumed} calories which is your daily goal. YOU ROCK. Don't eat more unless you work out."
+    else
+      message = "You have consumed #{calories_consumed} calories today. You can consume #{remaining_calories} more to meet stay within your daily goal. Keep up the good work, #{@user.name}!"
+    end
   end
 
   def reply_to_user
@@ -181,26 +209,6 @@ class Message < ApplicationRecord
     @nutritionix_client.nxql_search(search_params)
   end
 
-  # sends sms to wit, updates the messages table
-  def message_wit
-    configure_wit_client
-    wit_response = @wit_client.message(self.body)
-    self.update(json_wit_response: wit_response)
-  end
-
-  # useful for checking if Twilio is working
-  # useful for testing different message parameters such as url/media_url
-  def sms_govind
-    configure_twilio_client
-    @twilio_client.messages.create(
-      from: ENV["TWILIO_PHONE_NUMBER"],
-      to: ENV["GOVIND_PHONE_NUMBER"],
-      body: 'Show me my profile',
-      # url: 'localhost.com/viewmyprofile'
-      # media_url: 'http://coolwildlife.com/wp-content/uploads/galleries/post-3004/Fox%20Picture%20003.jpg'
-    )
-  end
-
   def display_capabilities
     messages = [
       "You can track food by telling me what you ate. You can say things like 'I just had an apple, three slices of bread, and peanut butter'. When you wanna see you profile just simply ask me for it.",
@@ -218,6 +226,26 @@ class Message < ApplicationRecord
     @response_to_user += "Get daily calories: \"How many calories have I had today\"\\nn"
     @response_to_user += "Get caloric content: \"How many calories are in an apple\"\\nn"
     @response_to_user += "Add calories: \"Add 500 calories\""
+  end
+
+  # sends sms to wit, updates the messages table
+  def message_wit
+    configure_wit_client
+    wit_response = @wit_client.message(self.body)
+    self.update(json_wit_response: wit_response)
+  end
+
+  # useful for checking if Twilio is working (for testing purposes only)
+  # useful for testing different message parameters such as url/media_url
+  def sms_govind
+    configure_twilio_client
+    @twilio_client.messages.create(
+      from: ENV["TWILIO_PHONE_NUMBER"],
+      to: ENV["GOVIND_PHONE_NUMBER"],
+      body: 'Show me my profile',
+      # url: 'localhost.com/viewmyprofile'
+      # media_url: 'http://coolwildlife.com/wp-content/uploads/galleries/post-3004/Fox%20Picture%20003.jpg'
+    )
   end
 
   ############################

@@ -21,13 +21,24 @@
   margin: auto;
 }
 
+.canvas-container {
+  position: relative;
+}
+
+.middle-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
 * {
   box-sizing: border-box;
 }
 
 
 body {
-  width: 1090px;
+  max-width: 1090px;
   margin: auto;
   margin-bottom: 500px;
 }
