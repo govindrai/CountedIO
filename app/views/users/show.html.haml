@@ -1,10 +1,4 @@
-.change-page
-  %span.change-page-link
-    = link_to "&#8678;".html_safe, LinkHelper.previous_day(@date, @user), class: 'back'
-  %span.date.change-page-link
-    = @date.strftime("%F")
-  %span.change-page-link
-    = link_to "&#8680;".html_safe, LinkHelper.next_day(@date, @user), class: 'forward'
+
 
 - if @authorized
   -if params[:week]

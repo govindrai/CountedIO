@@ -141,3 +141,7 @@ td,tr,th {
 .close-meals a {
   color: black;
 }
+
+.day {
+  display: block;
+}

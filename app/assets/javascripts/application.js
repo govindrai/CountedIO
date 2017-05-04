@@ -16,6 +16,10 @@
 //= require_tree .
 
 $(document).ready(function () {
+
+  $('body').on("click", '#nav-1', toggleDay)
+  $('body').on("click", '#nav-2', toggleWeek)
+  $('body').on("click", '#nav-3', toggleMonth)
   $('body').on("click", '.back', replaceContent)
   $('body').on("click", '.forward', replaceContent)
   $('body').on("click", '.refresh', refresh)
@@ -57,6 +61,12 @@ var closeMeals = function (e) {
 var refresh = function () {
   myDoughnutChart.data.datasets[0].data = [45,123,213]
   myDoughnutChart.update()
+}
+
+var toggleDay = function (e) {
+  e.preventDefault();
+  $('.day').toggle();
+
 }
 
 
