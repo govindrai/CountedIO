@@ -137,7 +137,6 @@ var getWeekData = function () {
 }
 
 var getMonthData = function () {
-  debugger
   var URL = $('.month-link').children()[0].href
   $.ajax({
     url: URL,
