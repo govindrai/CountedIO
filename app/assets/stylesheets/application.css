@@ -29,6 +29,7 @@
 body {
   width: 1090px;
   margin: auto;
+  margin-bottom: 500px;
 }
 
 nav {
@@ -57,7 +58,7 @@ button {
 }
 
 #nav-1:hover {
-  background-color: #FF6384
+  background-color: #E55A77
 }
 
 #nav-2 {
@@ -65,7 +66,7 @@ button {
 }
 
 #nav-2:hover {
-  background-color: #36A2EB
+  background-color: #3399DE
 }
 
 #nav-3 {
@@ -93,4 +94,54 @@ button {
     float: left;
     padding: 15px;
     border: 1px solid white;
+}
+
+.change-page {
+  margin-top: 10px;
+  font-size: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.change-page-link {
+  padding: 0 10px;
+  color: black;
+}
+
+a {
+  text-decoration: none;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+td,tr,th {
+  border: 1px solid black;
+}
+
+.food-container {
+  margin: auto;
+  display: flex;
+  align-items: center;
+  align-content: center;
+}
+
+.hidden {
+  display: none;
+}
+
+.foods-container {
+  display: flex;
+  align-items: center;
+  align-content: center;
+}
+
+.close-meals a {
+  color: black;
+}
+
+.day {
+  display: block;
 }

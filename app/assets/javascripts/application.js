@@ -16,9 +16,14 @@
 //= require_tree .
 
 $(document).ready(function () {
+
+  $('body').on("click", '#nav-1', toggleDay)
+  $('body').on("click", '#nav-2', toggleWeek)
+  $('body').on("click", '#nav-3', toggleMonth)
   $('body').on("click", '.back', replaceContent)
   $('body').on("click", '.forward', replaceContent)
   $('body').on("click", '.refresh', refresh)
+  $('body').on('click', '.close-meals', closeMeals)
 })
 
 var replaceContent = function (e) {
@@ -48,12 +53,40 @@ var replaceContent = function (e) {
   })
 }
 
+var closeMeals = function (e) {
+  e.preventDefault();
+  $(this).parent().toggle();
+}
+
 var refresh = function () {
-  myDoughnutChart.data.datasets[0].data = [45,123,213]
-  myDoughnutChart.update()
+  myDoughnutChart.data.datasets[0].data = [45,123,213];
+  myDoughnutChart.update();
+}
+
+var toggleDay = function (e) {
+  e.preventDefault();
+  hideTabs();
+  $('.day').toggle();
+}
+
+var toggleWeek = function (e) {
+  e.preventDefault();
+  hideTabs();
+  $('.week').toggle();
 }
 
 
+var toggleMonth = function (e) {
+  e.preventDefault();
+  hideTabs();
+  $('.month').toggle();
+}
+
+var hideTabs = function () {
+  $('.day').hide();
+  $('.week').hide();
+  $('.month').hide();
+}
 
 
 

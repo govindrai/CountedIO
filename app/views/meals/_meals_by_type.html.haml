@@ -1,18 +1,16 @@
--4.times do |x|
-  .container{id:"#{Meal.get_meal_types[x]}-meals"}
-    %h2= Meal.get_meal_types[x]
+.foods-container.col-12
+  -4.times do |x|
+    .food-container.hidden{id:"#{Meal.get_meal_types[x]}-meals"}
+      %h2= Meal.get_meal_types[x]
+      = link_to "X", '',class: "close-meals"
 
-    %table
-      %tbody
-        %tr
-          %td Item
-          %td Quantity
-          %td Serving
-          %td Calories
-          - meals[x].each_with_index do |meal, index|
-            %tr
-              %td= meal.food_name
-              %td= meal.quantity
-              %td= meal.units
-              %td= meal.calories
+      %table
+        %tbody
+          %tr
+            %td Item
+            %td Calories
+            - meals[x].each_with_index do |meal, index|
+              %tr
+                %td= meal.food_name
+                %td= meal.calories
 

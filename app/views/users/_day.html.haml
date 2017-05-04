@@ -1,40 +1,56 @@
+.day
+  .change-page
+    %span.change-page-link
+      = link_to "&#8678;".html_safe, LinkHelper.previous_day(@date, @user), class: 'back'
+    %span.date.change-page-link
+      = @date.strftime("%F")
+    %span.change-page-link
+      = link_to "&#8680;".html_safe, LinkHelper.next_day(@date, @user), class: 'forward'
+  %canvas#dayChart {"width"=>"200" "height"=>"200"}
 
-%canvas#myChart {"width"=>"200" "height"=>"200"}
-
-:javascript
-  function showDayData(event, activeElements) {
-    data = activeElements[0]._model.label
-  }
-
-
-:javascript
-  var ctx = $("#myChart");
-  var data = {
-    labels: ["Breakfast", "Lunch", "Dinner", "Snack", "Remaining Calories"],
-    datasets: [
-        {
-            data: #{@chart_data},
-            backgroundColor: [
-                "#FF6384",
-                "#36A2EB",
-                "#FFCE56",
-                "orange",
-                "green"
-            ],
-            hoverBackgroundColor: [
-                "#FF6384",
-                "#36A2EB",
-                "#FFCE56",
-                "orange",
-                "green"
-            ]
-        }]
-  };
-
-  var myDoughnutChart = new Chart(ctx, {
-    type: 'doughnut',
-    data: data,
-    options: {
-      onClick: showDayData
+  :javascript
+    function showDayData(event, activeElements) {
+      data = activeElements[0]._model.label
+      var target = '#' + data + "-meals"
+      $('#Breakfast-meals').hide()
+      $('#Lunch-meals').hide()
+      $('#Dinner-meals').hide()
+      $('#Snack-meals').hide()
+      $(target).toggle()
     }
-  });
+
+
+  :javascript
+    var ctx = $("#dayChart");
+    var data = {
+      labels: ["Breakfast", "Lunch", "Dinner", "Snack", "Remaining Calories"],
+      datasets: [
+          {
+              data: #{@chart_data},
+              backgroundColor: [
+                  "#FF6384",
+                  "#36A2EB",
+                  "#FFCE56",
+                  "#FFA500",
+                  "#2EDF2E"
+              ],
+              hoverBackgroundColor: [
+                  "#E55A77",
+                  "#3399DE",
+                  "#EEC04F",
+                  "#EB9800",
+                  "#28BF28"
+              ]
+          }]
+    };
+
+    var myDoughnutChart = new Chart(ctx, {
+      type: 'doughnut',
+      data: data,
+      options: {
+        onClick: showDayData
+      }
+    });
+
+
+
