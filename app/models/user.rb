@@ -36,6 +36,14 @@ class User < ApplicationRecord
     weekly_calories
   end
 
+  def get_bar_chart_labels(date)
+    weekly_labels = []
+    7.times do |x|
+      weekly_labels.push((date - (6 - x).days).strftime('%A'))
+    end
+    weekly_labels
+  end
+
   #FIXME there is an edge case on the first of the month as UTC then drops to the month before.
   def self.generate_month_label(date)
     date.strftime("%B")
@@ -73,6 +81,10 @@ class User < ApplicationRecord
     calories_remaining = self.target_calories - get_calories_consumed(date)
     calories_remaining = 0 if calories_remaining < 0
     meal_values = [get_meals(date, 'Breakfast').sum(:calories), get_meals(date, 'Lunch').sum(:calories), get_meals(date, 'Dinner').sum(:calories), get_meals(date, 'Snack').sum(:calories), calories_remaining]
+  end
+
+  def get_pie_chart_labels(date)
+
   end
 
   def get_time_to_success
