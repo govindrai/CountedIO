@@ -34,10 +34,9 @@ var replaceContent = function (e) {
   e.preventDefault();
   var URL = $(this).attr('href')
   var date = $(this).parent().parent().find('.date')
-  var direction = $(this).attr('class')
-  var data = `date=${date.text().substring(0,11)}&direction=${direction}`
+  var direction = this.classList[0]
   var chartID = this.classList[1]
-  // debugger
+  var data = `date=${date.text().substring(0,11)}&direction=${direction}&range=${chartID}`
   console.log(chartID);
   console.log(data);
 
@@ -48,10 +47,10 @@ var replaceContent = function (e) {
   })
   .done(function (response) {
     date.text(response.dateLabel)
-    if (chartID == 'dayChart') {
+    if (chartID == 'Day') {
       dayChart.data.datasets[0].data = response.data
       dayChart.update();
-    } else if (chartID == 'weekChart') {
+    } else if (chartID == 'Week') {
       weekChart.data.datasets[0].data = response.data
       weekChart.data.labels = response.dataLabels
       weekChart.data.datasets[1].data = response.targetCalories
