@@ -8,34 +8,18 @@ class User < ApplicationRecord
     self.meals.where("created_at >= ? AND create_at <=", today_PST, tomorrow_PST).sum(:calories)
   end
 
-  #############################
-  # Get meals for a certain day and/or meal_type
-  #############################
   def get_all_meals(date)
-    [get_breakfast_meals(date), get_lunch_meals(date), get_dinner_meals(date), get_snack_meals( date)]
+    [get_meals(date, "Breakfast"), get_meals(date, "Lunch"), get_meals(date, "Dinner"), get_meals(date, "Snack")]
   end
 
-  def get_breakfast_meals(date)
-    self.meals.where("created_at >= ? AND created_at <= ? AND meal_type = ?", today_PST, tomorrow_PST, "Breakfast")
-  end
-
-  def get_lunch_meals(date)
-    self.meals.where("created_at >= ? AND created_at <= ? AND meal_type = ?", today_PST, tomorrow_PST, "Lunch")
-  end
-
-  def get_dinner_meals(date)
-    self.meals.where("created_at >= ? AND created_at <= ? AND meal_type = ?", today_PST, tomorrow_PST, "Dinner")
-  end
-
-  def get_snack_meals(date)
-    self.meals.where("created_at >= ? AND created_at <= ? AND meal_type = ?", today_PST, tomorrow_PST, "Snack")
+  def get_meals(date, meal_type)
+    self.meals.where("created_at >= ? AND created_at <= ? AND meal_type = ?", today_PST, tomorrow_PST, meal_type)
   end
 
   def get_pie_chart_data(date)
     calories_remaining = user.target_calories - get_calories_consumed
     calories_remaining = 0 if calories_remaining < 0
-
-    meal_values = [get_breakfast_meals(date).sum(:calories), get_lunch_meals(date).sum(:calories), get_dinner_meals(date).sum(:calories), get_snack_meals(date).sum(:calories), calories_remaining]
+    meal_values = [get_meals(date, 'Breakfast').sum(:calories), get_meals(date, 'Lunch').sum(:calories), get_meals(date, 'Dinner').sum(:calories), get_meals(date, 'Snack').sum(:calories), calories_remaining]
   end
 
   def get_time_to_success
@@ -93,7 +77,4 @@ class User < ApplicationRecord
   def bmr_formula_female
     bmr = 10 * (self.weight_pounds * 0.453592) + 6.25 * (self.height_inches * 2.54) - 5 * self.age - 161
   end
-
-
-
 end
