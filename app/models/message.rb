@@ -28,10 +28,18 @@ class Message < ApplicationRecord
     when 'get_calories_summary'
       get_calories_summary
     when 'greet'
-      greet
+      get_greeting
     else
-      @response_to_user = "I HAVE NO IDEA WHAT YOU'RE TALKING ABOUT"
+      get_default_response
     end
+  end
+
+  def get_default_response
+    default_responses = [
+      "I won't lie, I have no idea how to answer that",
+      "You have broken me....jk. I am more useful when you use me to track. :)"
+    ]
+    @response_to_user = default_responses.sample
   end
 
   def get_profile
@@ -58,7 +66,7 @@ class Message < ApplicationRecord
     @response_to_user = message
   end
 
-  def greet
+  def get_greeting
     greetings = [
       "Hey there! I am more useful when you tell me to track your meals.",
       "How's it going? I am more useful when you tell me to track your meals.",
