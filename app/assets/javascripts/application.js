@@ -23,10 +23,10 @@ $(document).ready(function () {
   $('body').on("click", '.forward', replaceContent);
   $('body').on('click', '.close-meals', closeMeals);
   $('#invite-form').on("submit", inviteUser);
-  // getDayData();
-  // getWeekData();
-  // getMonthData();
-  // getDayMeals();
+  getDayData();
+  getWeekData();
+  getMonthData();
+  getDayMeals();
 })
 
 function inviteUser(e) {
@@ -102,7 +102,7 @@ var replaceContent = function (e) {
   })
 
   var baseUrl = $(document)[0].URL.split("?")
-  var url = baseUrl[0] + "get_day_meals" + "?" + baseUrl[1]
+  var url = baseUrl[0] + "/get_day_meals" + "?" + baseUrl[1]
   var direction = $(this).attr('class')
   var data = "?date=" + dateLabel.text().substring(0,11) + "&direction=" + direction
 
@@ -226,8 +226,9 @@ var getMonthData = function () {
 }
 
 var getDayMeals = function () {
+  // debugger
   var baseUrl = $(document)[0].URL.split("?")
-  var url = baseUrl[0] + "get_day_meals" + "?" + baseUrl[1]
+  var url = baseUrl[0] + "/get_day_meals" + "?" + baseUrl[1]
   $.ajax({
     url: url,
     method: 'get'
