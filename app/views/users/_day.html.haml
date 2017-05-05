@@ -13,6 +13,7 @@
 
   :javascript
     function showDayData(event, activeElements) {
+      console.log(activeElements);
       data = activeElements[0]._model.label
       var target = '#' + data + "-meals"
       $('#Breakfast-meals').hide()
@@ -51,7 +52,16 @@
       type: 'doughnut',
       data: data,
       options: {
-        onClick: showDayData
+        maintainAspectRatio: false,
+        onClick: showDayData,
+        legend: {
+          position: 'bottom',
+        },
+        title: {
+          display: true,
+          text: 'Daily Calorie Intake',
+          position: 'top',
+        }
       }
     });
 

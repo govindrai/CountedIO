@@ -15,14 +15,9 @@
  *= require_self
  */
 
-#chart-container {
-  width: 500px;
-  height: 500px;
-  margin: auto;
-}
-
 .canvas-container {
   position: relative;
+  height: 500px;
 }
 
 .middle-text {

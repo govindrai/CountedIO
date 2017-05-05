@@ -10,6 +10,8 @@
     %canvas#Month
 
 :javascript
+  Chart.defaults.global.defaultFontSize = 18;
+
   var dtx = $("#Month");
   var data = {
     datasets: [
@@ -34,12 +36,17 @@
     options: {
       scales: {
         xAxes: [{
-          position: 'top',
+          position: 'bottom',
           ticks: {
-            min: 1,
-            max: 1000
+            step: 2
           }
         }]
+      },
+      legend: {
+        position: 'bottom',
+        labels: {
+          text: "Calories Consumed, Target Calories"
+        }
       }
     }
   });
