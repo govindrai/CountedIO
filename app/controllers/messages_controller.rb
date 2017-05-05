@@ -13,7 +13,6 @@ class MessagesController < ApplicationController
   end
 
   def invite_user
-    p params
     @message = Message.create!(phone_number: params[:phone_number], body: "register")
     @message.reply_to_user
     head :ok
