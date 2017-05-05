@@ -17,9 +17,9 @@
 
 $(document).ready(function () {
 
-  $('body').on("click", '#nav-1', toggleDay);
-  $('body').on("click", '#nav-2', toggleWeek);
-  $('body').on("click", '#nav-3', toggleMonth);
+  $('body').on("click", '#day-button', toggleDay);
+  $('body').on("click", '#week-button', toggleWeek);
+  $('body').on("click", '#month-button', toggleMonth);
   $('body').on("click", '.back', replaceContent);
   $('body').on("click", '.forward', replaceContent);
   $('body').on('click', '.close-meals', closeMeals);
@@ -110,25 +110,33 @@ var closeMeals = function (e) {
 var toggleDay = function (e) {
   e.preventDefault();
   hideTabs();
+  $('#day-button').toggleClass('active');
   $('.day').toggle();
 }
 
 var toggleWeek = function (e) {
   e.preventDefault();
   hideTabs();
+  $('#week-button').toggleClass('active');
   $('.week').toggle();
+
 }
 
 var toggleMonth = function (e) {
   e.preventDefault();
   hideTabs();
+  $('#month-button').toggleClass('active');
   $('.month').toggle();
+
 }
 
 var hideTabs = function () {
   $('.day').hide();
   $('.week').hide();
   $('.month').hide();
+  $('#day-button').removeClass('active');
+  $('#week-button').removeClass('active');
+  $('#month-button').removeClass('active');
 }
 
 

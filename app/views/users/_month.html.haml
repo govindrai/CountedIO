@@ -3,7 +3,7 @@
     %span.change-page-link.month-link
       = link_to "&#8678;".html_safe, get_month_data_path(@user), class: 'back Month'
     %span.date.change-page-link
-      = @user.generate_month_label(@date)
+      = @user.generate_month_label(nil)
     %span.change-page-link
       = link_to "&#8680;".html_safe, get_month_data_path(@user), class: 'forward Month'
   .canvas-container

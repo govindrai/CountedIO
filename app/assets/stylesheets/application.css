@@ -43,6 +43,7 @@
   padding: 15px 0;
   border-top: 1px solid blue;
   border-bottom: 1px solid blue;
+  outline: none;
 }
 
 #change-chart-buttons button:last-child {

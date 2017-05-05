@@ -5,14 +5,13 @@ class UsersController < ApplicationController
 
   def show
     if @user.authorized?(params[:random])
-      @date = params[:date] ? DateTime.parse(params[:date]) : DateTime.now
-      @chart_data = @user.get_pie_chart_data(@date)
+      @date = DateTime.now
     else
       render plain: "USER NOT AUTHORIZED"
     end
   end
 
-  def get_day_data
+  def get_data
     if request.xhr?
       date = params[:date] ? DateTime.parse(params[:date]) : DateTime.now
       range = params[:range]
@@ -21,9 +20,19 @@ class UsersController < ApplicationController
     end
   end
 
-  def get_week_data
+  def get_day_data
     if request.xhr?
-      date = params[:date] ? DateTime.parse(params[:date]) : DateTime.now
+      date = params[:date]
+      range = params[:range]
+      direction = params[:direction]
+      render json: @user.get_data(date, range, direction), layout:false
+    end
+  end
+
+  def get_week_data
+    puts "I MADE IT INTO WEEK DATA"
+    if request.xhr?
+      date = params[:date]
       range = params[:range]
       direction = params[:direction]
       render json: @user.get_data(date, range, direction), layout:false
@@ -32,7 +41,7 @@ class UsersController < ApplicationController
 
   def get_month_data
     if request.xhr?
-      date = params[:date] ? DateTime.parse(params[:date]) : DateTime.now.beginning_of_month
+      date = params[:date]
       range = params[:range]
       direction = params[:direction]
       render json: @user.get_data(date, range, direction), layout:false
@@ -41,6 +50,7 @@ class UsersController < ApplicationController
 
   def get_day_meals
     if request.xhr?
+      puts "I JSUT HIT THIS BITCH"
       @date = params[:date] ? DateTime.parse(params[:date]) : DateTime.now
       if params[:direction]
         if params[:direction].include?('forward')

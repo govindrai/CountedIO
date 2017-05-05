@@ -6,6 +6,9 @@ class User < ApplicationRecord
   before_create :generate_randomized_profile_url, :set_maintenance_calories, :set_weight_goal_values
 
   def get_data(date, range, direction)
+    puts "DATE HERE"
+      puts date
+      puts "DATE ABOVE"
     {
       dateLabel: get_date_range_label(date, range, direction),
       data: get_chart_data(@date, range),
