@@ -101,7 +101,7 @@ body {
   float: none;
   margin: auto;
   margin-bottom: 500px;
-  background: url('back-green.svg')
+  background: url('splash-page-background.svg')
 }
 
 nav {
@@ -321,4 +321,8 @@ fieldset {
   text-shadow: -1px 1px #193047;
 }
 
+
+.home {
+  margin-top: 50px;
+}
 
