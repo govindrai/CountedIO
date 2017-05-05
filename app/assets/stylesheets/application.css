@@ -21,10 +21,9 @@
 }
 
 .middle-text {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  display: flex;
+  justify-content: center;
+  font-size: 35px;
 }
 
 * {
@@ -187,4 +186,9 @@ td,tr,th {
 
 fieldset {
   border: none;
+}
+
+
+.over {
+  color: red;
 }

@@ -35,7 +35,7 @@ class User < ApplicationRecord
   end
 
   def get_target_calories(date, range)
-    return if range == "Day"
+    return self.target_calories if range == "Day"
     days = range == "Week" ? 7 : get_days_in_month(date)
     Array.new(days, self.target_calories)
   end
