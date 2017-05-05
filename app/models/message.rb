@@ -220,12 +220,12 @@ class Message < ApplicationRecord
 
   def display_how_to
     @response_to_user = "Common commands:\n\n"
-    @response_to_user += "Adding food: \"I just ate grilled chicken breast\"\n\n"
-    @response_to_user += "Show profile: \"Show me my profile\"\\nn"
-    @response_to_user += "Registering: \"I want to register\"\\nn"
-    @response_to_user += "Get daily calories: \"How many calories have I had today\"\\nn"
-    @response_to_user += "Get caloric content: \"How many calories are in an apple\"\\nn"
-    @response_to_user += "Add calories: \"Add 500 calories\""
+    @response_to_user += "Adding food: \n\"I just ate grilled chicken breast\"\n\n"
+    @response_to_user += "Show profile: \n\"Show me my profile\"\n\n"
+    @response_to_user += "Registering: \n\"I want to register\"\n\n"
+    @response_to_user += "Get daily calories: \n\"How many calories have I had today\"\n\n"
+    @response_to_user += "Get caloric content: \n\"How many calories are in an apple\"\n\n"
+    @response_to_user += "Add calories: \n\"Add 500 calories\"\n"
   end
 
   # sends sms to wit, updates the messages table
