@@ -32,7 +32,7 @@ $(document).ready(function () {
 
 var replaceContent = function (e) {
   e.preventDefault();
-  var url = $(this).attr('href')
+  var URL = $(this).attr('href')
   var date = $(this).parent().parent().find('.date')
   var direction = this.classList[0]
   var chartID = this.classList[1]
@@ -49,6 +49,19 @@ var replaceContent = function (e) {
   request.done(function (response) {
     console.log("RESPONSE FROM PRESSING ARROW BUTTON")
     console.log(response)
+    var calsEaten = response.data[0] + response.data[1] + response.data[2] + response.data[3]
+    var calsRemaining = response.data[4]
+    if (calsRemaining <= 0) {
+      $('.middle-text').append("<p>Over Limit By:</p>")
+      $('.middle-text').append(`<p>${(calsEaten - calsRemaining).toString()}</p>`)
+      $('.middle-text').addClass('over')
+    } else {
+      $('.middle-text').append("<p>Calories Remaining Today:</p>")
+      $('.middle-text').append(`<p>${calsRemaining.toString()}</p>`)
+      $('.middle-text').addClass('over')
+
+    }
+
     date.text(response.dateLabel)
     if (chartID == 'Day') {
       dayChart.data.datasets[0].data = response.data

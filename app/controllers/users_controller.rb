@@ -40,7 +40,6 @@ class UsersController < ApplicationController
   end
 
   def get_day_meals
-    p params
     if request.xhr?
       @date = params[:date] ? DateTime.parse(params[:date]) : DateTime.now
       if params[:direction]
