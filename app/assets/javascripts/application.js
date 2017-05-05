@@ -145,7 +145,7 @@ var hideTabs = function () {
 
 
 var getDayData = function () {
-  var URL = `${location.protocol}//${location.host}${location.pathname}`+'/get_data?direction=none&range=Day'
+  var URL = location.protocol + "/" + location.host + "/" + location.pathname + '/get_data?direction=none&range=Day'
   // debugger
   $.ajax({
     url: URL,
@@ -172,7 +172,7 @@ var getDayData = function () {
 }
 
 var getWeekData = function () {
-  var URL = `${location.protocol}//${location.host}${location.pathname}`+'/get_data?direction=none&range=Week'
+  var URL = location.protocol + "/" + location.host + "/" + location.pathname + '/get_data?direction=none&range=Week'
   $.ajax({
     url: URL,
     method: 'get'
@@ -190,7 +190,7 @@ var getWeekData = function () {
 }
 
 var getMonthData = function () {
-  var URL = `${location.protocol}//${location.host}${location.pathname}`+'/get_data?direction=none&range=Month'
+  var URL = location.protocol + "/" + location.host + "/" + location.pathname + '/get_data?direction=none&range=Month'
   $.ajax({
     url: URL,
     method: 'get'
