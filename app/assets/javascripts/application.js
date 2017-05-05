@@ -70,10 +70,10 @@ var replaceContent = function (e) {
     var calsRemaining = response.data[4]
     $('.middle-text').html(' ')
     if (calsRemaining <= 0) {
-      $('.middle-text').append("<p>Over Limit By: " + (calsEaten - response.targetCalories).toString() + "Calories</p>")
+      $('.middle-text').append("<p>Uh oh. Over limit by " + (calsEaten - response.targetCalories).toString() + " Calories</p>")
       $('.middle-text').addClass('over')
     } else {
-      $('.middle-text').append("<p>Remaining Today: " + calsRemaining.toString() + "Calories</p>")
+      $('.middle-text').append("<p>Remaining Today: " + calsRemaining.toString() + " Calories</p>")
       $('.middle-text').removeClass('over')
     }
     // debugger
@@ -117,12 +117,11 @@ var replaceContent = function (e) {
   .fail(function () {
     console.log("This function has failed")
   })
-
 }
 
 var closeMeals = function (e) {
   e.preventDefault();
-  $(this).parent().toggle();
+  $(this).parent().slideToggle();
 }
 
 var toggleDay = function (e) {
@@ -147,7 +146,6 @@ var toggleMonth = function (e) {
   $('#month-button').toggleClass('active');
   $('#date-label').text(dateLabelsObj.month)
   $('.month').toggle();
-
 }
 
 var hideTabs = function () {
@@ -175,10 +173,10 @@ var getDayData = function () {
     console.log(calsEaten - response.targetCalories)
     $('.middle-text').html(' ')
     if (calsRemaining <= 0) {
-      $('.middle-text').append("<p>Over Limit By: " + (calsEaten - response.targetCalories).toString() + "Calories</p>")
+      $('.middle-text').append("<p>Uh oh. Over limit by " + (calsEaten - response.targetCalories).toString() + " Calories</p>")
       $('.middle-text').addClass('over')
     } else {
-      $('.middle-text').append("<p>Remaining Today: " + calsRemaining.toString() + "Calories</p>")
+      $('.middle-text').append("<p>Remaining Today: " + calsRemaining.toString() + " Calories</p>")
       $('.middle-text').removeClass('over')
     }
   })
@@ -235,7 +233,7 @@ var getDayMeals = function () {
   })
   .done(function (response) {
     // console.log(response)
-    $('body').append(response)
+    $('.day').append(response)
   })
   .fail(function (response) {
     console.log("Something is messed up.")

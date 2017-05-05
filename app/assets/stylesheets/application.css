@@ -98,7 +98,11 @@
 .middle-text {
   display: flex;
   justify-content: center;
-  font-size: 35px;
+  font-size: 24px;
+}
+
+.middle-text p {
+  margin: 10px auto;
 }
 
 * {
@@ -192,22 +196,35 @@ a {
   text-decoration: none;
 }
 
-
-td,tr,th {
-  border: 1px solid black;
-}
-
 .food-container {
   width: 100%;
   margin: auto;
   display: block;
 }
 
-.table-container {
-  display: flex;
-  justify-content: center;
-  flex-grow: 1;
-  background-color: #d3d3d3;
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+td {
+  padding:  15px;
+}
+
+.meal-type {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 8px auto;
+
+}
+
+tbody tr:nth-child(even) {
+  background: #f2f2f2;
+}
+
+thead {
+  background: #cbcbcb;
+  font-weight: bold;
 }
 
 .close-meals a {
@@ -227,18 +244,9 @@ td,tr,th {
   flex-grow: 1;
 }
 
-table {
-  border-collapse: collapse;
-  width: 400px;
-}
-
-
-
 .hidden {
   display: none;
 }
-
-
 
 .day {
   display: block;
