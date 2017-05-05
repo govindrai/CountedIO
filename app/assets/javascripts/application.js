@@ -37,7 +37,7 @@ var replaceContent = function (e) {
   var dateLabel = $('#date-label')
   var direction = this.classList[0]
   var chartType = $('.active').text()
-  var queryParams = `?date=${dateLabel.text().substring(0,11)}&direction=${direction}&range=${chartType}`
+  var queryParams = "?date=" + dateLabel.text().substring(0,11) + "&direction=" + direction + "&range=" + chartType
   URL+= queryParams
   console.log(URL)
   console.log(chartType);
@@ -54,10 +54,10 @@ var replaceContent = function (e) {
     var calsRemaining = response.data[4]
     $('.middle-text').html(' ')
     if (calsRemaining <= 0) {
-      $('.middle-text').append(`<p>Over Limit By: ${(calsEaten - response.targetCalories).toString()} Calories</p>`)
+      $('.middle-text').append("<p>Over Limit By: " + (calsEaten - response.targetCalories).toString() + "Calories</p>")
       $('.middle-text').addClass('over')
     } else {
-      $('.middle-text').append(`<p>Remaining Today: ${calsRemaining.toString()} Calories</p>`)
+      $('.middle-text').append("<p>Remaining Today: " + calsRemaining.toString() + "Calories</p>")
       $('.middle-text').removeClass('over')
     }
     // debugger
@@ -88,7 +88,7 @@ var replaceContent = function (e) {
   var baseUrl = $(document)[0].URL.split("?")
   var url = baseUrl[0] + "/get_day_meals" + "?" + baseUrl[1]
   var direction = $(this).attr('class')
-  var data = `date=${dateLabel.text().substring(0,11)}&direction=${direction}`
+  var data = "?date=" + dateLabel.text().substring(0,11) + "&direction=" + direction
 
   $.ajax({
     url: url,
@@ -159,10 +159,10 @@ var getDayData = function () {
     console.log(calsEaten - response.targetCalories)
     $('.middle-text').html(' ')
     if (calsRemaining <= 0) {
-      $('.middle-text').append(`<p>Over Limit By: ${(calsEaten - response.targetCalories).toString()} Calories</p>`)
+      $('.middle-text').append("<p>Over Limit By: " + (calsEaten - response.targetCalories).toString() + "Calories</p>")
       $('.middle-text').addClass('over')
     } else {
-      $('.middle-text').append(`<p>Remaining Today: ${calsRemaining.toString()} Calories</p>`)
+      $('.middle-text').append("<p>Remaining Today: " + calsRemaining.toString() + "Calories</p>")
       $('.middle-text').removeClass('over')
     }
   })
@@ -229,7 +229,7 @@ var getDayMealsOnToggle = function () {
   var url = baseUrl[0] + "/get_day_meals" + "?" + baseUrl[1]
   var date = $(this).parent().parent().find('.date')
   var direction = $(this).attr('class')
-  var data = `date=${date.text().substring(0,11)}&direction=${direction}`
+  var data = "?date=" + dateLabel.text().substring(0,11) + "&direction=" + direction
 
   $.ajax({
     url: url,
