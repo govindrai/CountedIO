@@ -11,7 +11,7 @@
     = form_tag invite_user_path do
       = field_set_tag do
         .form-field
-          = text_field_tag :phone_number, '', class: 'submit-box'
+          = text_field_tag :phone_number, '', class: 'submit-box', placeholder: "+1 (555) 555-5555"
         .form-field
           = submit_tag 'Text Me!', class: 'submit'
 

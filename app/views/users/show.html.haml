@@ -1,13 +1,14 @@
-#top-nav
-  #change-date-section
-    #left-arrow= link_to image_tag("small-left-arrow.png"), get_data_path(@user), class: 'back'
-    #date-label Today
-    #right-arrow= link_to image_tag("small-right-arrow.png"), get_data_path(@user), class: 'forward'
-  #change-chart-buttons-section
-    #change-chart-buttons
-      %button#day-button.active Day
-      %button#week-button Week
-      %button#month-button Month
+.show-container
+  #top-nav
+    #change-date-section
+      #left-arrow= link_to image_tag("small-left-arrow.png"), get_data_path(@user), class: 'back'
+      #date-label Today
+      #right-arrow= link_to image_tag("small-right-arrow.png"), get_data_path(@user), class: 'forward'
+    #change-chart-buttons-section
+      #change-chart-buttons
+        %button#day-button.active Day
+        %button#week-button Week
+        %button#month-button Month
 
 :javascript
   var dateLabelsObj = {
