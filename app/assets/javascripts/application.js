@@ -86,7 +86,7 @@ var replaceContent = function (e) {
   })
 
   var baseUrl = $(document)[0].URL.split("?")
-  var url = baseUrl[0] + "/get_day_meals" + "?" + baseUrl[1]
+  var url = baseUrl[0] + "get_day_meals" + "?" + baseUrl[1]
   var direction = $(this).attr('class')
   var data = "?date=" + dateLabel.text().substring(0,11) + "&direction=" + direction
 
@@ -226,7 +226,7 @@ var getDayMeals = function () {
 
 var getDayMealsOnToggle = function () {
   var baseUrl = $(document)[0].URL.split("?")
-  var url = baseUrl[0] + "/get_day_meals" + "?" + baseUrl[1]
+  var url = baseUrl[0] + "get_day_meals" + "?" + baseUrl[1]
   var date = $(this).parent().parent().find('.date')
   var direction = $(this).attr('class')
   var data = "?date=" + dateLabel.text().substring(0,11) + "&direction=" + direction
