@@ -1,15 +1,10 @@
 .month.hidden
-  .change-page
-    %span.change-page-link.month-link
-      = link_to "&#8678;".html_safe, get_month_data_path(@user), class: 'back Month'
-    %span.date.change-page-link
-      = @user.generate_month_label(@date)
-    %span.change-page-link
-      = link_to "&#8680;".html_safe, get_month_data_path(@user), class: 'forward Month'
   .canvas-container
     %canvas#Month
 
 :javascript
+  Chart.defaults.global.defaultFontSize = 18;
+
   var dtx = $("#Month");
   var data = {
     datasets: [
@@ -34,12 +29,24 @@
     options: {
       scales: {
         xAxes: [{
-          position: 'top',
+          position: 'bottom',
           ticks: {
-            min: 1,
-            max: 1000
+            step: 2
           }
         }]
-      }
+      },
+      legend: {
+        position: 'bottom',
+        labels: {
+          text: "Calories Consumed, Target Calories"
+        }
+      },
+      title: {
+        display: true,
+        text: 'Monthly Calorie Intake',
+        position: 'top',
+        fontSize: 25,
+        padding: 20
+      },
     }
   });

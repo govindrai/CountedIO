@@ -1,59 +1,61 @@
 .day
-  .change-page
-    %span.change-page-link.day-link
-      = link_to "&#8678;".html_safe, get_day_data_path(@user), class: 'back Day'
-    %span.date.change-page-link
-      = @date.strftime("%F")
-    %span.change-page-link
-      = link_to "&#8680;".html_safe, get_day_data_path(@user), class: 'forward Day'
   .middle-text
   .canvas-container
     %canvas#Day
 
 
-  :javascript
-    function showDayData(event, activeElements) {
-      data = activeElements[0]._model.label
-      var target = '#' + data + "-meals"
-      $('#Breakfast-meals').hide()
-      $('#Lunch-meals').hide()
-      $('#Dinner-meals').hide()
-      $('#Snack-meals').hide()
-      $(target).toggle()
-    }
+:javascript
+  function showDayData(event, activeElements) {
+    console.log(activeElements);
+    data = activeElements[0]._model.label
+    var target = '#' + data + "-meals"
+    $('#Breakfast-meals').hide()
+    $('#Lunch-meals').hide()
+    $('#Dinner-meals').hide()
+    $('#Snack-meals').hide()
+    $(target).toggle()
+  }
 
 
-  :javascript
-    var ctx = $("#Day");
-    var data = {
-      labels: ["Breakfast", "Lunch", "Dinner", "Snack", "Remaining Calories"],
-      datasets: [
-          {
-              data: #{@chart_data},
-              backgroundColor: [
-                  "#FF6384",
-                  "#36A2EB",
-                  "#FFCE56",
-                  "#FFA500",
-                  "#2EDF2E"
-              ],
-              hoverBackgroundColor: [
-                  "#E55A77",
-                  "#3399DE",
-                  "#EEC04F",
-                  "#EB9800",
-                  "#28BF28"
-              ]
-          }]
-    };
+:javascript
+  var ctx = $("#Day");
+  var data = {
+    labels: ["Breakfast", "Lunch", "Dinner", "Snack", "Remaining Calories"],
+    datasets: [
+        {
+            backgroundColor: [
+                "#FF6384",
+                "#36A2EB",
+                "#FFCE56",
+                "#FFA500",
+                "#2EDF2E"
+            ],
+            hoverBackgroundColor: [
+                "#E55A77",
+                "#3399DE",
+                "#EEC04F",
+                "#EB9800",
+                "#28BF28"
+            ]
+        }]
+  };
 
-    var dayChart = new Chart(ctx, {
-      type: 'doughnut',
-      data: data,
-      options: {
-        onClick: showDayData
+  var dayChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: data,
+    options: {
+      maintainAspectRatio: false,
+      onClick: showDayData,
+      legend: {
+        position: 'bottom',
+      },
+      title: {
+        display: true,
+        text: 'Daily Calorie Intake',
+        position: 'top',
       }
-    });
+    }
+  });
 
 
 

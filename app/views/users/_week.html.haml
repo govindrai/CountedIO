@@ -1,11 +1,4 @@
 .week.hidden
-  .change-page
-    %span.change-page-link.week-link
-      = link_to "&#8678;".html_safe, get_week_data_path(@user), class: 'back Week'
-    %span.date.change-page-link
-      = @user.generate_week_label(@date, "Week")
-    %span.change-page-link
-      = link_to "&#8680;".html_safe, get_week_data_path(@user), class: 'forward Week'
   .canvas-container
     %canvas#Week
 
@@ -15,7 +8,6 @@
       labels: [],
       datasets: [
           {
-              data: #{@chart_data},
               backgroundColor: [
                 "#FF6384",
                 "#36A2EB",
@@ -46,16 +38,21 @@
       layout: {
         padding: 0
       },
-      title: {
-        display: true,
-        text: "YO MOMMMA",
-        fontSize: 36
-      },
       scales: {
         yAxes: [{
           ticks: {
           }
         }]
+      },
+      title: {
+        display: true,
+        text: 'Weekly Calorie Intake',
+        position: 'top',
+        fontSize: 25,
+        padding: 20
+      },
+      legend: {
+        position: 'bottom'
       }
     }
   });

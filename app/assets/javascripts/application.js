@@ -17,9 +17,9 @@
 
 $(document).ready(function () {
 
-  $('body').on("click", '#nav-1', toggleDay);
-  $('body').on("click", '#nav-2', toggleWeek);
-  $('body').on("click", '#nav-3', toggleMonth);
+  $('body').on("click", '#day-button', toggleDay);
+  $('body').on("click", '#week-button', toggleWeek);
+  $('body').on("click", '#month-button', toggleMonth);
   $('body').on("click", '.back', replaceContent);
   $('body').on("click", '.forward', replaceContent);
   $('body').on('click', '.close-meals', closeMeals);
@@ -33,13 +33,14 @@ $(document).ready(function () {
 var replaceContent = function (e) {
   e.preventDefault();
   var URL = $(this).attr('href')
-  var date = $(this).parent().parent().find('.date')
+  // debugger
+  var dateLabel = $('#date-label')
   var direction = this.classList[0]
-  var chartID = this.classList[1]
-  var queryParams = `?date=${date.text().substring(0,11)}&direction=${direction}&range=${chartID}`
+  var chartType = $('.active').text()
+  var queryParams = `?date=${dateLabel.text().substring(0,11)}&direction=${direction}&range=${chartType}`
   URL+= queryParams
   console.log(URL)
-  console.log(chartID);
+  console.log(chartType);
   console.log(queryParams);
   var request = $.ajax({
     url: URL,
@@ -59,12 +60,15 @@ var replaceContent = function (e) {
       $('.middle-text').append(`<p>Remaining Today: ${calsRemaining.toString()} Calories</p>`)
       $('.middle-text').removeClass('over')
     }
+    // debugger
+    dateLabelsObj[chartType.toLowerCase()] = response.dateLabel;
+    dateLabel.text(dateLabelsObj[chartType.toLowerCase()]);
 
-    date.text(response.dateLabel)
-    if (chartID == 'Day') {
+    // debugger
+    if (chartType == 'Day') {
       dayChart.data.datasets[0].data = response.data
       dayChart.update();
-    } else if (chartID == 'Week') {
+    } else if (chartType == 'Week') {
       weekChart.data.datasets[0].data = response.data
       weekChart.data.labels = response.dataLabels
       weekChart.data.datasets[1].data = response.targetCalories
@@ -81,12 +85,10 @@ var replaceContent = function (e) {
     console.log("Shit is messed up")
   })
 
-
   var baseUrl = $(document)[0].URL.split("?")
   var url = baseUrl[0] + "/get_day_meals" + "?" + baseUrl[1]
-  var date = $(this).parent().parent().find('.date')
   var direction = $(this).attr('class')
-  var data = `date=${date.text().substring(0,11)}&direction=${direction}`
+  var data = `date=${dateLabel.text().substring(0,11)}&direction=${direction}`
 
   $.ajax({
     url: url,
@@ -110,30 +112,41 @@ var closeMeals = function (e) {
 var toggleDay = function (e) {
   e.preventDefault();
   hideTabs();
+  $('#day-button').toggleClass('active');
+  $('#date-label').text(dateLabelsObj.day)
   $('.day').toggle();
 }
 
 var toggleWeek = function (e) {
   e.preventDefault();
   hideTabs();
+  $('#week-button').toggleClass('active');
+  $('#date-label').text(dateLabelsObj.week)
   $('.week').toggle();
 }
 
 var toggleMonth = function (e) {
   e.preventDefault();
   hideTabs();
+  $('#month-button').toggleClass('active');
+  $('#date-label').text(dateLabelsObj.month)
   $('.month').toggle();
+
 }
 
 var hideTabs = function () {
   $('.day').hide();
   $('.week').hide();
   $('.month').hide();
+  $('#day-button').removeClass('active');
+  $('#week-button').removeClass('active');
+  $('#month-button').removeClass('active');
 }
 
 
 var getDayData = function () {
-  var URL = $('.day-link').children()[0].href + "?direction=none&range=Day"
+  var URL = `${location.protocol}//${location.host}${location.pathname}`+'/get_data?direction=none&range=Day'
+  // debugger
   $.ajax({
     url: URL,
     method: 'get'
@@ -159,7 +172,7 @@ var getDayData = function () {
 }
 
 var getWeekData = function () {
-  var URL = $('.week-link').children()[0].href + "?direction=none&range=Week"
+  var URL = `${location.protocol}//${location.host}${location.pathname}`+'/get_data?direction=none&range=Week'
   $.ajax({
     url: URL,
     method: 'get'
@@ -177,7 +190,7 @@ var getWeekData = function () {
 }
 
 var getMonthData = function () {
-  var URL = $('.month-link').children()[0].href + "?direction=none&range=Month"
+  var URL = `${location.protocol}//${location.host}${location.pathname}`+'/get_data?direction=none&range=Month'
   $.ajax({
     url: URL,
     method: 'get'

@@ -1,6 +1,21 @@
 module DateHelper
 
+  def generate_day_label(date, direction="none")
+    if date == 'Today'
+      date = DateTime.now
+    else
+      date = date ? DateTime.parse(date) : DateTime.now
+    end
+    if direction.include?('forward')
+      date += 1.days
+    elsif direction.include?('back')
+      date -= 1.days
+    end
+    date.strftime("%F")
+  end
+
   def generate_week_label(date, direction="none")
+    date = date ? DateTime.parse(date) : DateTime.now
     if direction.include?('forward')
       date1 =  date + 7
       date2 =  date1 + 7
@@ -12,6 +27,7 @@ module DateHelper
   end
 
   def generate_month_label(date, direction="none")
+    date = date ? DateTime.parse(date) : DateTime.now.beginning_of_month
     if direction.include?('forward')
       date += 1.months
     elsif direction.include?('back')
@@ -20,14 +36,6 @@ module DateHelper
     date.strftime("%B")
   end
 
-  def generate_day_label(date, direction="none")
-    if direction.include?('forward')
-      date += 1.days
-    elsif direction.include?('back')
-      date -= 1.days
-    end
-    date.strftime("%F")
-  end
 
   def get_weekday(date)
     date.strftime('%A')
