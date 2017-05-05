@@ -1,6 +1,4 @@
 class UsersController < ApplicationController
-  include LinkHelper
-
   before_action :set_user
 
   def show
