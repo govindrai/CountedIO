@@ -75,6 +75,13 @@
   color: black;
 }
 
+
+#chart-container {
+  width: 500px;
+  height: 500px;
+  margin: auto;
+}
+
 .canvas-container {
   position: relative;
   height: 500px;
@@ -177,34 +184,53 @@ a {
   text-decoration: none;
 }
 
-table {
-  border-collapse: collapse;
-}
 
 td,tr,th {
   border: 1px solid black;
 }
 
 .food-container {
+  width: 100%;
   margin: auto;
-  display: flex;
-  align-items: center;
-  align-content: center;
+  display: block;
 }
 
-.hidden {
-  display: none;
-}
-
-.foods-container {
+.table-container {
   display: flex;
-  align-items: center;
-  align-content: center;
+  justify-content: center;
+  flex-grow: 1;
+  background-color: #d3d3d3;
 }
 
 .close-meals a {
   color: black;
 }
+
+.table-header {
+  display: flex;
+  justify-content: center;
+}
+
+.meal-type {
+  flex-grow: 2;
+}
+
+.close-meals {
+  flex-grow: 1;
+}
+
+table {
+  border-collapse: collapse;
+  width: 400px;
+}
+
+
+
+.hidden {
+  display: none;
+}
+
+
 
 .day {
   display: block;
@@ -217,20 +243,20 @@ td,tr,th {
 }
 
 .logo {
-  width: 800px;
-  margin: 30px;
+  margin: 5px;
+  max-width: 100%;
 }
 
 .description {
   display: flex;
   justify-content: center;
-  margin: 30px;
+  margin: 10px;
 }
 
 .sign-up {
   display: flex;
   justify-content: center;
-  margin: 30px;
+  margin: 5px;
 }
 
 .form {
@@ -240,7 +266,7 @@ td,tr,th {
 .text-form {
   display: flex;
   justify-content: center;
-  margin: 30px;
+  text-align: center;
 }
 
 fieldset {
@@ -252,9 +278,44 @@ fieldset {
   color: red;
 }
 
+
 @media screen and (max-width: 800px) {
     [class*="col-"] {
         width: 100%;
       }
 }
 
+.submit-box {
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.submit-box:active {
+  background-color: #D3D3D3;
+}
+
+.submit-box:focus {
+  outline: none;
+  background-color: #D3D3D3;
+}
+
+.submit {
+  color: #fff;
+  background-color: #0E7C7B;
+  text-shadow: -1px 1px #417cb8;
+  border: none;
+  border-radius: 5px;
+  padding: 5px;
+  margin-top: 5px;
+}
+
+.submit:hover{
+  background-color: #346392;
+  text-shadow: -1px 1px #27496d;
+  cursor: pointer;
+}
+
+.submit:active {
+  background-color: #27496d;
+  text-shadow: -1px 1px #193047;
+}
