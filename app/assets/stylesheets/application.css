@@ -354,7 +354,7 @@ fieldset {
 
 
 .home {
-  background: url('splash-page-background.svg');
+  background: url('splash-page-background.png');
   background-size: cover;
   height: 100vh;
 }
