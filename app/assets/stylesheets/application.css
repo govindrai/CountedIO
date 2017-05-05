@@ -101,6 +101,7 @@ body {
   float: none;
   margin: auto;
   margin-bottom: 500px;
+  background: url('back-green.svg')
 }
 
 nav {
@@ -164,7 +165,7 @@ button {
 [class*="col-"] {
     float: left;
     padding: 15px;
-    border: 1px solid white;
+    /*border: 1px solid white;*/
 }
 
 .change-page {
@@ -319,3 +320,5 @@ fieldset {
   background-color: #27496d;
   text-shadow: -1px 1px #193047;
 }
+
+
