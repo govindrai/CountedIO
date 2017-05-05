@@ -286,7 +286,7 @@ class Message < ApplicationRecord
           message += "Since you want to maintain weight, just keep your daily average intake to #{@user.target_calories}"
         end
 
-        message += "If you stick to this goal, you will reach your goal in #{@user.time_to_success}. YOU CAN DO IT!! 🤗\n\n"
+        message += "If you stick to this goal, you will reach your goal in #{@user.get_time_to_success}. YOU CAN DO IT!! 🤗\n\n"
         message += "If you need help, just ask!"
       else
         if @temp_user.height_inches

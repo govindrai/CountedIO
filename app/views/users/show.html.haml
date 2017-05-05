@@ -1,8 +1,8 @@
 #top-nav
   #change-date-section
-    #left-arrow= link_to image_tag("arrow-left-48.png"), get_data_path(@user), class: 'back'
+    #left-arrow= link_to image_tag("small-left-arrow.png"), get_data_path(@user), class: 'back'
     #date-label Today
-    #right-arrow= link_to image_tag("arrow-right-48.png"), get_data_path(@user), class: 'forward'
+    #right-arrow= link_to image_tag("small-right-arrow.png"), get_data_path(@user), class: 'forward'
   #change-chart-buttons-section
     #change-chart-buttons
       %button#day-button.active Day
@@ -21,8 +21,8 @@
 = render partial: 'month'
 
 
-#bottom-nav
-  #icon-1 "Home"
-  #icon-2 "IO"
-  #icon-3 "?"
-  #icon-4 "Logo"
+/ #bottom-nav
+/   #icon-1 "Home"
+/   #icon-2 "IO"
+/   #icon-3 "?"
+/   #icon-4 "Logo"

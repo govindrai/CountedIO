@@ -16,48 +16,64 @@
 //= require_tree .
 
 $(document).ready(function () {
-
   $('body').on("click", '#day-button', toggleDay);
   $('body').on("click", '#week-button', toggleWeek);
   $('body').on("click", '#month-button', toggleMonth);
   $('body').on("click", '.back', replaceContent);
   $('body').on("click", '.forward', replaceContent);
   $('body').on('click', '.close-meals', closeMeals);
+  $('#invite-form').on("submit", inviteUser);
   getDayData();
   getWeekData();
   getMonthData();
   getDayMeals();
-
 })
+
+function inviteUser(e) {
+  e.preventDefault();
+  var url = $(this).attr('action');
+  var data = $(this).serialize();
+  var form = $(this);
+
+  var request = $.ajax({
+    url: url,
+    type: 'POST',
+    data: data
+  })
+
+  request.done(function() {
+    console.log("IT WORKED MUFFF IMA REGISTER YA")
+    form.parent().prev().html("<h4 style='color:green'>Thanks! You'll get a text message shortly!</h4>")
+  })
+
+  request.fail(function() {
+    console.log("OH SHIT I CAN'T REGISTER YA");
+  })
+}
 
 var replaceContent = function (e) {
   e.preventDefault();
   var URL = $(this).attr('href')
-  // debugger
   var dateLabel = $('#date-label')
   var direction = this.classList[0]
   var chartType = $('.active').text()
-  var queryParams = `?date=${dateLabel.text().substring(0,11)}&direction=${direction}&range=${chartType}`
-  URL+= queryParams
-  console.log(URL)
-  console.log(chartType);
-  console.log(queryParams);
+  var queryParams = "?date=" + dateLabel.text().substring(0,11) + "&direction=" + direction + "&range=" + chartType
+  URL += queryParams
+
   var request = $.ajax({
     url: URL,
     method: 'get'
   })
 
   request.done(function (response) {
-    console.log("RESPONSE FROM PRESSING ARROW BUTTON")
-    console.log(response)
     var calsEaten = response.data[0] + response.data[1] + response.data[2] + response.data[3]
     var calsRemaining = response.data[4]
     $('.middle-text').html(' ')
     if (calsRemaining <= 0) {
-      $('.middle-text').append(`<p>Over Limit By: ${(calsEaten - response.targetCalories).toString()} Calories</p>`)
+      $('.middle-text').append("<p>Uh oh. Over limit by " + (calsEaten - response.targetCalories).toString() + " Calories</p>")
       $('.middle-text').addClass('over')
     } else {
-      $('.middle-text').append(`<p>Remaining Today: ${calsRemaining.toString()} Calories</p>`)
+      $('.middle-text').append("<p>Remaining Today: " + calsRemaining.toString() + " Calories</p>")
       $('.middle-text').removeClass('over')
     }
     // debugger
@@ -88,7 +104,7 @@ var replaceContent = function (e) {
   var baseUrl = $(document)[0].URL.split("?")
   var url = baseUrl[0] + "/get_day_meals" + "?" + baseUrl[1]
   var direction = $(this).attr('class')
-  var data = `date=${dateLabel.text().substring(0,11)}&direction=${direction}`
+  var data = "?date=" + dateLabel.text().substring(0,11) + "&direction=" + direction
 
   $.ajax({
     url: url,
@@ -101,12 +117,11 @@ var replaceContent = function (e) {
   .fail(function () {
     console.log("This function has failed")
   })
-
 }
 
 var closeMeals = function (e) {
   e.preventDefault();
-  $(this).parent().toggle();
+  $(this).parent().slideToggle();
 }
 
 var toggleDay = function (e) {
@@ -131,7 +146,6 @@ var toggleMonth = function (e) {
   $('#month-button').toggleClass('active');
   $('#date-label').text(dateLabelsObj.month)
   $('.month').toggle();
-
 }
 
 var hideTabs = function () {
@@ -145,8 +159,8 @@ var hideTabs = function () {
 
 
 var getDayData = function () {
-  var URL = `${location.protocol}//${location.host}${location.pathname}`+'/get_data?direction=none&range=Day'
-  // debugger
+  var baseUrl = $(document)[0].URL.split("?")[0]
+  var URL = baseUrl + '/get_data?direction=none&range=Day'
   $.ajax({
     url: URL,
     method: 'get'
@@ -159,10 +173,10 @@ var getDayData = function () {
     console.log(calsEaten - response.targetCalories)
     $('.middle-text').html(' ')
     if (calsRemaining <= 0) {
-      $('.middle-text').append(`<p>Over Limit By: ${(calsEaten - response.targetCalories).toString()} Calories</p>`)
+      $('.middle-text').append("<p>Uh oh. Over limit by " + (calsEaten - response.targetCalories).toString() + " Calories</p>")
       $('.middle-text').addClass('over')
     } else {
-      $('.middle-text').append(`<p>Remaining Today: ${calsRemaining.toString()} Calories</p>`)
+      $('.middle-text').append("<p>Remaining Today: " + calsRemaining.toString() + " Calories</p>")
       $('.middle-text').removeClass('over')
     }
   })
@@ -172,7 +186,8 @@ var getDayData = function () {
 }
 
 var getWeekData = function () {
-  var URL = `${location.protocol}//${location.host}${location.pathname}`+'/get_data?direction=none&range=Week'
+  var baseUrl = $(document)[0].URL.split("?")[0]
+  var URL = baseUrl + '/get_data?direction=none&range=Week'
   $.ajax({
     url: URL,
     method: 'get'
@@ -190,7 +205,8 @@ var getWeekData = function () {
 }
 
 var getMonthData = function () {
-  var URL = `${location.protocol}//${location.host}${location.pathname}`+'/get_data?direction=none&range=Month'
+  var baseUrl = $(document)[0].URL.split("?")[0]
+  var URL = baseUrl + '/get_data?direction=none&range=Month'
   $.ajax({
     url: URL,
     method: 'get'
@@ -208,6 +224,7 @@ var getMonthData = function () {
 }
 
 var getDayMeals = function () {
+  // debugger
   var baseUrl = $(document)[0].URL.split("?")
   var url = baseUrl[0] + "/get_day_meals" + "?" + baseUrl[1]
   $.ajax({
@@ -216,7 +233,7 @@ var getDayMeals = function () {
   })
   .done(function (response) {
     // console.log(response)
-    $('body').append(response)
+    $('.day').append(response)
   })
   .fail(function (response) {
     console.log("Something is messed up.")
@@ -226,10 +243,10 @@ var getDayMeals = function () {
 
 var getDayMealsOnToggle = function () {
   var baseUrl = $(document)[0].URL.split("?")
-  var url = baseUrl[0] + "/get_day_meals" + "?" + baseUrl[1]
+  var url = baseUrl[0] + "get_day_meals" + "?" + baseUrl[1]
   var date = $(this).parent().parent().find('.date')
   var direction = $(this).attr('class')
-  var data = `date=${date.text().substring(0,11)}&direction=${direction}`
+  var data = "?date=" + dateLabel.text().substring(0,11) + "&direction=" + direction
 
   $.ajax({
     url: url,

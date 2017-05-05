@@ -9,18 +9,18 @@
     console.log(activeElements);
     data = activeElements[0]._model.label
     var target = '#' + data + "-meals"
-    $('#Breakfast-meals').hide()
-    $('#Lunch-meals').hide()
-    $('#Dinner-meals').hide()
-    $('#Snack-meals').hide()
-    $(target).toggle()
+    $('#Breakfast-meals').hide();
+    $('#Lunch-meals').hide();
+    $('#Dinner-meals').hide();
+    $('#Snack-meals').hide();
+    $(target).slideToggle();
   }
 
 
 :javascript
   var ctx = $("#Day");
   var data = {
-    labels: ["Breakfast", "Lunch", "Dinner", "Snack", "Remaining Calories"],
+    labels: ["Breakfast", "Lunch", "Dinner", "Snack", "Calories Remaining"],
     datasets: [
         {
             backgroundColor: [
@@ -48,6 +48,9 @@
       onClick: showDayData,
       legend: {
         position: 'bottom',
+        labels: {
+          padding: 25
+        },
       },
       title: {
         display: true,
@@ -56,6 +59,3 @@
       }
     }
   });
-
-
-

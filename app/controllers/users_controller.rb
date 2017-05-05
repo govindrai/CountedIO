@@ -1,6 +1,4 @@
 class UsersController < ApplicationController
-  include LinkHelper
-
   before_action :set_user
 
   def show
@@ -37,6 +35,4 @@ class UsersController < ApplicationController
   def set_user
     @user = User.find(params[:user_id])
   end
-
-
 end
