@@ -31,7 +31,7 @@ class UsersController < ApplicationController
 
   def get_month_data
     if request.xhr?
-      date = params[:date] ? DateTime.parse(params[:date]) : DateTime.now
+      date = params[:date] ? DateTime.parse(params[:date]) : DateTime.now.beginning_of_month
       range = params[:range]
       direction = params[:direction]
       render json: @user.get_data(date, range, direction), layout:false

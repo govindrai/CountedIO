@@ -6,7 +6,12 @@ class User < ApplicationRecord
   before_create :generate_randomized_profile_url, :set_maintenance_calories, :set_weight_goal_values
 
   def get_data(date, range, direction)
-    {data: get_chart_data(date, range), dataLabels: get_chart_data_labels(date, range), dateLabel: get_date_range_label(date, range, direction), targetCalories: get_target_calories(date, range)}.to_json
+    {
+      dateLabel: get_date_range_label(date, range, direction),
+      data: get_chart_data(@date, range),
+      dataLabels: get_chart_data_labels(@date, range),
+      targetCalories: get_target_calories(@date, range)
+    }.to_json
   end
 
   def get_chart_data(date, range)
@@ -38,12 +43,19 @@ class User < ApplicationRecord
   def get_date_range_label(date, range, direction)
     case range
     when "Day"
-      generate_day_label(date, direction)
+      label = generate_day_label(date, direction)
+      @date = DateTime.parse(label)
     when "Week"
-      generate_week_label(date, direction)
+      label = generate_week_label(date, direction)
+      @date = DateTime.parse(label[0..11])
     when "Month"
-      generate_month_label(date, direction)
+      label = generate_month_label(date, direction)
+      @date = DateTime.parse(label)
     end
+      puts "*" * 50
+      puts @date
+      puts "*" * 50
+      label
   end
 
   def get_calories_consumed(date)

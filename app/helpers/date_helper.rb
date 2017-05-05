@@ -1,4 +1,5 @@
 module DateHelper
+
   def generate_week_label(date, direction="none")
     if direction.include?('forward')
       date1 =  date + 7
@@ -12,18 +13,18 @@ module DateHelper
 
   def generate_month_label(date, direction="none")
     if direction.include?('forward')
-      date =  @date + 1.months
+      date += 1.months
     elsif direction.include?('back')
-      date = @date - 1.months
+      date -= 1.months
     end
     date.strftime("%B")
   end
 
   def generate_day_label(date, direction="none")
     if direction.include?('forward')
-      date += 1
+      date += 1.days
     elsif direction.include?('back')
-      date -= 1
+      date -= 1.days
     end
     date.strftime("%F")
   end

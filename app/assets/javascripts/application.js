@@ -36,16 +36,19 @@ var replaceContent = function (e) {
   var date = $(this).parent().parent().find('.date')
   var direction = this.classList[0]
   var chartID = this.classList[1]
-  var data = `date=${date.text().substring(0,11)}&direction=${direction}&range=${chartID}`
+  var queryParams = `?date=${date.text().substring(0,11)}&direction=${direction}&range=${chartID}`
+  URL+= queryParams
+  console.log(URL)
   console.log(chartID);
-  console.log(data);
-
-  $.ajax({
+  console.log(queryParams);
+  var request = $.ajax({
     url: URL,
-    method: 'get',
-    data: data
+    method: 'get'
   })
-  .done(function (response) {
+
+  request.done(function (response) {
+    console.log("RESPONSE FROM PRESSING ARROW BUTTON")
+    console.log(response)
     date.text(response.dateLabel)
     if (chartID == 'Day') {
       dayChart.data.datasets[0].data = response.data
@@ -62,7 +65,8 @@ var replaceContent = function (e) {
       monthChart.update();
     }
   })
-  .fail(function () {
+
+  request.fail(function () {
     console.log("Shit is messed up")
   })
 }
@@ -99,13 +103,11 @@ var hideTabs = function () {
 
 var getDayData = function () {
   var URL = $('.day-link').children()[0].href + "?direction=none&range=Day"
-  console.log(URL)
   $.ajax({
     url: URL,
     method: 'get'
   })
   .done(function (response) {
-    console.log("GETTING getDay")
     console.log(response)
     dayChart.data.datasets[0].data = response.data
     dayChart.update();
