@@ -24,8 +24,8 @@
   display: flex;
   align-items: center;
   justify-content: space-around;
-  font-size: 25px;
-  margin-bottom: 25px;
+  font-size: 16px;
+  margin-bottom: 15px;
  }
 
 #change-chart-buttons {
@@ -34,16 +34,22 @@
   justify-content: center;
 }
 
+#change-date-section img {
+  width: 24px;
+  height: 24px;
+}
+
 #change-chart-buttons button {
   flex-grow:  1;
   background-color: white;
   color: blue;
   border: none;
   border-right: 1px solid blue;
-  padding: 15px 0;
+  padding: 10px 0;
   border-top: 1px solid blue;
   border-bottom: 1px solid blue;
   outline: none;
+  font-size: 16px;
 }
 
 #change-chart-buttons button:last-child {
@@ -67,12 +73,14 @@
   color: blue;
   background: rgba(201, 201, 201, 0.1);
   margin-bottom: 20px;
-  padding: 25px;
+  padding: 10px 25px;
   border-bottom:  1px solid rgba(201, 201, 201, .5);
+  font-size: 16px;
 }
 
 #date-label {
   color: black;
+  font-weight: bold;
 }
 
 

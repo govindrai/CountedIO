@@ -16,7 +16,6 @@
 //= require_tree .
 
 $(document).ready(function () {
-
   $('body').on("click", '#day-button', toggleDay);
   $('body').on("click", '#week-button', toggleWeek);
   $('body').on("click", '#month-button', toggleMonth);
@@ -24,17 +23,18 @@ $(document).ready(function () {
   $('body').on("click", '.forward', replaceContent);
   $('body').on('click', '.close-meals', closeMeals);
   $('#invite-form').on("submit", inviteUser);
-  getDayData();
-  getWeekData();
-  getMonthData();
-  getDayMeals();
+  // getDayData();
+  // getWeekData();
+  // getMonthData();
+  // getDayMeals();
 })
 
 function inviteUser(e) {
-  e.preventDefault()
+  e.preventDefault();
   var url = $(this).attr('action');
   var data = $(this).serialize();
   var form = $(this);
+
   var request = $.ajax({
     url: url,
     type: 'POST',
@@ -49,29 +49,23 @@ function inviteUser(e) {
   request.fail(function() {
     console.log("OH SHIT I CAN'T REGISTER YA");
   })
-
 }
 
 var replaceContent = function (e) {
   e.preventDefault();
   var URL = $(this).attr('href')
-  // debugger
   var dateLabel = $('#date-label')
   var direction = this.classList[0]
   var chartType = $('.active').text()
   var queryParams = "?date=" + dateLabel.text().substring(0,11) + "&direction=" + direction + "&range=" + chartType
-  URL+= queryParams
-  console.log(URL)
-  console.log(chartType);
-  console.log(queryParams);
+  URL += queryParams
+
   var request = $.ajax({
     url: URL,
     method: 'get'
   })
 
   request.done(function (response) {
-    console.log("RESPONSE FROM PRESSING ARROW BUTTON")
-    console.log(response)
     var calsEaten = response.data[0] + response.data[1] + response.data[2] + response.data[3]
     var calsRemaining = response.data[4]
     $('.middle-text').html(' ')
@@ -167,8 +161,8 @@ var hideTabs = function () {
 
 
 var getDayData = function () {
-  var URL = location.protocol + "/" + location.host + location.pathname + 'get_data?direction=none&range=Day'
-  // debugger
+  var baseUrl = $(document)[0].URL.split("?")[0]
+  var URL = baseUrl + '/get_data?direction=none&range=Day'
   $.ajax({
     url: URL,
     method: 'get'
@@ -194,7 +188,8 @@ var getDayData = function () {
 }
 
 var getWeekData = function () {
-  var URL = location.protocol + "/" + location.host + location.pathname + 'get_data?direction=none&range=Week'
+  var baseUrl = $(document)[0].URL.split("?")[0]
+  var URL = baseUrl + '/get_data?direction=none&range=Week'
   $.ajax({
     url: URL,
     method: 'get'
@@ -212,7 +207,8 @@ var getWeekData = function () {
 }
 
 var getMonthData = function () {
-  var URL = location.protocol + "/" + location.host + location.pathname + 'get_data?direction=none&range=Month'
+  var baseUrl = $(document)[0].URL.split("?")[0]
+  var URL = baseUrl + '/get_data?direction=none&range=Month'
   $.ajax({
     url: URL,
     method: 'get'
