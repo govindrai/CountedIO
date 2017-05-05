@@ -1,59 +1,43 @@
 .month.hidden
   .change-page
     %span.change-page-link.month-link
-      = link_to "&#8678;".html_safe, get_month_data_path(@user), class: 'back monthChart'
+      = link_to "&#8678;".html_safe, get_month_data_path(@user), class: 'back Month'
     %span.date.change-page-link
-      = User.generate_month_label(@date)
+      = @user.generate_month_label(@date)
     %span.change-page-link
-      = link_to "&#8680;".html_safe, get_month_data_path(@user), class: 'forward monthChart'
+      = link_to "&#8680;".html_safe, get_month_data_path(@user), class: 'forward Month'
   .canvas-container
-    %canvas#monthChart
+    %canvas#Month
 
 :javascript
-  var dtx = $("#monthChart");
+  var dtx = $("#Month");
   var data = {
-        labels: [],
-      datasets: [{
-        data: [],
-        backgroundColor: [
-          "#FF6384",
-          "#36A2EB",
-          "#FFCE56",
-          "#FFA500",
-          "#2EDF2E"
-        ],
-        borderColor: [
-          "#E55A77",
-          "#3399DE",
-          "#EEC04F",
-          "#EB9800",
-          "#28BF28"
-        ],
-        borderWidth: 1
-      },
-      {
-        type: 'line',
-        data: []
-      }
-      ]
+    datasets: [
+    {
+      fill: false,
+      backgroundColor: "rgba(75,192,192,0.4)",
+      borderColor: "rgba(75,192,192,1)",
+      borderWidth: 4,
+    },
+    {
+      fill: false,
+      borderWidth: 4,
+      backgroundColor: "rgba(0,192,0,0.4)",
+      borderColor: "rgba(0,192,0,1)"
     }
-
+    ]
+  }
 
   var monthChart = new Chart(dtx, {
     type: 'line',
     data: data,
     options: {
-      layout: {
-        padding: 0
-      },
-      title: {
-        display: true,
-        text: "YO MOMMMA",
-        fontSize: 36
-      },
       scales: {
-        yAxes: [{
+        xAxes: [{
+          position: 'top',
           ticks: {
+            min: 1,
+            max: 1000
           }
         }]
       }

@@ -1,73 +1,65 @@
 class User < ApplicationRecord
+  include DateHelper
+
   has_many :meals, dependent: :destroy
   has_many :messages, dependent: :destroy
-
   before_create :generate_randomized_profile_url, :set_maintenance_calories, :set_weight_goal_values
 
-  def get_line_chart_data(date)
-    month_int = date.month
-    days = User.days_in_month[month_int - 1].to_i
-    monthly_calories = []
-    days.times do |x|
-      meal_values = self.get_pie_chart_data(date + x)
-      meal_values.pop
-      monthly_calories.push(meal_values.inject(0,:+))
-    end
-      monthly_calories
+  def get_data(date, range, direction)
+    {
+      dateLabel: get_date_range_label(date, range, direction),
+      data: get_chart_data(@date, range),
+      dataLabels: get_chart_data_labels(@date, range),
+      targetCalories: get_target_calories(@date, range)
+    }.to_json
   end
 
-  def get_line_chart_labels(date)
-    month_int = date.month
-    days = User.days_in_month[month_int - 1].to_i
-    days_labels = []
-    days.times do |x|
-      days_labels.push(x + 1)
-    end
-    days_labels
-  end
-
-  def get_bar_chart_data(date)
-    weekly_calories = []
-    7.times do |x|
+  def get_chart_data(date, range)
+    return get_pie_chart_data(date) if range == "Day"
+    days = range == "Week" ? 7 : get_days_in_month(date)
+    Array.new(days) do |x|
       meal_values = self.get_pie_chart_data(date + x + 1)
       meal_values.pop
-      weekly_calories.push(meal_values.inject(0,:+))
+      meal_values.inject(0,:+)
     end
-    weekly_calories
   end
 
-  def get_bar_chart_labels(date)
-    weekly_labels = []
-    7.times do |x|
-      weekly_labels.push((date - (6 - x).days).strftime('%A'))
+  def get_chart_data_labels(date, range)
+    return if range == "Day"
+    days = range == "Week" ? 7 : get_days_in_month(date)
+    if days == 7
+      Array.new(days) { |x| get_weekday(date - (6 - x).days) }
+    else
+      Array.new(days) { |x| x + 1 }
     end
-    weekly_labels
   end
 
-  #FIXME there is an edge case on the first of the month as UTC then drops to the month before.
-  def self.generate_month_label(date)
-    date.strftime("%B")
+  def get_target_calories(date, range)
+    return if range == "Day"
+    days = range == "Week" ? 7 : get_days_in_month(date)
+    Array.new(days, self.target_calories)
   end
 
-  def self.days_in_month
-    # DateTime.now.end_of_month.day
-    %w(31 30 28 30 31 30 31 31 30 31 30 31)
-  end
-
-  # def self.months
-  #   %w(January February March April May June July August September October November December)
-  # end
-
-  # def self.months_to_int(date)
-  #   User.months[User.date_to_PST(date)[0].month + 1]
-  # end
-
-  def self.generate_week_label(date1,date2)
-    "#{(date1).strftime("%F")} - #{date2.strftime("%F")}"
+  def get_date_range_label(date, range, direction)
+    case range
+    when "Day"
+      label = generate_day_label(date, direction)
+      @date = DateTime.parse(label)
+    when "Week"
+      label = generate_week_label(date, direction)
+      @date = DateTime.parse(label[0..11])
+    when "Month"
+      label = generate_month_label(date, direction)
+      @date = DateTime.parse(label)
+    end
+      puts "*" * 50
+      puts @date
+      puts "*" * 50
+      label
   end
 
   def get_calories_consumed(date)
-    self.meals.where("created_at >= ? AND created_at <= ?", User.date_to_PST(date)[0],User.date_to_PST(date)[1]).sum(:calories)
+    self.meals.where("created_at >= ? AND created_at <= ?", date_to_PST(date)[0],date_to_PST(date)[1]).sum(:calories)
   end
 
   def get_all_meals(date)
@@ -75,28 +67,13 @@ class User < ApplicationRecord
   end
 
   def get_meals(date, meal_type)
-    self.meals.where("created_at >= ? AND created_at <= ? AND meal_type = ?", User.date_to_PST(date)[0],User.date_to_PST(date)[1], meal_type)
+    self.meals.where("created_at >= ? AND created_at <= ? AND meal_type = ?", date_to_PST(date)[0],date_to_PST(date)[1], meal_type)
   end
 
   def get_pie_chart_data(date)
-    calories_remaining = self.target_calories - get_calories_consumed(date)
-    calories_remaining = 0 if calories_remaining < 0
-    meal_values = [get_meals(date, 'Breakfast').sum(:calories), get_meals(date, 'Lunch').sum(:calories), get_meals(date, 'Dinner').sum(:calories), get_meals(date, 'Snack').sum(:calories), calories_remaining]
+    calories_remaining = self.target_calories - get_calories_consumed(date) < 0 ? 0 : self.target_calories - get_calories_consumed(date)
+    [get_meals(date, 'Breakfast').sum(:calories), get_meals(date, 'Lunch').sum(:calories), get_meals(date, 'Dinner').sum(:calories), get_meals(date, 'Snack').sum(:calories), calories_remaining]
   end
-
-
-
-  #REFACTOR THESE TWO METHODS INTO ONE
-  def get_target_calories_week
-    Array.new(7, self.target_calories)
-  end
-
-  def get_target_calories_month(date)
-    month_int = date.month
-    # FIGURE THE MONTH INT THING OUT MAYBE NOT -1
-    Array.new(User.days_in_month[month_int - 1].to_i, self.target_calories)
-  end
-
 
   def get_time_to_success
     weeks = (self.target_weight_pounds - self.weight_pounds).to_i.abs
@@ -120,21 +97,7 @@ class User < ApplicationRecord
     self.randomized_profile_url = random_url
   end
 
-
-  def self.date_to_PST(date)
-    [date.beginning_of_day.in_time_zone("Pacific Time (US & Canada)"), date.beginning_of_day.in_time_zone("Pacific Time (US & Canada)") + 1.days]
-  end
-
   private
-
-
-  def today_PST
-    Time.now.beginning_of_day.in_time_zone("Pacific Time (US & Canada)")
-  end
-
-  def tomorrow_PST
-    Time.now.beginning_of_day.in_time_zone("Pacific Time (US & Canada)") + 1.days
-  end
 
   # sets weight direction and target calories
   def set_weight_goal_values
@@ -151,20 +114,18 @@ class User < ApplicationRecord
   end
 
   def set_maintenance_calories
-    activity_level = {"Sitting all day": 1.2, "Seated work, no exercise": 1.3, "Seated work, light exercise": 1.4, "Moderately physical, no exercise": 1.5, "Moderately physical work, light exercise": 1.6, "Moderately physical work, heavy exercise": 1.7, "Heavy work/ heavy exercise": 1.8, "Above average physical activity": 2}
-
-    if self.sex == "male" || self.sex =="Male"
-      self.maintenance_calories = (1.4 * bmr_formula_male).round()
+    if self.sex.downcase == "male"
+      self.maintenance_calories = (1.4 * bmr_formula_male).round
     else
-      self.maintenance_calories = (1.4 * bmr_formula_female).round()
+      self.maintenance_calories = (1.4 * bmr_formula_female).round
     end
   end
 
   def bmr_formula_male
-    bmr = 10 * (self.weight_pounds * 0.453592) + 6.25 * (self.height_inches * 2.54) - 5 * self.age + 5
+    10 * (self.weight_pounds * 0.453592) + 6.25 * (self.height_inches * 2.54) - 5 * self.age + 5
   end
 
   def bmr_formula_female
-    bmr = 10 * (self.weight_pounds * 0.453592) + 6.25 * (self.height_inches * 2.54) - 5 * self.age - 161
+    10 * (self.weight_pounds * 0.453592) + 6.25 * (self.height_inches * 2.54) - 5 * self.age - 161
   end
 end
