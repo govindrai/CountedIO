@@ -32,7 +32,7 @@ $(document).ready(function () {
 
 var replaceContent = function (e) {
   e.preventDefault();
-  var URL = $(this).attr('href')
+  var url = $(this).attr('href')
   var date = $(this).parent().parent().find('.date')
   var direction = this.classList[0]
   var chartID = this.classList[1]
@@ -69,6 +69,26 @@ var replaceContent = function (e) {
   request.fail(function () {
     console.log("Shit is messed up")
   })
+
+
+  var baseUrl = $(document)[0].URL.split("?")
+  var url = baseUrl[0] + "/get_day_meals" + "?" + baseUrl[1]
+  var date = $(this).parent().parent().find('.date')
+  var direction = $(this).attr('class')
+  var data = `date=${date.text().substring(0,11)}&direction=${direction}`
+
+  $.ajax({
+    url: url,
+    method: 'get',
+    data: data
+  })
+  .done(function (response) {
+    $('.foods-container').replaceWith(response)
+  })
+  .fail(function () {
+    console.log("This function has failed")
+  })
+
 }
 
 var closeMeals = function (e) {
@@ -108,7 +128,6 @@ var getDayData = function () {
     method: 'get'
   })
   .done(function (response) {
-    console.log(response)
     dayChart.data.datasets[0].data = response.data
     dayChart.update();
   })
@@ -166,6 +185,27 @@ var getDayMeals = function () {
   })
   .fail(function (response) {
     console.log("Something is messed up.")
+  })
+}
+
+
+var getDayMealsOnToggle = function () {
+  var baseUrl = $(document)[0].URL.split("?")
+  var url = baseUrl[0] + "/get_day_meals" + "?" + baseUrl[1]
+  var date = $(this).parent().parent().find('.date')
+  var direction = $(this).attr('class')
+  var data = `date=${date.text().substring(0,11)}&direction=${direction}`
+
+  $.ajax({
+    url: url,
+    method: 'get',
+    data: data
+  })
+  .done(function (response) {
+    $('.foods-container').replaceWith(response)
+  })
+  .fail(function () {
+    console.log("This function has failed")
   })
 }
 
