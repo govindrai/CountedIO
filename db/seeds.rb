@@ -21,7 +21,7 @@ random_amount_of_days = []
 end
 
 1500.times do |time|
-  Meal.create(user_id: 6, food_name: food.sample, calories: calories.sample, quantity: quantity.sample, meal_type: meal_type.sample, original_description: original_description[0], created_at: DateTime.now - random_amount_of_days.sample)
+  Meal.create(user_id: 7, food_name: food.sample, calories: calories.sample, quantity: quantity.sample, meal_type: meal_type.sample, original_description: original_description[0], created_at: DateTime.now - random_amount_of_days.sample)
 end
 
 

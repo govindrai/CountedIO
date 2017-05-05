@@ -92,17 +92,14 @@
   font-weight: bold;
 }
 
-
-#chart-container {
-  width: 500px;
-  height: 500px;
-  margin: auto;
-}
-
 .canvas-container {
   position: relative;
   max-width: 1190px;
   margin: auto;
+}
+
+#donut-chart {
+  height: 600px;
 }
 
 .middle-text {
