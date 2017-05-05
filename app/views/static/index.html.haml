@@ -1,10 +1,12 @@
 .home
   .logo-container
     = image_tag 'COUNTED.png', class: "col-8 logo"
+
+  = image_tag "iphone_messages.png", class: "iphone-photo"
   .description
-    %h2 AI to keep you in tip top shape.
+    AI to keep you in tip top shape.
   .sign-up
-    %h4 Enter your number below to sign up today!
+    Sign up is easy! Just input your phone and we'll text you!
   .text-form
     = form_tag invite_user_path do
       = field_set_tag do

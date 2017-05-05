@@ -326,3 +326,28 @@ fieldset {
   margin-top: 50px;
 }
 
+.description {
+  margin: 150px auto;
+  font-size: 48px;
+  font-weight: bold;
+  color: white;
+  text-transform: uppercase;
+
+}
+
+.sign-up {
+  font-size: 18px;
+  font-weight: bold
+}
+
+.text-form input {
+  width: 300px;
+  height: 50px;
+  font-size: 35px;
+  display: inline-block;
+}
+
+.iphone-photo {
+  height: 600px;
+  display: none;
+}
