@@ -51,15 +51,14 @@ var replaceContent = function (e) {
     console.log(response)
     var calsEaten = response.data[0] + response.data[1] + response.data[2] + response.data[3]
     var calsRemaining = response.data[4]
+    $('.middle-text').html(' ')
     if (calsRemaining <= 0) {
       $('.middle-text').append("<p>Over Limit By:</p>")
-      $('.middle-text').append(`<p>${(calsEaten - calsRemaining).toString()}</p>`)
+      $('.middle-text').append(`<p>${(calsEaten - calsRemaining).toString()} Calories</p>`)
       $('.middle-text').addClass('over')
     } else {
-      $('.middle-text').append("<p>Calories Remaining Today:</p>")
-      $('.middle-text').append(`<p>${calsRemaining.toString()}</p>`)
-      $('.middle-text').addClass('over')
-
+      $('.middle-text').append("<p>Remaining Today:</p>")
+      $('.middle-text').append(`<p>${calsRemaining.toString()} Calories</p>`)
     }
 
     date.text(response.dateLabel)
@@ -143,6 +142,17 @@ var getDayData = function () {
   .done(function (response) {
     dayChart.data.datasets[0].data = response.data
     dayChart.update();
+    var calsEaten = response.data[0] + response.data[1] + response.data[2] + response.data[3]
+    var calsRemaining = response.data[4]
+    $('.middle-text').html(' ')
+    if (calsRemaining <= 0) {
+      $('.middle-text').append("<p>Over Limit By:</p>")
+      $('.middle-text').append(`<p>${(calsEaten - calsRemaining).toString()} Calories</p>`)
+      $('.middle-text').addClass('over')
+    } else {
+      $('.middle-text').append("<p>Remaining Today:</p>")
+      $('.middle-text').append(`<p>${calsRemaining.toString()} Calories</p>`)
+    }
   })
   .fail(function (response) {
     console.log("Something is messed up.")
