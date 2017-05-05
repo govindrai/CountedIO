@@ -156,3 +156,40 @@ td,tr,th {
 .day {
   display: block;
 }
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo {
+  width: 800px;
+  margin: 30px;
+}
+
+.description {
+  display: flex;
+  justify-content: center;
+  margin: 30px;
+}
+
+.sign-up {
+  display: flex;
+  justify-content: center;
+  margin: 30px;
+}
+
+.form {
+  border: none;
+}
+
+.text-form {
+  display: flex;
+  justify-content: center;
+  margin: 30px;
+}
+
+fieldset {
+  border: none;
+}
