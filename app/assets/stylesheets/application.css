@@ -15,6 +15,62 @@
  *= require_self
  */
 
+ #float-none {
+  float: none;
+ }
+
+ #change-date-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  font-size: 25px;
+  margin-bottom: 25px;
+ }
+
+#change-chart-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#change-chart-buttons button {
+  flex-grow:  1;
+  background-color: white;
+  color: blue;
+  border: none;
+  border-right: 1px solid blue;
+  padding: 15px 0;
+  border-top: 1px solid blue;
+  border-bottom: 1px solid blue;
+}
+
+#change-chart-buttons button:last-child {
+  border-right: 1px solid blue;
+  border-bottom-right-radius: 6px;
+  border-top-right-radius: 6px;
+}
+
+#change-chart-buttons button:first-child {
+  border-left: 1px solid blue;
+  border-bottom-left-radius: 6px;
+  border-top-left-radius: 6px;
+}
+
+#change-chart-buttons button.active {
+  background-color: blue;
+  color: white;
+}
+
+#top-nav {
+  color: blue;
+  background: ;
+  margin-bottom: 20px;
+}
+
+#date-label {
+  color: black;
+}
+
 .canvas-container {
   position: relative;
   height: 500px;
@@ -30,9 +86,8 @@
   box-sizing: border-box;
 }
 
-
 body {
-  max-width: 1090px;
+  float: none;
   margin: auto;
   margin-bottom: 500px;
 }
@@ -192,3 +247,10 @@ fieldset {
 .over {
   color: red;
 }
+
+@media screen and (max-width: 800px) {
+    [class*="col-"] {
+        width: 100%;
+      }
+}
+
