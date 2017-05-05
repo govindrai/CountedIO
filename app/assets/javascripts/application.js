@@ -23,12 +23,34 @@ $(document).ready(function () {
   $('body').on("click", '.back', replaceContent);
   $('body').on("click", '.forward', replaceContent);
   $('body').on('click', '.close-meals', closeMeals);
+  $('#invite-form').on("submit", inviteUser);
   getDayData();
   getWeekData();
   getMonthData();
   getDayMeals();
-
 })
+
+function inviteUser(e) {
+  e.preventDefault()
+  var url = $(this).attr('action');
+  var data = $(this).serialize();
+  var form = $(this);
+  var request = $.ajax({
+    url: url,
+    type: 'POST',
+    data: data
+  })
+
+  request.done(function() {
+    console.log("IT WORKED MUFFF IMA REGISTER YA")
+    form.parent().prev().html("<h4 style='color:green'>Thanks! You'll get a text message shortly!</h4>")
+  })
+
+  request.fail(function() {
+    console.log("OH SHIT I CAN'T REGISTER YA");
+  })
+
+}
 
 var replaceContent = function (e) {
   e.preventDefault();

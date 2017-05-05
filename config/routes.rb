@@ -1,20 +1,12 @@
 Rails.application.routes.draw do
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   root 'static#index'
-  post '/', to: 'users#index'
   post '/messages/invite_user/', to: 'messages#invite_user', as: :invite_user
-
-
 
   resources :messages
   match '/profile/:user_id', to: 'users#show',  via: 'get', as: :profile
-
   get '/profile/:user_id/get_data', to: 'users#get_data', as: :get_data
-
   get '/profile/:user_id/get_day_meals', to: 'users#get_day_meals', as: :get_day_meals
-
-
-
 
 
   # Routes for Testing

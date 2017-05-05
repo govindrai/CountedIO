@@ -5,10 +5,9 @@
 .sign-up
   %h4 Enter your number below to sign up today!
 .text-form
-  = form_tag invite_user_path do
-    = field_set_tag do
-      .form-field
-        = text_field_tag :phone_number, '', class: 'submit-box'
-      .form-field
-        = submit_tag 'Text Me!', class: 'submit'
+  = form_tag invite_user_path, id: "invite-form" do
+    .form-field
+      = text_field_tag :phone_number, '', class: 'submit-box'
+    .form-field
+      = submit_tag 'Text Me!', class: 'submit'
 
