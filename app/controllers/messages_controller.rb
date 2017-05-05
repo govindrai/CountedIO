@@ -12,6 +12,12 @@ class MessagesController < ApplicationController
     head :ok
   end
 
+  def invite_user
+    @message = Message.create!(phone_number: params[:phone_number], body: "register")
+    @message.reply_to_user
+    head :ok
+  end
+
   def test_twilio_send
     @message = Message.new(body: "Hey there!", phone_number: ENV["GOVIND_PHONE_NUMBER"])
     @message.sms_govind

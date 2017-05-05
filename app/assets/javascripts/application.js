@@ -126,7 +126,6 @@ var getDayData = function () {
   })
   .done(function (response) {
     console.log("GETTING getDay")
-    date.text(response.date)
     dayChart.data.datasets[0].data = response.data
     dayChart.update();
   })
