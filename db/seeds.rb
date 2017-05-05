@@ -5,9 +5,9 @@ Meal.destroy_all
 
 dan = User.create(name: "Daniel Welsh", phone_number: "+17802636496", age: 20, weight_pounds: 170, target_weight_pounds: 180, sex: "male", height_inches: 74)
 
-food = ["Chicken", "Celery", "Waffles", "Ice Cream", "Cereal", "Sandwich", "Ham", "Grilled Chicken Breast", "Rice", "Cake", "Kush"]
+food = ["Chicken", "Celery", "Waffles", "Ice Cream", "Cereal", "Sandwich", "Ham", "Grilled Chicken Breast", "Rice", "Cake", "Kush", "Wasabi", "Super Steak", "Strawberries", "Apples", "Orange", "Coffee", "Twinky", "Donuts", "Chicken and Rice", "Cheese Pizza", "Pepperoni Pizza", "Water", "Brie", "Crackers", "Figs"]
 
-calories = [123,324,234,90,34,234,754,234]
+calories = [140,375,220,600,30,210,750,215,450,10,230,560,750,230,120,170,75,70,40,30]
 
 meal_type = ["Breakfast", "Lunch", "Dinner", "Snack"]
 
@@ -15,11 +15,13 @@ quantity = [1,2,3,4]
 
 original_description = ["lala"]
 
-dates = [DateTime.now, DateTime.now - 1, DateTime.now - 2, DateTime.now - 3, DateTime.now - 4]
+random_amount_of_days = []
+150.times do |time|
+  random_amount_of_days << time
+end
 
-
-40.times do |time|
-  Meal.create(user: dan, food_name: food.sample, calories: calories.sample, quantity: quantity.sample, meal_type: meal_type.sample, original_description: original_description[0], created_at: dates.sample)
+1500.times do |time|
+  Meal.create(user: dan, food_name: food.sample, calories: calories.sample, quantity: quantity.sample, meal_type: meal_type.sample, original_description: original_description[0], created_at: DateTime.now - random_amount_of_days.sample)
 end
 
 
