@@ -36,8 +36,8 @@ class Message < ApplicationRecord
 
   def get_default_response
     default_responses = [
-      "I won't lie, I have no idea how to answer that",
-      "You have broken me....jk. I am more useful when you use me to track. :)"
+      "I won't lie, I have no idea how to answer that 😅",
+      "You have broken me....jk. I am more useful when you use me to track. 👍"
     ]
     @response_to_user = default_responses.sample
   end
@@ -48,7 +48,8 @@ class Message < ApplicationRecord
 
   def add_meal
     foods_array = extract_food
-    message = "Roger that! I have added "
+    startMessageString = ["Roger that! I have added ", "Thanks for letting me know! I have added" ]
+    message = startMessageString.sample
     message_fail = ""
     foods_array.each do |food_obj|
       if food_obj[:food_name] == "User Defined Calories"
@@ -68,9 +69,9 @@ class Message < ApplicationRecord
 
   def get_greeting
     greetings = [
-      "Hey there! I am more useful when you tell me to track your meals.",
-      "How's it going? I am more useful when you tell me to track your meals.",
-      "Hello to you to! I am more useful when you tell me to track your meals."
+      "Hey there! ✌️ I am more useful when you tell me to track your meals.",
+      "How's it going? 🤗 I am more useful when you tell me to track your meals.",
+      "Hello to you to! 🤗 I am more useful when you tell me to track your meals."
     ]
     @response_to_user = greetings.sample
   end
@@ -83,7 +84,7 @@ class Message < ApplicationRecord
         total_calories =  (food_obj[:calories] * food_obj[:quantity].to_f).round
         message += "A #{food_obj[:original_description]} has #{total_calories} calories. YUM! 😋\n"
       else
-        message += "I'm sorry we weren't able to find #{food_obj[:original_description]} in the database"
+        message += "😭 I'm sorry we weren't able to find #{food_obj[:original_description]} in the database"
       end
     end
     @response_to_user = message
@@ -95,9 +96,9 @@ class Message < ApplicationRecord
     if remaining_calories < 0
       message = "😧 UH OH. It seems like you've overate! You've consumed #{calories_consumed} calories, #{remaining_calories.abs} more than your daily goal. You can workout to offset these extra calories!"
     elsif remaining_calories == 0
-      message = "WOW. You've consumed exactly #{calories_consumed} calories which is your daily goal. YOU ROCK. Don't eat more unless you work out."
+      message = "WOW. 😮 You've consumed exactly #{calories_consumed} calories which is your daily goal. YOU ROCK. Don't eat more unless you work out."
     else
-      message = "You have consumed #{calories_consumed} calories today. You can consume #{remaining_calories} more to meet stay within your daily goal. Keep up the good work, #{@user.name}!"
+      message = "You have consumed #{calories_consumed} calories today. You can consume #{remaining_calories} more to meet stay within your daily goal. Keep up the good work, #{@user.name}! 😁"
     end
   end
 
@@ -254,7 +255,7 @@ class Message < ApplicationRecord
 
   def ask_to_register
     @response_to_user = %Q(
-    Hey there! We'd love to help you, but you need to be registered!\n\nReady to register? Just say "Register"
+    Hey there! ✌️ We'd love to help you, but you need to be registered!\n\nReady to register❓ Just say "Register"‼️
     )
     # @response_to_user = "https://media.giphy.com/media/zCmxiQtydu8kE/giphy.gif"
     # reply_to_user_gif
