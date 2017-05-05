@@ -3,7 +3,7 @@ class User < ApplicationRecord
 
   has_many :meals, dependent: :destroy
   has_many :messages, dependent: :destroy
-  before_create :generate_randomized_profile_url, :set_maintenance_calories, :set_weight_goal_values
+  before_create :set_maintenance_calories, :set_weight_goal_values
 
   def get_data(date, range, direction)
     {
@@ -87,7 +87,7 @@ class User < ApplicationRecord
   end
 
   def get_profile_url
-    "https://vildeio.herokuapp.com/profile/#{self.id}?random=#{generate_randomized_profile_url}"
+    "https://counted.herokuapp.com/profile/#{self.id}?random=#{generate_randomized_profile_url}"
   end
 
   def generate_randomized_profile_url
