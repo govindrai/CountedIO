@@ -20,6 +20,11 @@
   padding: 0;
  }
 
+ .show-container {
+    background: white;
+    margin-top: 140px;
+ }
+
  #change-date-section {
   display: flex;
   align-items: center;
@@ -71,11 +76,15 @@
 
 #top-nav {
   color: blue;
-  background: rgba(201, 201, 201, 0.1);
-  margin-bottom: 20px;
+  background: #FAFAFA;
   padding: 10px 25px;
-  border-bottom:  1px solid rgba(201, 201, 201, .5);
+  border-bottom:  1px solid #E2E2E2;
   font-size: 16px;
+  position: fixed;
+  top: 0;
+  left:  0;
+  width: 100%;
+  z-index: 100;
 }
 
 #date-label {
@@ -92,7 +101,8 @@
 
 .canvas-container {
   position: relative;
-  height: 500px;
+  max-width: 1190px;
+  margin: auto;
 }
 
 .middle-text {
@@ -109,11 +119,16 @@
   box-sizing: border-box;
 }
 
+html {
+  height: 100%;
+}
+
 body {
   float: none;
   margin: auto;
   margin-bottom: 500px;
-  background: url('splash-page-background.svg')
+  background: white;
+  height: 100%;
 }
 
 nav {
@@ -339,7 +354,9 @@ fieldset {
 
 
 .home {
-  margin-top: 50px;
+  background: url('splash-page-background.png');
+  background-size: cover;
+  height: 100vh;
 }
 
 .description {
@@ -353,7 +370,8 @@ fieldset {
 
 .sign-up {
   font-size: 18px;
-  font-weight: bold
+  font-weight: bold;
+  margin-bottom: 25px;
 }
 
 .text-form input {
@@ -361,6 +379,7 @@ fieldset {
   height: 50px;
   font-size: 35px;
   display: inline-block;
+  border-radius: 0 0 0 0;
 }
 
 .iphone-photo {

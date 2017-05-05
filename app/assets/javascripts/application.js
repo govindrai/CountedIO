@@ -22,7 +22,7 @@ $(document).ready(function () {
   $('body').on("click", '.back', replaceContent);
   $('body').on("click", '.forward', replaceContent);
   $('body').on('click', '.close-meals', closeMeals);
-  $('#invite-form').on("submit", inviteUser);
+  $('body').on("submit", '#invite-form', inviteUser);
   getDayData();
   getWeekData();
   getMonthData();
@@ -34,7 +34,13 @@ function inviteUser(e) {
   var url = $(this).attr('action');
   var data = $(this).serialize();
   var form = $(this);
-
+  var insertLocation = form.parent().prev()
+  var pattern = /^\+\d{10,15}$/;
+  debugger
+  if ($('#phone_number').val().match(pattern) == null) {
+    insertLocation.html("Oops! You must supply a phone number with the following format: '+' followed by country code and phone number with no spacing or dashes");
+    return;
+  }
   var request = $.ajax({
     url: url,
     type: 'POST',
@@ -43,7 +49,7 @@ function inviteUser(e) {
 
   request.done(function() {
     console.log("IT WORKED MUFFF IMA REGISTER YA")
-    form.parent().prev().html("<h4 style='color:green'>Thanks! You'll get a text message shortly!</h4>")
+    insertLocation.html("<h4 style='color:green'>Thanks! You'll get a text message shortly!</h4>")
   })
 
   request.fail(function() {
@@ -243,7 +249,7 @@ var getDayMeals = function () {
 
 var getDayMealsOnToggle = function () {
   var baseUrl = $(document)[0].URL.split("?")
-  var url = baseUrl[0] + "get_day_meals" + "?" + baseUrl[1]
+  var url = baseUrl[0] + "/get_day_meals" + "?" + baseUrl[1]
   var date = $(this).parent().parent().find('.date')
   var direction = $(this).attr('class')
   var data = "?date=" + dateLabel.text().substring(0,11) + "&direction=" + direction
