@@ -1,15 +1,20 @@
 #top-nav
   #change-date-section
-    #left-arrow &lt;
+    #left-arrow= link_to "&#8678;".html_safe, get_data_path(@user), class: 'back'
     #date-label Today
-    #right-arrow &gt;
+    #right-arrow= link_to "&#8680;".html_safe, get_data_path(@user), class: 'forward'
   #change-chart-buttons-section
     #change-chart-buttons
       %button#day-button.active Day
       %button#week-button Week
       %button#month-button Month
 
-
+:javascript
+  var dateLabelsObj = {
+    day: "Today",
+    week: "#{@user.generate_week_label(nil)}",
+    month: "#{@user.generate_month_label(nil)}"
+  }
 
 = render partial: 'day'
 = render partial: 'week'

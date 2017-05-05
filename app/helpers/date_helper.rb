@@ -1,7 +1,11 @@
 module DateHelper
 
   def generate_day_label(date, direction="none")
-    date = date ? DateTime.parse(date) : DateTime.now
+    if date == 'Today'
+      date = DateTime.now
+    else
+      date = date ? DateTime.parse(date) : DateTime.now
+    end
     if direction.include?('forward')
       date += 1.days
     elsif direction.include?('back')

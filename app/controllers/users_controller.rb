@@ -13,7 +13,12 @@ class UsersController < ApplicationController
 
   def get_day_meals
     if request.xhr?
-      @date = params[:date] ? DateTime.parse(params[:date]) : DateTime.now
+      if params[:date] == "Today"
+        @date = DateTime.now
+      else
+        @date = params[:date] ? DateTime.parse(params[:date]) : DateTime.now
+      end
+
       if params[:direction]
         if params[:direction].include?('forward')
           @date += 1
