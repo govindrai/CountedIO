@@ -1,62 +1,23 @@
 class UsersController < ApplicationController
-  before_action :set_user
   include LinkHelper
 
+  before_action :set_user
 
   def show
-    if @user.authorized?(params[:random])
-      @date = DateTime.now
-    else
-      render plain: "USER NOT AUTHORIZED"
-    end
+    render plain: "USER NOT AUTHORIZED" unless @user.authorized?(params[:random])
   end
 
   def get_data
-    if request.xhr?
-      date = params[:date] ? DateTime.parse(params[:date]) : DateTime.now
-      range = params[:range]
-      direction = params[:direction]
-      render json: @user.get_data(date, range, direction), layout:false
-    end
-  end
-
-  def get_day_data
-    if request.xhr?
-      date = params[:date]
-      range = params[:range]
-      direction = params[:direction]
-      render json: @user.get_data(date, range, direction), layout:false
-    end
-  end
-
-  def get_week_data
-    puts "I MADE IT INTO WEEK DATA"
-    if request.xhr?
-      date = params[:date]
-      range = params[:range]
-      direction = params[:direction]
-      render json: @user.get_data(date, range, direction), layout:false
-    end
-  end
-
-  def get_month_data
-    if request.xhr?
-      date = params[:date]
-      range = params[:range]
-      direction = params[:direction]
-      render json: @user.get_data(date, range, direction), layout:false
-    end
+    render json: @user.get_data(params[:date], params[:range], params[:direction]), layout:false if request.xhr?
   end
 
   def get_day_meals
     if request.xhr?
-      puts "I JSUT HIT THIS BITCH"
       @date = params[:date] ? DateTime.parse(params[:date]) : DateTime.now
       if params[:direction]
         if params[:direction].include?('forward')
           @date += 1
         elsif params[:direction].include?('back')
-          p "HITTING THIS OTHER BITCH"
           @date -= 1
         end
       end
