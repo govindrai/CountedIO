@@ -1,8 +1,8 @@
 %h1 VildeIO
 %h2 AI to keep you in tip top shape
-= form_tag user_text_path do
+= form_tag invite_user_path do
   = field_set_tag do
-    = label_tag :number, 'Enter Your Phone Number:'
-    = text_field_tag :number
+    = label_tag :phone_number, 'Enter Your Phone Number:'
+    = text_field_tag :phone_number
     = submit_tag 'Text Me!'
 

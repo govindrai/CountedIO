@@ -2,6 +2,7 @@ class UsersController < ApplicationController
   before_action :set_user
   include LinkHelper
 
+
   def show
     if @user.authorized?(params[:random])
       @date = params[:date] ? DateTime.parse(params[:date]) : DateTime.now
@@ -88,5 +89,6 @@ class UsersController < ApplicationController
   def set_user
     @user = User.find(params[:user_id])
   end
+
 
 end

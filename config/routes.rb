@@ -2,7 +2,10 @@ Rails.application.routes.draw do
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   root 'static#index'
   post '/', to: 'users#index'
-  match "/profile/text" => "users#text", :via => :post, :as => :user_text
+  post '/messages/invite_user/', to: 'messages#invite_user', as: :invite_user
+
+
+
   resources :messages
   match '/profile/:user_id', to: 'users#show',  via: 'get', as: :profile
 
