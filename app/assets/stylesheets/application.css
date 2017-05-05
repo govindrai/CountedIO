@@ -17,6 +17,7 @@
 
  #float-none {
   float: none;
+  padding: 0;
  }
 
  #change-date-section {
@@ -63,8 +64,10 @@
 
 #top-nav {
   color: blue;
-  background: ;
+  background: rgba(201, 201, 201, 0.1);
   margin-bottom: 20px;
+  padding: 25px;
+  border-bottom:  1px solid rgba(201, 201, 201, .5);
 }
 
 #date-label {
