@@ -123,7 +123,6 @@ html {
 body {
   float: none;
   margin: auto;
-  margin-bottom: 500px;
   background: white;
   height: 100%;
 }
@@ -276,12 +275,6 @@ thead {
   max-width: 100%;
 }
 
-.description {
-  display: flex;
-  justify-content: center;
-  margin: 10px;
-}
-
 .sign-up {
   display: flex;
   justify-content: center;
@@ -296,6 +289,7 @@ thead {
   display: flex;
   justify-content: center;
   text-align: center;
+  margin-bottom:40px;
 }
 
 fieldset {
@@ -351,18 +345,31 @@ fieldset {
 
 
 .home {
-  background: url('splash-page-background.png');
+  /* background: url('splash-page-background.png'); */
   background-size: cover;
   height: 100vh;
 }
 
 .description {
-  margin: 150px auto;
+  margin: 35px auto;
   font-size: 48px;
   font-weight: bold;
-  color: white;
+  color: black;
   text-transform: uppercase;
+  display: flex;
+  max-width: 1190px;
+  padding: 0 30px;
+  align-items: center;
+}
 
+.description .right {
+  width: 35%;
+}
+
+.description .left {
+  width: 45%;
+  padding: 0 30px;
+  text-align: right;
 }
 
 .sign-up {
