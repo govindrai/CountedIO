@@ -7,7 +7,7 @@ Calorie counting is big in today's wellness world, and counting your calories ca
 ## If you were to tell your friend what you ate today, how would you do so?
 You'd probably say "Hey friend, I ate an apple for breakfast and two slices of pizza for lunch". To enter that into a calorie tracker such as myFitnessPal you'd have to fill out numerous fields. But with Counted, you can simply say just that: "I ate an apple for breakfast and two slices of pizza for lunch" and Counted will now exactly what you ate, how much you ate, what time you ate and give you back a summary of the calories you've eaten.
 
-# Counted is live. Text +1(925)555-5555. And it's 100% free.
+# Counted is live. Text +1 (925) 350-4172. And it's 100% free.
 <img src="app/assets/images/iphone_messages.png?raw=true" height="600px">
 
 # Features
